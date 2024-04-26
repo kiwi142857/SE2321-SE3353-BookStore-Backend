@@ -2,9 +2,9 @@ spring:
   application:
     name: unigpt
   datasource:
-    url: jdbc:mysql://139.224.10.154:3306/unigpt
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/bookstore
+    username: kiwi
+    password: kiwi01
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
