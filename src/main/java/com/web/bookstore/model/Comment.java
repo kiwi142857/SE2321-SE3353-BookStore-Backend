@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import java.util.List;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.util.Date;
 
 @Data
 @Entity
+@Table(name = "comment")
 public class Comment {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +24,6 @@ public class Comment {
 
     @Column(name = "content")
     private String content;
-
-    @Column(name = "rating")
-    private Integer rating;
 
     @Column(name = "date")
     private Date date;

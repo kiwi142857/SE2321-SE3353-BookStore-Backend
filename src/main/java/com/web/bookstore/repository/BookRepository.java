@@ -2,8 +2,6 @@ package com.web.bookstore.repository;
 
 import com.web.bookstore.model.Book;
 
-import lombok.Data;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,9 +1,9 @@
-package com.web.bookstore.serviceImpl;
+package com.web.bookstore.serviceimpl;
 
 import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
-import com.web.bookstore.dto.GetBookOkDTO;
+import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.repository.BookRepository;
 import com.web.bookstore.service.BookService;
 import com.web.bookstore.dto.BookBreifDTO;
@@ -22,9 +22,9 @@ public class BookServiceImpl implements BookService {
         this.bookRepository = bookRepository;
     }
 
-    public GetBookOkDTO getBookById(Integer id) throws NoSuchElementException {
+    public GetBookDetailDTO getBookById(Integer id) throws NoSuchElementException {
         Book book = bookRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Book not found"));
-        return new GetBookOkDTO(book);
+        return new GetBookDetailDTO(book);
     }
 
     public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {
@@ -40,7 +40,7 @@ public class BookServiceImpl implements BookService {
         bookList = bookList.stream().skip((page) * size).limit(size).collect(Collectors.toList());
         List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
         Integer total = bookBreifDTOList.size();
-        System.out.println(bookBreifDTOList);
+        // System.out.println(bookBreifDTOList);
         return new GetBookListDTO(bookBreifDTOList, total);
     }
 }

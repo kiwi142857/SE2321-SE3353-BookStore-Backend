@@ -1,6 +1,5 @@
 package com.web.bookstore.model;
 
-import com.web.bookstore.model.Comment;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,7 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.annotation.Generated;
+import jakarta.persistence.Table;
 
 import java.util.List;
 
@@ -16,6 +15,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "book")
 public class Book {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
