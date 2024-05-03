@@ -16,6 +16,8 @@ import com.web.bookstore.service.BookService;
 import com.web.bookstore.model.Order;
 import com.web.bookstore.model.User;
 
+import java.util.Comparator;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -29,6 +31,25 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public List<GetOrderOkDTO> getOrderList(Integer pageSize, Integer pageNumber, String token) {
+        User user = authService.getUserByToken(token);
+        List<Order> orderList = orderRepository.findByUser(user);
+
+        // 使用流操作将orderList转换为GetOrderOkDTO
+        List<GetOrderOkDTO> getOrderOkDTOList = orderList.stream()
+                // 按照订单号逆序排序
+                .sorted(Comparator.comparing(Order::getOrderNumber).reversed())
+                // 跳过前 (pageNumber * pageSize) 个元素
+                .skip(pageNumber * pageSize)
+                // 取 pageSize 个元素
+                .limit(pageSize)
+                // 将 Order 转换为 GetOrderOkDTO
+                .map(order -> new GetOrderOkDTO(order, bookService))
+                .collect(Collectors.toList());
+
+        return getOrderOkDTOList;
+    }
+
+    public List<GetOrderOkDTO> getAllOrders(String token) {
         User user = authService.getUserByToken(token);
         List<Order> orderList = orderRepository.findByUser(user);
 

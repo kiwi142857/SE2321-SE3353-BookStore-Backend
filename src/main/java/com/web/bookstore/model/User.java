@@ -5,8 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.One;
+
 import com.web.bookstore.dto.RegisterRequestDTO;
 import com.web.bookstore.dto.JaccountUserDTO;
+import com.web.bookstore.model.CartItem;
+import com.web.bookstore.model.Cart;
 
 import java.util.ArrayList;
 
@@ -37,8 +41,15 @@ public class User {
     @Column(name = "description")
     private String description;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    private Cart cart;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     public User(RegisterRequestDTO dto) {
         this.name = dto.getUsername();

@@ -29,7 +29,7 @@ public class GetOrderOkDTO {
         this.address = order.getAddress();
         this.tel = order.getTel();
         this.createdAt = order.getCreatedAt();
-        this.items = order.getItems().stream().map(orderItem -> new OrderItemDTO(orderItem, bookService))
+        this.items = order.getItems().stream().map(orderItem -> new OrderItemDTO(orderItem))
                 .collect(Collectors.toList());
     }
 

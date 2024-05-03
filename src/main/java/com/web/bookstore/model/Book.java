@@ -55,7 +55,7 @@ public class Book {
     @Column(name = "oneStarNumber")
     private Integer oneStarNumber;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
     private List<Comment> comments;
 
     @Column(name = "cover")

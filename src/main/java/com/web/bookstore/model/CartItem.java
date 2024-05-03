@@ -3,23 +3,23 @@ package com.web.bookstore.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import lombok.Data;
+
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.*;
-import lombok.Data;
-
-import com.web.bookstore.model.Book;
 
 @Entity
 @Data
-@Table(name = "order_item")
-public class OrderItem {
+public class CartItem {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
+
+    @ManyToOne
+    private Cart cart;
 
     @JoinColumn(name = "book_id")
     private Book book;
@@ -27,16 +27,21 @@ public class OrderItem {
     @Column(name = "number")
     private Integer number;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-
-    public OrderItem() {
+    public CartItem() {
     }
 
-    public OrderItem(Book book, Integer number, Order order) {
+    public CartItem(Cart cart, Book book) {
+        this.cart = cart;
         this.book = book;
-        this.number = number;
-        this.order = order;
+        this.number = 1;
     }
+
+    public void increaseNumber() {
+        this.number++;
+    }
+
+    public void decreaseNumber() {
+        this.number--;
+    }
+
 }

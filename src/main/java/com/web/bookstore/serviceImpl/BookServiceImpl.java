@@ -13,6 +13,8 @@ import com.web.bookstore.model.Book;
 import java.util.stream.Collectors;
 import java.util.List;
 
+import java.util.Optional;
+
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -22,9 +24,8 @@ public class BookServiceImpl implements BookService {
         this.bookRepository = bookRepository;
     }
 
-    public GetBookDetailDTO getBookById(Integer id) throws NoSuchElementException {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Book not found"));
-        return new GetBookDetailDTO(book);
+    public Optional<Book> getBookById(Integer id) {
+        return bookRepository.findById(id);
     }
 
     public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {

@@ -7,13 +7,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.web.bookstore.service.BookService;
+import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.dto.ResponseDTO;
+import com.web.bookstore.model.Book;
+import com.web.bookstore.dto.GetBookListDTO;
+
+import javax.swing.text.html.Option;
 
 import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/book")
@@ -28,7 +35,12 @@ public class BookController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getBookById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(bookService.getBookById(id));
+            Optional<Book> book = bookService.getBookById(id);
+            if (book.isPresent()) {
+                return ResponseEntity.ok(new GetBookDetailDTO(book.get()));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, "Book not found"));
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }

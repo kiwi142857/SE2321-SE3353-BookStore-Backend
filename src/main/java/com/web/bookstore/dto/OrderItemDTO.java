@@ -21,9 +21,9 @@ public class OrderItemDTO {
         this.number = number;
     }
 
-    public OrderItemDTO(OrderItem orderItem, BookService bookService) {
+    public OrderItemDTO(OrderItem orderItem) {
         this.id = orderItem.getId();
-        this.book = new GetBookDetailDTO(bookService.getBookById(orderItem.getBookId()));
+        this.book = new GetBookDetailDTO(orderItem.getBook());
         this.number = orderItem.getNumber();
     }
 
