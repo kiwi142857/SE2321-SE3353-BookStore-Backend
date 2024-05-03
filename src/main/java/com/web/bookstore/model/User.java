@@ -45,7 +45,7 @@ public class User {
     private List<Order> orders = new ArrayList<>();
 
     @OneToOne
-    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    @JoinColumn(name = "cart_id")
     private Cart cart;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
