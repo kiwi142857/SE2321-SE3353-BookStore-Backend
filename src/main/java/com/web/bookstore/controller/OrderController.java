@@ -44,12 +44,16 @@ public class OrderController {
         }
     }
 
-    @PostMapping("")
-    public ResponseEntity<Object> createOrder(@RequestBody String body, @CookieValue(value = "token") String token) {
-        try {
-            return ResponseEntity.ok(orderService.createOrder(body, token));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, e.getMessage()));
-        }
-    }
+    /*
+     * @PostMapping("")
+     * public ResponseEntity<Object> createOrder(@RequestBody String
+     * body, @CookieValue(value = "token") String token) {
+     * try {
+     * return ResponseEntity.ok(orderService.createOrder(body, token));
+     * } catch (Exception e) {
+     * return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new
+     * ResponseDTO(false, e.getMessage()));
+     * }
+     * }
+     */
 }

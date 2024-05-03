@@ -9,7 +9,8 @@ import com.web.bookstore.dto.GetOrderOkDTO;
 public interface OrderService {
     public List<GetOrderOkDTO> getOrderList(Integer pageSize, Integer pageNumber, String token);
 
-    public GetOrderOkDTO createOrder(Integer bookId, Integer quantity, String token);
+    // public GetOrderOkDTO createOrder(Integer bookId, Integer quantity, String
+    // token);
 
     public List<GetOrderOkDTO> getAllOrders(String token);
 }
