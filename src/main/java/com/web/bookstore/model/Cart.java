@@ -13,10 +13,7 @@ import jakarta.annotation.Generated;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.GenerationType;
 
-import jaka
-
-a.per
-sistence.Table;
+import jakarta.persistence.Table;
 
 @Entity
 @Data
