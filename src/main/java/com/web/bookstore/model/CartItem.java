@@ -10,8 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import jakarta.persistence.Table;
+
 @Entity
 @Data
+@Table(name = "cart_item")
 public class CartItem {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +24,7 @@ public class CartItem {
     @ManyToOne
     private Cart cart;
 
+    @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
 

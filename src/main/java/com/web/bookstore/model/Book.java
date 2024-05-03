@@ -11,6 +11,8 @@ import jakarta.persistence.Table;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.One;
+
 import lombok.Data;
 
 @Data

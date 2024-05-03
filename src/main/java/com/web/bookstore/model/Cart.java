@@ -13,8 +13,14 @@ import jakarta.annotation.Generated;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.GenerationType;
 
+import jaka
+
+a.per
+sistence.Table;
+
 @Entity
 @Data
+@Table(name = "cart")
 public class Cart {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
