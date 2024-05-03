@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+
+import com.web.bookstore.dto.PostOrderDTO;
 import com.web.bookstore.dto.ResponseDTO;
 
 import java.util.Optional;
@@ -44,16 +46,14 @@ public class OrderController {
         }
     }
 
-    /*
-     * @PostMapping("")
-     * public ResponseEntity<Object> createOrder(@RequestBody String
-     * body, @CookieValue(value = "token") String token) {
-     * try {
-     * return ResponseEntity.ok(orderService.createOrder(body, token));
-     * } catch (Exception e) {
-     * return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new
-     * ResponseDTO(false, e.getMessage()));
-     * }
-     * }
-     */
+    @PostMapping("")
+    public ResponseEntity<Object> createOrder(@RequestBody PostOrderDTO postOrderDTO,
+            @CookieValue(value = "token") String token) {
+        try {
+            return ResponseEntity.ok(orderService.createOrder(postOrderDTO, token));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
 }

@@ -23,7 +23,7 @@ public class GetOrderOkDTO {
 
     public List<OrderItemDTO> items;
 
-    public GetOrderOkDTO(Order order, BookService bookService) {
+    public GetOrderOkDTO(Order order) {
         this.id = order.getId();
         this.receiver = order.getReceiver();
         this.address = order.getAddress();

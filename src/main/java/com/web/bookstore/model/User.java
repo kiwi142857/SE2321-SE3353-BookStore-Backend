@@ -3,16 +3,11 @@ package com.web.bookstore.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.ibatis.annotations.One;
 
 import com.web.bookstore.dto.RegisterRequestDTO;
 import com.web.bookstore.dto.JaccountUserDTO;
-import com.web.bookstore.model.CartItem;
-import com.web.bookstore.model.Cart;
-
-import java.util.ArrayList;
 
 @Data
 @Entity

@@ -21,6 +21,7 @@ public class OrderItem {
     @Id
     private Integer id;
 
+    @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
 
@@ -37,6 +38,12 @@ public class OrderItem {
     public OrderItem(Book book, Integer number, Order order) {
         this.book = book;
         this.number = number;
+        this.order = order;
+    }
+
+    public OrderItem(CartItem cartItem, Order order) {
+        this.book = cartItem.getBook();
+        this.number = cartItem.getNumber();
         this.order = order;
     }
 }

@@ -11,6 +11,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.util.stream.Collectors;
+
 import java.util.List;
 import java.time.Instant;
 import lombok.Data;
@@ -51,5 +53,14 @@ public class Order {
         this.address = address;
         this.tel = tel;
         this.createdAt = createdAt;
+    }
+
+    public Order(User user, String receiver, String address, String tel, Instant createdAt, List<CartItem> cartItems) {
+        this.user = user;
+        this.receiver = receiver;
+        this.address = address;
+        this.tel = tel;
+        this.createdAt = createdAt;
+        this.items = cartItems.stream().map(cartItem -> new OrderItem(cartItem, this)).collect(Collectors.toList());
     }
 }

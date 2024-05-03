@@ -16,6 +16,7 @@ import com.web.bookstore.model.Book;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -127,5 +128,15 @@ public class CartServiceImpl implements CartService {
 
         return new GetCartOkDTO(cart);
 
+    }
+
+    public Optional<CartItem> getCartItemById(Integer cartItemId) {
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        return cartItem;
+    }
+
+    public List<CartItem> getCartItemListByIds(List<Integer> cartItemIds) {
+        List<CartItem> cartItemList = cartItemRepository.findAllById(cartItemIds);
+        return cartItemList;
     }
 }
