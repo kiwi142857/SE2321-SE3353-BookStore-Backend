@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/book")
+@RequestMapping("/api/books")
 public class BookController {
 
     private final BookService bookService;
