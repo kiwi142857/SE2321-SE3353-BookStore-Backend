@@ -38,9 +38,9 @@ public class BookServiceImpl implements BookService {
             bookList = bookRepository.findByAuthorContaining(keyWord);
         }
         System.out.println(bookList);
+        Integer total = bookList.size();
         bookList = bookList.stream().skip((page) * size).limit(size).collect(Collectors.toList());
         List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
-        Integer total = bookBreifDTOList.size();
         // System.out.println(bookBreifDTOList);
         return new GetBookListDTO(bookBreifDTOList, total);
     }
