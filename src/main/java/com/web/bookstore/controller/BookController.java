@@ -55,4 +55,15 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
     }
+
+    @GetMapping("rank")
+    public ResponseEntity<Object> getRankList(
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "0") Integer pageIndex) {
+        try {
+            return ResponseEntity.ok(bookService.getRankList(pageSize, pageIndex));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
 }

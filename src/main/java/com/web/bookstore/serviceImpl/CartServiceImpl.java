@@ -64,7 +64,7 @@ public class CartServiceImpl implements CartService {
 
     }
 
-    public ResponseDTO deleteCartItem(User user, Integer bookId) {
+    public ResponseDTO deleteCartItem(User user, Integer cartItemId) {
 
         Cart cart = user.getCart();
 
@@ -72,20 +72,19 @@ public class CartServiceImpl implements CartService {
             return new ResponseDTO(false, "The cart is empty");
         }
 
-        Optional<Book> book = bookService.getBookById(bookId);
-        if (!book.isPresent()) {
-            return new ResponseDTO(false, "The book does not exist");
-        }
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
 
-        Book book_ = book.get();
-        Optional<CartItem> cartItem = cartItemRepository.findByCartAndBook(cart, book_);
-
-        if (cartItem.isPresent()) {
-            cartItemRepository.delete(cartItem.get());
-            return new ResponseDTO(true, "The book has been removed from the cart");
-        } else {
+        if (!cartItem.isPresent()) {
             return new ResponseDTO(false, "The book is not in the cart");
         }
+
+        // Check if the cartItem in the cart
+        if (cartItem.get().getCart() != cart) {
+            return new ResponseDTO(false, "The book is not in the cart");
+        }
+
+        cartItemRepository.delete(cartItem.get());
+        return new ResponseDTO(true, "The book has been removed from the cart");
 
     }
 

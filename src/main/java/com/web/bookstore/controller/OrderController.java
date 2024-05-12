@@ -50,6 +50,7 @@ public class OrderController {
     public ResponseEntity<Object> createOrder(@RequestBody PostOrderDTO postOrderDTO,
             @CookieValue(value = "token") String token) {
         try {
+            System.out.println("postOrderDTO: " + postOrderDTO.getItems().get(0));
             return ResponseEntity.ok(orderService.createOrder(postOrderDTO, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, e.getMessage()));

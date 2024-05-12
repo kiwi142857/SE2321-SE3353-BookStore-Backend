@@ -44,4 +44,11 @@ public class BookServiceImpl implements BookService {
         // System.out.println(bookBreifDTOList);
         return new GetBookListDTO(bookBreifDTOList, total);
     }
+
+    public GetBookListDTO getRankList(Integer pageSize, Integer sizeIndex) {
+        List<Book> bookList = bookRepository.findAll();
+        bookList = bookList.stream().skip((sizeIndex) * pageSize).limit(pageSize).collect(Collectors.toList());
+        List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
+        return new GetBookListDTO(bookBreifDTOList, pageSize);
+    }
 }

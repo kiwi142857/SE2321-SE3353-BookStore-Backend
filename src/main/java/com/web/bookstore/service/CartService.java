@@ -13,7 +13,7 @@ public interface CartService {
 
     public ResponseDTO addCartItem(User user, Integer bookId);
 
-    public ResponseDTO deleteCartItem(User user, Integer bookId);
+    public ResponseDTO deleteCartItem(User user, Integer cartItemId);
 
     public ResponseDTO updateCartItem(User user, Integer bookId, Integer quantity);
 

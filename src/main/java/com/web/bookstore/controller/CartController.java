@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -50,6 +52,20 @@ public class CartController {
                 return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
             }
             return ResponseEntity.ok(cartService.getCart(user));
+        } catch (Exception e) {
+            return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteCartItem(@PathVariable Integer id,
+            @CookieValue(value = "token") String token) {
+        try {
+            User user = authService.getUserByToken(token);
+            if (user == null) {
+                return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
+            }
+            return ResponseEntity.ok(cartService.deleteCartItem(user, id));
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
