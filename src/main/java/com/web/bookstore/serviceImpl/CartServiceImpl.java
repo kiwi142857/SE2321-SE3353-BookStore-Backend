@@ -88,7 +88,7 @@ public class CartServiceImpl implements CartService {
 
     }
 
-    public ResponseDTO updateCartItem(User user, Integer bookId, Integer quantity) {
+    public ResponseDTO updateCartItem(User user, Integer cartItemId, Integer quantity) {
 
         Cart cart = user.getCart();
 
@@ -96,22 +96,20 @@ public class CartServiceImpl implements CartService {
             return new ResponseDTO(false, "The cart is empty");
         }
 
-        Optional<Book> book = bookService.getBookById(bookId);
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
 
-        if (!book.isPresent()) {
-            return new ResponseDTO(false, "The book does not exist");
-        }
-
-        Book book_ = book.get();
-        Optional<CartItem> cartItem = cartItemRepository.findByCartAndBook(cart, book_);
-
-        if (cartItem.isPresent()) {
-            cartItem.get().setNumber(quantity);
-            cartItemRepository.save(cartItem.get());
-            return new ResponseDTO(true, "The quantity has been updated");
-        } else {
+        if (!cartItem.isPresent()) {
             return new ResponseDTO(false, "The book is not in the cart");
         }
+
+        // Check if the cartItem in the cart
+        if (cartItem.get().getCart() != cart) {
+            return new ResponseDTO(false, "The book is not in the cart");
+        }
+
+        cartItem.get().setNumber(quantity);
+        cartItemRepository.save(cartItem.get());
+        return new ResponseDTO(true, "The quantity has been updated");
 
     }
 

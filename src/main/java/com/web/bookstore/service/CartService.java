@@ -15,7 +15,7 @@ public interface CartService {
 
     public ResponseDTO deleteCartItem(User user, Integer cartItemId);
 
-    public ResponseDTO updateCartItem(User user, Integer bookId, Integer quantity);
+    public ResponseDTO updateCartItem(User user, Integer cartItemId, Integer quantity);
 
     public List<CartItem> getCartItemListByIds(List<Integer> ids);
     // public boolean checkout(Integer userId);

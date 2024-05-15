@@ -70,4 +70,18 @@ public class CartController {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateCartItem(@PathVariable Integer id, @RequestParam Integer number,
+            @CookieValue(value = "token") String token) {
+        try {
+            User user = authService.getUserByToken(token);
+            if (user == null) {
+                return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
+            }
+            return ResponseEntity.ok(cartService.updateCartItem(user, id, number));
+        } catch (Exception e) {
+            return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
