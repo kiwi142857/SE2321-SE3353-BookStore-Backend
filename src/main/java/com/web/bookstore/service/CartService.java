@@ -21,4 +21,6 @@ public interface CartService {
     // public boolean checkout(Integer userId);
 
     // public boolean cancelCheckout(Integer userId);
+
+    public ResponseDTO updateCartAfterOrder(User user, List<CartItem> cartItemList) throws Exception;
 }

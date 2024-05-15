@@ -91,8 +91,11 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         // delete all cart items
-        for (CartItem cartItem : cartItemList) {
-            cartServiceImpl.deleteCartItem(user, cartItem.getBook().getId());
+        try {
+            cartServiceImpl.updateCartAfterOrder(user,
+                    cartItemList);
+        } catch (Exception e) {
+            return new ResponseDTO(false, e.getMessage());
         }
 
         return new ResponseDTO(true, "The order has been created");

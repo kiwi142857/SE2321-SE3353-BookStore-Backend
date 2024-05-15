@@ -138,4 +138,26 @@ public class CartServiceImpl implements CartService {
         List<CartItem> cartItemList = cartItemRepository.findAllById(cartItemIds);
         return cartItemList;
     }
+
+    public ResponseDTO updateCartAfterOrder(User user, List<CartItem> cartItemList) throws Exception {
+
+        Cart cart = user.getCart();
+
+        if (cart == null) {
+            throw new Exception("The cart is empty");
+        }
+
+        for (CartItem cartItem : cartItemList) {
+            if (cartItem.getCart() != cart) {
+                throw new Exception("The cart item does not belong to the user");
+            }
+        }
+
+        for (CartItem cartItem : cartItemList) {
+            cartItemRepository.delete(cartItem);
+        }
+
+        return new ResponseDTO(true, "The cart has been updated");
+
+    }
 }
