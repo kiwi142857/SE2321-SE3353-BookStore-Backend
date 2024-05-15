@@ -11,6 +11,8 @@ import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
 
 import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import java.util.Optional;
@@ -47,6 +49,8 @@ public class BookServiceImpl implements BookService {
 
     public GetBookListDTO getRankList(Integer pageSize, Integer sizeIndex) {
         List<Book> bookList = bookRepository.findAll();
+        bookList.sort(Comparator.comparing(Book::getSales));
+        Collections.reverse(bookList);
         bookList = bookList.stream().skip((sizeIndex) * pageSize).limit(pageSize).collect(Collectors.toList());
         List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
         return new GetBookListDTO(bookBreifDTOList, pageSize);

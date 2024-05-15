@@ -19,13 +19,17 @@ public class BookBreifDTO {
 
     private String tag;
 
-    public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag) {
+    private Integer sales;
+
+    public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag,
+            Integer sales) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.price = price;
         this.cover = cover;
         this.tag = tag;
+        this.sales = sales;
     }
 
     public BookBreifDTO(Book book) {
@@ -35,5 +39,6 @@ public class BookBreifDTO {
         this.price = book.getPrice();
         this.cover = book.getCover();
         this.tag = book.getTag();
+        this.sales = book.getSales();
     }
 }
