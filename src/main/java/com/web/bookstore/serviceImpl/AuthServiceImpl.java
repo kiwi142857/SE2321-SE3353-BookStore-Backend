@@ -12,6 +12,7 @@ import com.web.bookstore.dto.JaccountResponseDTO;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.json.JSONObject;
 
@@ -34,17 +35,20 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 public class AuthServiceImpl implements AuthService {
     private final AuthRepository authRepository;
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(AuthRepository authRepository, UserRepository userRepository) {
+    public AuthServiceImpl(AuthRepository authRepository, UserRepository userRepository,
+            BCryptPasswordEncoder passwordEncoder) {
         this.authRepository = authRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public String login(LoginRequestDTO dto) throws AuthenticationException {
         Optional<User> optionalUser = userRepository.findByName(dto.getUsername());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            if (user.getPassword().equals(dto.getPassword())) {
+            if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
                 return generateAuthToken(user);
             }
         }
@@ -55,7 +59,9 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.findByName(dto.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
-        userRepository.save(new User(dto));
+        User user = new User(dto);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userRepository.save(user);
     }
 
     private String generateAuthToken(User user) {
@@ -86,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
         String client_secret = "B9919DDA3BD9FBF7ADB9F84F67920D8CB6528620B9586D1C";
         Unirest.setTimeouts(0, 0);
         HttpResponse<String> response = null;
-         try { 
+        try {
             response = Unirest.post("http://jaccount.sjtu.edu.cn/oauth2/token")
                     .header("Authorization",
                             "Basic b3YzU0xyTzRIeVpTRUx4Y0hpcVM6Qjk5MTlEREEzQkQ5RkJGN0FEQjlGODRGNjc5MjBEOENCNjUyODYyMEI5NTg2RDFD")
@@ -111,11 +117,10 @@ public class AuthServiceImpl implements AuthService {
         } catch (JSONException e) {
             throw new AuthenticationException("Request access token failed");
         }
-        String accessToken ;
-        try{
+        String accessToken;
+        try {
             accessToken = responseBody.getString("access_token");
-        }
-        catch (JSONException e){
+        } catch (JSONException e) {
             throw new AuthenticationException("Request access token failed");
         }
         return accessToken;
