@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
 import com.web.bookstore.dto.UserDTO;
+import com.web.bookstore.dto.PasswordChangeRequestDTO;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
 
@@ -63,4 +64,15 @@ public class UserController {
         }
     }
 
+    @PutMapping("/me/password")
+    public ResponseEntity<Object> changePassword(
+            @CookieValue(value = "token") String token,
+            @RequestBody PasswordChangeRequestDTO request) {
+        try {
+            return ResponseEntity.ok(service.changePassword(token, request.getOldPassword(), request.getNewPassword()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
 }

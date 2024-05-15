@@ -2,7 +2,10 @@ package com.web.bookstore.service;
 
 import com.web.bookstore.model.User;
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
+import com.web.bookstore.dto.ResponseDTO;
 import javax.security.sasl.AuthenticationException;
+
+import org.apache.catalina.connector.Response;
 
 public interface UserService {
 
@@ -23,4 +26,6 @@ public interface UserService {
             Integer id,
             UpdateUserInfoRequestDTO updateUserInfoRequestDTO,
             String token) throws AuthenticationException;
+
+    ResponseDTO changePassword(String token, String oldPassword, String newPassword);
 }
