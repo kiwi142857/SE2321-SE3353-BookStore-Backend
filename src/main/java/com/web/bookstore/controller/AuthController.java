@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.AuthenticationException;
@@ -56,7 +57,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/logout")
+    @PutMapping("/logout")
     public ResponseEntity<Object> logout(HttpServletResponse response) {
         Cookie cookie = new Cookie("token", "");
         cookie.setMaxAge(0);
