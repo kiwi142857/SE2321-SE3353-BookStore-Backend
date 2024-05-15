@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.util.List;
@@ -69,6 +70,49 @@ public class Book {
     @Column(name = "tag")
     private String tag;
 
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL)
+    private BookRate bookRate;
+
     public Book() {
     }
+
+    public Integer getBookRate(Integer starNumber) {
+        if (starNumber == 5) {
+            return fiveStarNumber;
+        } else if (starNumber == 4) {
+            return fourStarNumber;
+        } else if (starNumber == 3) {
+            return threeStarNumber;
+        } else if (starNumber == 2) {
+            return twoStarNumber;
+        } else {
+            return oneStarNumber;
+        }
+    }
+
+    public void updateRate(Integer oldStarNumber, Integer newStarNumber) {
+        if (oldStarNumber == 5) {
+            fiveStarNumber--;
+        } else if (oldStarNumber == 4) {
+            fourStarNumber--;
+        } else if (oldStarNumber == 3) {
+            threeStarNumber--;
+        } else if (oldStarNumber == 2) {
+            twoStarNumber--;
+        } else {
+            oneStarNumber--;
+        }
+        if (newStarNumber == 5) {
+            fiveStarNumber++;
+        } else if (newStarNumber == 4) {
+            fourStarNumber++;
+        } else if (newStarNumber == 3) {
+            threeStarNumber++;
+        } else if (newStarNumber == 2) {
+            twoStarNumber++;
+        } else {
+            oneStarNumber++;
+        }
+    }
+
 }

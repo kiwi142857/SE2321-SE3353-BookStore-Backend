@@ -46,6 +46,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private BookRate bookRate;
+
     public User(RegisterRequestDTO dto) {
         this.name = dto.getUsername();
         this.email = dto.getEmail();
