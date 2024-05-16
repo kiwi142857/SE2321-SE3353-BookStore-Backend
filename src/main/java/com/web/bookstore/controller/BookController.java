@@ -48,7 +48,7 @@ public class BookController {
         }
     }
 
-    @GetMapping("search")
+    @GetMapping("/search")
     public ResponseEntity<Object> searchBook(@RequestParam String searchType, @RequestParam String keyWord,
             @RequestParam Integer pageSize, @RequestParam Integer pageIndex) {
         try {
@@ -58,7 +58,7 @@ public class BookController {
         }
     }
 
-    @GetMapping("rank")
+    @GetMapping("/rank")
     public ResponseEntity<Object> getRankList(
             @RequestParam(required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(required = false, defaultValue = "0") Integer pageIndex) {
@@ -82,9 +82,9 @@ public class BookController {
 
     @PostMapping("/{id}/rate")
     public ResponseEntity<Object> rateBook(@PathVariable Integer id, @CookieValue(value = "token") String token,
-            @RequestParam Integer value) {
+            @RequestParam Integer rate) {
         try {
-            return ResponseEntity.ok(bookService.rateBook(token, id, value));
+            return ResponseEntity.ok(bookService.rateBook(token, id, rate));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }

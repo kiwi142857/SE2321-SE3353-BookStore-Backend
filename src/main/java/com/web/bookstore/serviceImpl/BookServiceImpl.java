@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
         } else {
             bookList = bookRepository.findByAuthorContaining(keyWord);
         }
-        System.out.println(bookList);
+        // System.out.println(bookList);
         Integer total = bookList.size();
         bookList = bookList.stream().skip((page) * size).limit(size).collect(Collectors.toList());
         List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
@@ -96,8 +96,8 @@ public class BookServiceImpl implements BookService {
         Optional<BookRate> bookRate = bookRateRepository.findByUserAndBook(user, book.get());
         if (bookRate.isEmpty()) {
             // 对书籍的评分更新
+            book.get().addRate(rate);
             bookRateRepository.save(new BookRate(user, book.get(), rate));
-            book.get().updateRate(-1, rate);
         } else {
             book.get().updateRate(bookRate.get().getRate(), rate);
             bookRate.get().setRate(rate);
