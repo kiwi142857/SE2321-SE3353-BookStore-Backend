@@ -12,6 +12,8 @@ import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.dto.GetBookListDTO;
+import com.web.bookstore.dto.GetBookRateDTO;
+import com.web.bookstore.dto.CommentRequestDTO;
 
 import javax.swing.text.html.Option;
 
@@ -21,6 +23,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 
@@ -89,4 +92,26 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
     }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<Object> getBookComments(@PathVariable Integer id,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "0") Integer pageIndex) {
+        try {
+            return ResponseEntity.ok(bookService.getCommentList(id, pageSize, pageIndex));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<Object> addBookComment(@PathVariable Integer id, @CookieValue(value = "token") String token,
+            @RequestBody CommentRequestDTO request) {
+        try {
+            return ResponseEntity.ok(bookService.addComment(token, id, request.getContent()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
 }

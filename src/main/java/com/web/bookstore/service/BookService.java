@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.ResponseDTO;
+import com.web.bookstore.dto.GetCommentListDTO;
 
 public interface BookService {
 
@@ -21,4 +22,10 @@ public interface BookService {
     GetBookRateDTO getBookRate(String token, Integer bookId);
 
     ResponseDTO rateBook(String token, Integer bookId, Integer rate);
+
+    GetCommentListDTO getCommentList(Integer bookId, Integer pageSize, Integer pageIndex);
+
+    ResponseDTO addComment(String token, Integer bookId, String content);
+
+    ResponseDTO replyComment(String token, Integer bookId, String content, String reply);
 }

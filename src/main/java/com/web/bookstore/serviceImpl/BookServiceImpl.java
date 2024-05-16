@@ -19,10 +19,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.web.bookstore.dto.GetBookRateDTO;
+import com.web.bookstore.dto.GetCommentListDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.repository.BookRateRepository;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.model.User;
+import com.web.bookstore.model.Comment;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -105,5 +107,59 @@ public class BookServiceImpl implements BookService {
         }
 
         return new ResponseDTO(true, "Rate success");
+    }
+
+    public GetCommentListDTO getCommentList(Integer bookId, Integer pageSize, Integer pageIndex) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        if (book.isEmpty()) {
+            throw new NoSuchElementException("Book not found");
+        }
+        Integer total = book.get().getComments().size();
+        List<Comment> test_comments = book.get().getComments();
+        for (Comment comment : test_comments) {
+            System.out.println(comment);
+        }
+        List<Comment> comments = book.get().getComments().stream().skip((pageIndex) * pageSize).limit(pageSize)
+                .collect(Collectors.toList());
+        System.out.println(comments);
+        return new GetCommentListDTO(total, comments);
+    }
+
+    public ResponseDTO addComment(String token, Integer bookId, String content) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        if (book.isEmpty()) {
+            throw new NoSuchElementException("Book not found");
+        }
+        User user = authService.getUserByToken(token);
+        if (user == null) {
+            throw new NoSuchElementException("User not found");
+        }
+        // 评论内容不能为空
+        if (content == null || content.equals("")) {
+            throw new IllegalArgumentException("Comment content can not be empty");
+        }
+        Comment comment = new Comment(content, book.get(), user);
+        book.get().getComments().add(comment);
+        bookRepository.save(book.get());
+        return new ResponseDTO(true, "Comment success");
+    }
+
+    public ResponseDTO replyComment(String token, Integer bookId, String content, String reply) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        if (book.isEmpty()) {
+            throw new NoSuchElementException("Book not found");
+        }
+        User user = authService.getUserByToken(token);
+        if (user == null) {
+            throw new NoSuchElementException("User not found");
+        }
+        // 评论内容不能为空
+        if (content == null || content.equals("")) {
+            throw new IllegalArgumentException("Comment content can not be empty");
+        }
+        Comment comment = new Comment(content, book.get(), user, reply);
+        book.get().getComments().add(comment);
+        bookRepository.save(book.get());
+        return new ResponseDTO(true, "Comment success");
     }
 }

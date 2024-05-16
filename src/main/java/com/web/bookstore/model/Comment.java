@@ -38,4 +38,43 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "reply")
+    private String reply;
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", date=" + date +
+                ", reply='" + reply + '\'' +
+                '}';
+    }
+
+    public Comment() {
+    }
+
+    public Comment(String content, Date date, Book book, User user, String reply) {
+        this.content = content;
+        this.date = date;
+        this.book = book;
+        this.user = user;
+        this.reply = reply;
+    }
+
+    public Comment(String content, Book book, User user) {
+        this.content = content;
+        this.date = new Date();
+        this.book = book;
+        this.user = user;
+    }
+
+    public Comment(String content, Book book, User user, String reply) {
+        this.content = content;
+        this.date = new Date();
+        this.book = book;
+        this.user = user;
+        this.reply = reply;
+    }
 }
