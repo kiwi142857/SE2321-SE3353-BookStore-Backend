@@ -48,11 +48,17 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> optionalUser = userRepository.findByName(dto.getUsername());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            Optional<Auth> optionalAuth = authRepository.findByUser(user);
+            if (optionalAuth.isEmpty()) {
+                throw new AuthenticationException("Invalid username or password");
+            }
+            Auth auth = optionalAuth.get();
+            if (passwordEncoder.matches(dto.getPassword(), auth.getPassword())) {
                 return generateAuthToken(user);
             }
         }
         throw new AuthenticationException("Invalid username or password");
+
     }
 
     public void register(RegisterRequestDTO dto) {
@@ -60,8 +66,10 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Username already exists");
         }
         User user = new User(dto);
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         userRepository.save(user);
+        Auth auth = new Auth(user, passwordEncoder.encode(dto.getPassword()));
+        authRepository.save(auth);
+
     }
 
     private String generateAuthToken(User user) {
@@ -166,5 +174,9 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             throw new AuthenticationException("Sending GET request failed");
         }
+    }
+
+    public Optional<Auth> getAuthByToken(String token) {
+        return authRepository.findByToken(token);
     }
 }

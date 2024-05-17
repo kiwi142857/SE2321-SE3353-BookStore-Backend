@@ -24,9 +24,6 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password")
-    private String password;
-
     @Column(name = "avatar")
     private String avatar;
 
@@ -52,7 +49,7 @@ public class User {
     public User(RegisterRequestDTO dto) {
         this.name = dto.getUsername();
         this.email = dto.getEmail();
-        this.password = dto.getPassword();
+
         this.avatar = dto.getAvatar();
         this.description = dto.getDescription();
     }

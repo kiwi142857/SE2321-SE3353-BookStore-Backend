@@ -10,4 +10,5 @@ public interface AuthRepository extends JpaRepository<Auth, Integer> {
     public Optional<Auth> findByToken(String token);
 
     public Optional<Auth> findByUser(User user);
+
 }

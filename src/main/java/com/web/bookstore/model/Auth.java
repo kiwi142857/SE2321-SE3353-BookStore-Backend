@@ -23,6 +23,9 @@ public class Auth {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "password")
+    private String password;
+
     public Auth() {
 
     }
@@ -30,6 +33,12 @@ public class Auth {
     public Auth(User user) {
         updateToken();
         this.user = user;
+    }
+
+    public Auth(User user, String password) {
+        updateToken();
+        this.user = user;
+        this.password = password;
     }
 
     public void updateToken() {

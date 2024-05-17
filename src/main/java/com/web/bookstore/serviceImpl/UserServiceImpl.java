@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.web.bookstore.model.User;
+import com.web.bookstore.model.Auth;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
 import com.web.bookstore.repository.UserRepository;
@@ -56,13 +57,17 @@ public class UserServiceImpl implements UserService {
 
     public ResponseDTO changePassword(String token, String oldPassword, String newPassword) {
         User user = authService.getUserByToken(token);
+        Optional<Auth> optionalAuth = authService.getAuthByToken(token);
 
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+        if (optionalAuth.isEmpty()) {
+            throw new NoSuchElementException("Auth not found for token: " + token);
+        }
+        if (!passwordEncoder.matches(oldPassword, optionalAuth.get().getPassword())) {
             System.out.println("Old password is incorrect");
             return new ResponseDTO(false, "Old password is incorrect");
         }
 
-        user.setPassword(newPassword);
+        optionalAuth.get().setPassword(newPassword);
         repository.save(user);
         return new ResponseDTO(true, "Change password successfully");
     }

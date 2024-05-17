@@ -4,7 +4,10 @@ import com.web.bookstore.dto.LoginRequestDTO;
 import com.web.bookstore.dto.RegisterRequestDTO;
 import javax.naming.AuthenticationException;
 
+import java.util.Optional;
+
 import com.web.bookstore.model.User;
+import com.web.bookstore.model.Auth;
 
 public interface AuthService {
     /**
@@ -35,4 +38,11 @@ public interface AuthService {
      * @throws AuthenticationException 登录异常
      */
     String jaccountLogin(String code) throws AuthenticationException;
+
+    /**
+     * @brief 根据token获取Auth
+     * @param token 用户token
+     * @return Auth
+     */
+    Optional<Auth> getAuthByToken(String token);
 }
