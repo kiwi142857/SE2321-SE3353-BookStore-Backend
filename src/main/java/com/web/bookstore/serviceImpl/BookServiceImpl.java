@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.repository.BookRepository;
 import com.web.bookstore.service.BookService;
-import com.web.bookstore.dto.BookBriefDTO;
+import com.web.bookstore.dto.BookBreifDTO;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.model.BookRate;
@@ -56,7 +56,7 @@ public class BookServiceImpl implements BookService {
         // System.out.println(bookList);
         Integer total = bookList.size();
         bookList = bookList.stream().skip((page) * size).limit(size).collect(Collectors.toList());
-        List<BookBriefDTO> bookBreifDTOList = bookList.stream().map(BookBriefDTO::new).collect(Collectors.toList());
+        List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
         // System.out.println(bookBreifDTOList);
         return new GetBookListDTO(bookBreifDTOList, total);
     }
@@ -66,7 +66,7 @@ public class BookServiceImpl implements BookService {
         bookList.sort(Comparator.comparing(Book::getSales));
         Collections.reverse(bookList);
         bookList = bookList.stream().skip((sizeIndex) * pageSize).limit(pageSize).collect(Collectors.toList());
-        List<BookBriefDTO> bookBreifDTOList = bookList.stream().map(BookBriefDTO::new).collect(Collectors.toList());
+        List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
         return new GetBookListDTO(bookBreifDTOList, pageSize);
     }
 

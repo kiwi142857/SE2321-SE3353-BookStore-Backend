@@ -35,12 +35,6 @@ public class BookRate {
     public BookRate() {
     }
 
-    public BookRate(Book book, Integer rate, User user) {
-        this.book = book;
-        this.rate = rate;
-        this.user = user;
-    }
-
     public BookRate(User user, Book book, Integer rate) {
         this.user = user;
         this.book = book;

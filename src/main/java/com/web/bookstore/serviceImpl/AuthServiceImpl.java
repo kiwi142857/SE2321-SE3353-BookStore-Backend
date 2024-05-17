@@ -135,7 +135,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = sendGetRequest("https://api.sjtu.edu.cn/v1/me/profile?access_token=" + accessToken);
-        // System.out.println("user" + user);
+
         // 查找是否已经注册
         Optional<User> optionalUser = userRepository.findByAccount(user.getAccount());
         if (optionalUser.isPresent()) {
@@ -149,7 +149,6 @@ public class AuthServiceImpl implements AuthService {
 
     private User sendGetRequest(String urlStr) throws AuthenticationException {
         try {
-            // System.out.println("urlStr: " + urlStr);
             Unirest.setTimeouts(300, 3000);
             HttpResponse<String> response = Unirest.get(urlStr)
                     .header("User-Agent", "Apifox/1.0.0 (https://apifox.com)")
@@ -157,22 +156,14 @@ public class AuthServiceImpl implements AuthService {
                     .header("Host", "api.sjtu.edu.cn")
                     .header("Connection", "keep-alive")
                     .asString();
-
-            // System.out.println("Response status: " + response.getStatus());
-            // System.out.println("Response body: " + response.getBody());
-
             if (response.getStatus() == HttpURLConnection.HTTP_OK) {
                 ObjectMapper mapper = new ObjectMapper();
                 JaccountResponseDTO jaccountResponse = mapper.readValue(response.getBody(), JaccountResponseDTO.class);
-
                 return new User(jaccountResponse.getUsers().get(0));
             } else {
-                // System.out.println("GET request not worked");
                 throw new AuthenticationException("GET request not worked");
             }
-
         } catch (Exception e) {
-            // System.out.println("Exception: " + e.getMessage());
             throw new AuthenticationException("Sending GET request failed");
         }
     }

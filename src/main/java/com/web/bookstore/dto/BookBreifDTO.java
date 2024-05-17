@@ -5,7 +5,7 @@ import com.web.bookstore.model.Book;
 import lombok.Data;
 
 @Data
-public class BookBriefDTO {
+public class BookBreifDTO {
 
     private Integer id;
 
@@ -21,7 +21,7 @@ public class BookBriefDTO {
 
     private Integer sales;
 
-    public BookBriefDTO(Integer id, String title, String author, Integer price, String cover, String tag,
+    public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag,
             Integer sales) {
         this.id = id;
         this.title = title;
@@ -32,7 +32,7 @@ public class BookBriefDTO {
         this.sales = sales;
     }
 
-    public BookBriefDTO(Book book) {
+    public BookBreifDTO(Book book) {
         this.id = book.getId();
         this.title = book.getTitle();
         this.author = book.getAuthor();
