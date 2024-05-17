@@ -28,4 +28,6 @@ public interface BookService {
     ResponseDTO addComment(String token, Integer bookId, String content);
 
     ResponseDTO replyComment(String token, Integer bookId, String content, String reply);
+
+    void updateBook(Book book);
 }

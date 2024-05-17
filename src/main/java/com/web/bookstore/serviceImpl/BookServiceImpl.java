@@ -162,4 +162,8 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(book.get());
         return new ResponseDTO(true, "Comment success");
     }
+
+    public void updateBook(Book book) {
+        bookRepository.save(book);
+    }
 }

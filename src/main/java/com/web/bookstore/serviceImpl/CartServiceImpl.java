@@ -152,6 +152,10 @@ public class CartServiceImpl implements CartService {
         }
 
         for (CartItem cartItem : cartItemList) {
+            Book book = cartItem.getBook();
+            Integer number = cartItem.getNumber();
+            book.setSales(number + book.getSales());
+            bookService.updateBook(book);
             cartItemRepository.delete(cartItem);
         }
 
