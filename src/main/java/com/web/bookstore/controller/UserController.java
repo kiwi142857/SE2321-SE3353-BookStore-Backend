@@ -47,14 +47,12 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/me")
     public ResponseEntity<Object> updateUserProfile(
-            @PathVariable Integer id,
             @CookieValue(value = "token") String token,
             @RequestBody UpdateUserInfoRequestDTO updateUserInfoRequestDTO) {
         try {
-            service.updateUserInfo(id, updateUserInfoRequestDTO, token);
-            return ResponseEntity.ok(new ResponseDTO(true, "Update user info successfully"));
+            return ResponseEntity.ok(service.updateUserInfo(updateUserInfoRequestDTO, token));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));

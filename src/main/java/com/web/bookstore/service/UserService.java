@@ -22,8 +22,7 @@ public interface UserService {
      * @param updateUserInfoRequestDTO 更新用户信息请求
      * @param token                    用户token
      */
-    void updateUserInfo(
-            Integer id,
+    ResponseDTO updateUserInfo(
             UpdateUserInfoRequestDTO updateUserInfoRequestDTO,
             String token) throws AuthenticationException;
 

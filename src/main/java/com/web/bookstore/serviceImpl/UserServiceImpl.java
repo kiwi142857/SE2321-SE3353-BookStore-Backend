@@ -38,25 +38,20 @@ public class UserServiceImpl implements UserService {
         return optionalUser.get();
     }
 
-    public void updateUserInfo(
-            Integer id,
+    public ResponseDTO updateUserInfo(
             UpdateUserInfoRequestDTO updateUserInfoRequestDTO,
             String token) throws AuthenticationException {
-        Optional<User> optionalUser = repository.findById(id);
-        if (optionalUser.isEmpty()) {
-            throw new NoSuchElementException("User not found for ID: " + id);
-        }
-
-        User targetUser = optionalUser.get();
         User requestUser = authService.getUserByToken(token);
-        if (!targetUser.equals(requestUser)) {
-            throw new AuthenticationException("Unauthorized to update user info");
+        String name = updateUserInfoRequestDTO.getName();
+        Optional<User> optionalUser = repository.findByName(name);
+        if (optionalUser.isPresent() && !(optionalUser.get().getId() == requestUser.getId())) {
+            throw new IllegalArgumentException("Username already exists");
         }
-        targetUser.setName(updateUserInfoRequestDTO.getName());
-        targetUser.setAvatar(updateUserInfoRequestDTO.getAvatar());
-        targetUser.setDescription(updateUserInfoRequestDTO.getDescription());
+        requestUser.setName(updateUserInfoRequestDTO.getName());
+        requestUser.setDescription(updateUserInfoRequestDTO.getDescription());
 
-        repository.save(targetUser);
+        repository.save(requestUser);
+        return new ResponseDTO(true, "Update user info successfully");
     }
 
     public ResponseDTO changePassword(String token, String oldPassword, String newPassword) {
