@@ -1,6 +1,6 @@
 package com.web.bookstore.dto;
 
-import com.web.bookstore.dto.BookBreifDTO;
+import com.web.bookstore.dto.BookBriefDTO;
 import lombok.Data;
 import java.util.List;
 
@@ -8,9 +8,9 @@ import java.util.List;
 public class GetBookListDTO {
 
     private Integer total;
-    private List<BookBreifDTO> bookList;
+    private List<BookBriefDTO> bookList;
 
-    public GetBookListDTO(List<BookBreifDTO> bookList, Integer total) {
+    public GetBookListDTO(List<BookBriefDTO> bookList, Integer total) {
         this.bookList = bookList;
         this.total = total;
     }
