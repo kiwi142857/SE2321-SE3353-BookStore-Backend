@@ -33,6 +33,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import java.util.Date;
+
 @Service
 public class AuthServiceImpl implements AuthService {
     private final AuthDAO authDAO;
@@ -94,6 +96,12 @@ public class AuthServiceImpl implements AuthService {
         // TODO: 登录请求应该抛出401(未授权)异常
         Auth auth = authDAO.findByToken(token)
                 .orElseThrow(() -> new NoSuchElementException("Invalid token"));
+
+        // Check if the token has expired
+        if (auth.getExpirationTime().before(new Date())) {
+            throw new NoSuchElementException("Token expired");
+        }
+
         return auth.getUser();
     }
 
