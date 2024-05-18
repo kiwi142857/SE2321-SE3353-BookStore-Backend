@@ -20,4 +20,7 @@ public class OrderDAO {
         return orderRepository.findByUser(user);
     }
 
+    public void save(Order order) {
+        orderRepository.save(order);
+    }
 }

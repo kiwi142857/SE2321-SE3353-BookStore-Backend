@@ -34,4 +34,11 @@ public class CartItemDAO {
         return cartItemRepository.findAllById(ids);
     }
 
+    public void save(CartItem cartItem) {
+        cartItemRepository.save(cartItem);
+    }
+
+    public void delete(CartItem cartItem) {
+        cartItemRepository.delete(cartItem);
+    }
 }

@@ -25,33 +25,35 @@ import com.web.bookstore.repository.BookRateRepository;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Comment;
+import com.web.bookstore.dao.BookDAO;
+import com.web.bookstore.dao.BookRateDAO;
+import com.web.bookstore.dao.AuthDAO;
 
 @Service
 public class BookServiceImpl implements BookService {
 
-    public final BookRepository bookRepository;
-    public final BookRateRepository bookRateRepository;
+    public final BookDAO bookDAO;
+    public final BookRateDAO bookRateDAO;
     public final AuthService authService;
 
-    public BookServiceImpl(BookRepository bookRepository, BookRateRepository bookRateRepository,
-            AuthService authService) {
-        this.bookRepository = bookRepository;
-        this.bookRateRepository = bookRateRepository;
+    public BookServiceImpl(BookDAO bookDAO, BookRateDAO bookRateDAO, AuthService authService) {
+        this.bookDAO = bookDAO;
+        this.bookRateDAO = bookRateDAO;
         this.authService = authService;
     }
 
     public Optional<Book> getBookById(Integer id) {
-        return bookRepository.findById(id);
+        return bookDAO.findById(id);
     }
 
     public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {
         List<Book> bookList;
         if (searchType.equals("title")) {
-            bookList = bookRepository.findByTitleContaining(keyWord);
+            bookList = bookDAO.findByTitleContaining(keyWord);
         } else if (searchType.equals("tag")) {
-            bookList = bookRepository.findByTag(keyWord);
+            bookList = bookDAO.findByTag(keyWord);
         } else {
-            bookList = bookRepository.findByAuthorContaining(keyWord);
+            bookList = bookDAO.findByAuthorContaining(keyWord);
         }
         // System.out.println(bookList);
         Integer total = bookList.size();
@@ -62,7 +64,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public GetBookListDTO getRankList(Integer pageSize, Integer sizeIndex) {
-        List<Book> bookList = bookRepository.findAll();
+        List<Book> bookList = bookDAO.findAll();
         bookList.sort(Comparator.comparing(Book::getSales));
         Collections.reverse(bookList);
         bookList = bookList.stream().skip((sizeIndex) * pageSize).limit(pageSize).collect(Collectors.toList());
@@ -71,7 +73,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public GetBookRateDTO getBookRate(String token, Integer bookId) {
-        Optional<Book> book = bookRepository.findById(bookId);
+        Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
@@ -79,7 +81,7 @@ public class BookServiceImpl implements BookService {
         if (user == null) {
             throw new NoSuchElementException("User not found");
         }
-        Optional<BookRate> bookRate = bookRateRepository.findByUserAndBook(user, book.get());
+        Optional<BookRate> bookRate = bookRateDAO.findByUserAndBook(user, book.get());
         if (bookRate.isEmpty()) {
             return new GetBookRateDTO(0);
         }
@@ -87,7 +89,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public ResponseDTO rateBook(String token, Integer bookId, Integer rate) {
-        Optional<Book> book = bookRepository.findById(bookId);
+        Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
@@ -95,22 +97,22 @@ public class BookServiceImpl implements BookService {
         if (user == null) {
             throw new NoSuchElementException("User not found");
         }
-        Optional<BookRate> bookRate = bookRateRepository.findByUserAndBook(user, book.get());
+        Optional<BookRate> bookRate = bookRateDAO.findByUserAndBook(user, book.get());
         if (bookRate.isEmpty()) {
             // 对书籍的评分更新
             book.get().addRate(rate);
-            bookRateRepository.save(new BookRate(user, book.get(), rate));
+            bookRateDAO.save(new BookRate(user, book.get(), rate));
         } else {
             book.get().updateRate(bookRate.get().getRate(), rate);
             bookRate.get().setRate(rate);
-            bookRateRepository.save(bookRate.get());
+            bookRateDAO.save(bookRate.get());
         }
 
         return new ResponseDTO(true, "Rate success");
     }
 
     public GetCommentListDTO getCommentList(Integer bookId, Integer pageSize, Integer pageIndex) {
-        Optional<Book> book = bookRepository.findById(bookId);
+        Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
@@ -126,7 +128,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public ResponseDTO addComment(String token, Integer bookId, String content) {
-        Optional<Book> book = bookRepository.findById(bookId);
+        Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
@@ -140,12 +142,12 @@ public class BookServiceImpl implements BookService {
         }
         Comment comment = new Comment(content, book.get(), user);
         book.get().getComments().add(comment);
-        bookRepository.save(book.get());
+        bookDAO.save(book.get());
         return new ResponseDTO(true, "Comment success");
     }
 
     public ResponseDTO replyComment(String token, Integer bookId, String content, String reply) {
-        Optional<Book> book = bookRepository.findById(bookId);
+        Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
@@ -159,11 +161,11 @@ public class BookServiceImpl implements BookService {
         }
         Comment comment = new Comment(content, book.get(), user, reply);
         book.get().getComments().add(comment);
-        bookRepository.save(book.get());
+        bookDAO.save(book.get());
         return new ResponseDTO(true, "Comment success");
     }
 
     public void updateBook(Book book) {
-        bookRepository.save(book);
+        bookDAO.save(book);
     }
 }

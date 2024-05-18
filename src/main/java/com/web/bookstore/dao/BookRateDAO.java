@@ -21,4 +21,7 @@ public class BookRateDAO {
         return bookRateRepository.findByUserAndBook(user, book);
     }
 
+    public void save(BookRate bookRate) {
+        bookRateRepository.save(bookRate);
+    }
 }

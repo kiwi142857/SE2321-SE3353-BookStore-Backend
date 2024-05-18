@@ -13,6 +13,11 @@ import com.web.bookstore.dto.GetCartOkDTO;
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.Book;
+import com.web.bookstore.model.CartItem;
+import com.web.bookstore.repository.CartItemRepository;
+import com.web.bookstore.repository.CartRepository;
+import com.web.bookstore.dao.CartItemDAO;
+import com.web.bookstore.dao.CartDAO;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -21,14 +26,13 @@ import java.util.List;
 @Service
 public class CartServiceImpl implements CartService {
 
-    private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
+    private final CartDAO cartDAO;
+    private final CartItemDAO cartItemDAO;
     private final BookService bookService;
 
-    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository,
-            BookService bookService) {
-        this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
+    public CartServiceImpl(CartDAO cartDAO, CartItemDAO cartItemDAO, BookService bookService) {
+        this.cartDAO = cartDAO;
+        this.cartItemDAO = cartItemDAO;
         this.bookService = bookService;
     }
 
@@ -37,7 +41,7 @@ public class CartServiceImpl implements CartService {
         Cart cart = user.getCart();
         if (cart == null) {
             cart = new Cart();
-            cartRepository.save(cart);
+            cartDAO.save(cart);
             user.setCart(cart);
         }
 
@@ -49,7 +53,7 @@ public class CartServiceImpl implements CartService {
 
         Book book_ = book.get();
 
-        Optional<CartItem> existingCartItem = cartItemRepository.findByCartAndBook(cart, book_);
+        Optional<CartItem> existingCartItem = cartItemDAO.findByCartAndBook(cart, book_);
 
         if (existingCartItem.isPresent()) {
             // The book is already in the cart
@@ -58,7 +62,7 @@ public class CartServiceImpl implements CartService {
             // The book is not in the cart, add it
 
             CartItem cartItem = new CartItem(cart, book_);
-            cartItemRepository.save(cartItem);
+            cartItemDAO.save(cartItem);
             return new ResponseDTO(true, "The book has been added to the cart");
         }
 
@@ -72,7 +76,7 @@ public class CartServiceImpl implements CartService {
             return new ResponseDTO(false, "The cart is empty");
         }
 
-        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        Optional<CartItem> cartItem = cartItemDAO.findById(cartItemId);
 
         if (!cartItem.isPresent()) {
             return new ResponseDTO(false, "The book is not in the cart");
@@ -83,7 +87,7 @@ public class CartServiceImpl implements CartService {
             return new ResponseDTO(false, "The book is not in the cart");
         }
 
-        cartItemRepository.delete(cartItem.get());
+        cartItemDAO.delete(cartItem.get());
         return new ResponseDTO(true, "The book has been removed from the cart");
 
     }
@@ -96,7 +100,7 @@ public class CartServiceImpl implements CartService {
             return new ResponseDTO(false, "The cart is empty");
         }
 
-        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        Optional<CartItem> cartItem = cartItemDAO.findById(cartItemId);
 
         if (!cartItem.isPresent()) {
             return new ResponseDTO(false, "The book is not in the cart");
@@ -108,7 +112,7 @@ public class CartServiceImpl implements CartService {
         }
 
         cartItem.get().setNumber(quantity);
-        cartItemRepository.save(cartItem.get());
+        cartItemDAO.save(cartItem.get());
         return new ResponseDTO(true, "The quantity has been updated");
 
     }
@@ -119,7 +123,7 @@ public class CartServiceImpl implements CartService {
 
         if (cart == null) {
             cart = new Cart();
-            cartRepository.save(cart);
+            cartDAO.save(cart);
             user.setCart(cart);
         }
 
@@ -128,12 +132,12 @@ public class CartServiceImpl implements CartService {
     }
 
     public Optional<CartItem> getCartItemById(Integer cartItemId) {
-        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        Optional<CartItem> cartItem = cartItemDAO.findById(cartItemId);
         return cartItem;
     }
 
     public List<CartItem> getCartItemListByIds(List<Integer> cartItemIds) {
-        List<CartItem> cartItemList = cartItemRepository.findAllById(cartItemIds);
+        List<CartItem> cartItemList = cartItemDAO.findAllById(cartItemIds);
         return cartItemList;
     }
 
@@ -156,7 +160,7 @@ public class CartServiceImpl implements CartService {
             Integer number = cartItem.getNumber();
             book.setSales(number + book.getSales());
             bookService.updateBook(book);
-            cartItemRepository.delete(cartItem);
+            cartItemDAO.delete(cartItem);
         }
 
         return new ResponseDTO(true, "The cart has been updated");

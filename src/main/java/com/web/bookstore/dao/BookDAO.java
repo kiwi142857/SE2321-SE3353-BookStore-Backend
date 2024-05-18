@@ -1,6 +1,7 @@
 package com.web.bookstore.dao;
 
 import com.web.bookstore.model.Book;
+import com.web.bookstore.model.User;
 import com.web.bookstore.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +29,15 @@ public class BookDAO {
         return bookRepository.findById(id);
     }
 
+    public List<Book> findByTag(String tag) {
+        return bookRepository.findByTag(tag);
+    }
+
+    public List<Book> findAll() {
+        return bookRepository.findAll();
+    }
+
+    public Book save(Book book) {
+        return bookRepository.save(book);
+    }
 }

@@ -17,21 +17,22 @@ import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
 import com.web.bookstore.repository.UserRepository;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
+import com.web.bookstore.dao.UserDAO;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository repository;
+    private final UserDAO userDAO;
     private final AuthService authService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository repository, AuthService authService, BCryptPasswordEncoder passwordEncoder) {
-        this.repository = repository;
+    public UserServiceImpl(UserDAO userDAO, AuthService authService, BCryptPasswordEncoder passwordEncoder) {
+        this.userDAO = userDAO;
         this.authService = authService;
         this.passwordEncoder = passwordEncoder;
     }
 
     public User findUserById(Integer id) {
-        Optional<User> optionalUser = repository.findById(id);
+        Optional<User> optionalUser = userDAO.findById(id);
         if (optionalUser.isEmpty()) {
             throw new NoSuchElementException("User not found for ID: " + id);
         }
@@ -44,14 +45,14 @@ public class UserServiceImpl implements UserService {
             String token) throws AuthenticationException {
         User requestUser = authService.getUserByToken(token);
         String name = updateUserInfoRequestDTO.getName();
-        Optional<User> optionalUser = repository.findByName(name);
+        Optional<User> optionalUser = userDAO.findByName(name);
         if (optionalUser.isPresent() && !(optionalUser.get().getId() == requestUser.getId())) {
             throw new IllegalArgumentException("Username already exists");
         }
         requestUser.setName(updateUserInfoRequestDTO.getName());
         requestUser.setDescription(updateUserInfoRequestDTO.getDescription());
 
-        repository.save(requestUser);
+        userDAO.save(requestUser);
         return new ResponseDTO(true, "Update user info successfully");
     }
 
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
         }
 
         optionalAuth.get().setPassword(newPassword);
-        repository.save(user);
+        userDAO.save(user);
         return new ResponseDTO(true, "Change password successfully");
     }
 }

@@ -19,4 +19,7 @@ public class CommentDAO {
         return commentRepository.findById(id);
     }
 
+    public void save(Comment comment) {
+        commentRepository.save(comment);
+    }
 }

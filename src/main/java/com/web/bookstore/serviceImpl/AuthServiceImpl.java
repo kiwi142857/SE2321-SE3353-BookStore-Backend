@@ -8,6 +8,8 @@ import com.web.bookstore.model.Auth;
 import com.web.bookstore.model.User;
 import com.web.bookstore.repository.AuthRepository;
 import com.web.bookstore.repository.UserRepository;
+import com.web.bookstore.dao.AuthDAO;
+import com.web.bookstore.dao.UserDAO;
 import com.web.bookstore.dto.JaccountResponseDTO;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,22 +35,22 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-    private final AuthRepository authRepository;
-    private final UserRepository userRepository;
+    private final AuthDAO authDAO;
+    private final UserDAO userDAO;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(AuthRepository authRepository, UserRepository userRepository,
+    public AuthServiceImpl(AuthDAO authDAO, UserDAO userDAO,
             BCryptPasswordEncoder passwordEncoder) {
-        this.authRepository = authRepository;
-        this.userRepository = userRepository;
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
         this.passwordEncoder = passwordEncoder;
     }
 
     public String login(LoginRequestDTO dto) throws AuthenticationException {
-        Optional<User> optionalUser = userRepository.findByName(dto.getUsername());
+        Optional<User> optionalUser = userDAO.findByName(dto.getUsername());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            Optional<Auth> optionalAuth = authRepository.findByUser(user);
+            Optional<Auth> optionalAuth = authDAO.findByUser(user);
             if (optionalAuth.isEmpty()) {
                 throw new AuthenticationException("Invalid username or password");
             }
@@ -62,18 +64,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public void register(RegisterRequestDTO dto) {
-        if (userRepository.findByName(dto.getUsername()).isPresent()) {
+        if (userDAO.findByName(dto.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
         User user = new User(dto);
-        userRepository.save(user);
+        userDAO.save(user);
         Auth auth = new Auth(user, passwordEncoder.encode(dto.getPassword()));
-        authRepository.save(auth);
+        authDAO.save(auth);
 
     }
 
     private String generateAuthToken(User user) {
-        Optional<Auth> optionalAuth = authRepository.findByUser(user);
+        Optional<Auth> optionalAuth = authDAO.findByUser(user);
         Auth auth;
         if (optionalAuth.isPresent()) {
             // 用户已经拥有令牌
@@ -84,13 +86,13 @@ public class AuthServiceImpl implements AuthService {
             auth = new Auth(user);
         }
 
-        authRepository.save(auth);
+        authDAO.save(auth);
         return auth.getToken();
     }
 
     public User getUserByToken(String token) {
         // TODO: 登录请求应该抛出401(未授权)异常
-        Auth auth = authRepository.findByToken(token)
+        Auth auth = authDAO.findByToken(token)
                 .orElseThrow(() -> new NoSuchElementException("Invalid token"));
         return auth.getUser();
     }
@@ -145,11 +147,11 @@ public class AuthServiceImpl implements AuthService {
         User user = sendGetRequest("https://api.sjtu.edu.cn/v1/me/profile?access_token=" + accessToken);
 
         // 查找是否已经注册
-        Optional<User> optionalUser = userRepository.findByAccount(user.getAccount());
+        Optional<User> optionalUser = userDAO.findByAccount(user.getAccount());
         if (optionalUser.isPresent()) {
             return generateAuthToken(optionalUser.get());
         }
-        userRepository.save(user);
+        userDAO.save(user);
         String token = generateAuthToken(user);
         System.out.println("token" + token);
         return token;
@@ -177,6 +179,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public Optional<Auth> getAuthByToken(String token) {
-        return authRepository.findByToken(token);
+        return authDAO.findByToken(token);
     }
 }

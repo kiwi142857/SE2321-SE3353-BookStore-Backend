@@ -24,4 +24,7 @@ public class OrderItemDAO {
         return orderItemRepository.findByOrder(order);
     }
 
+    public void save(OrderItem orderItem) {
+        orderItemRepository.save(orderItem);
+    }
 }

@@ -5,21 +5,22 @@ import org.springframework.stereotype.Service;
 import com.web.bookstore.model.Comment;
 import com.web.bookstore.repository.CommentRepository;
 import com.web.bookstore.service.CommentService;
+import com.web.bookstore.dao.CommentDAO;
 
 import java.util.Optional;
 
 @Service
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentRepository commentRepository;
+    private final CommentDAO commentDAO;
 
-    public CommentServiceImpl(CommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
+    public CommentServiceImpl(CommentDAO commentDAO) {
+        this.commentDAO = commentDAO;
     }
 
     @Override
     public Optional<Comment> getCommentById(Integer id) {
-        return commentRepository.findById(id);
+        return commentDAO.findById(id);
     }
 
 }
