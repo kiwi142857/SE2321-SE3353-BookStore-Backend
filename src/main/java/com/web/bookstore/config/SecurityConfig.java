@@ -24,10 +24,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors().configurationSource(corsConfigurationSource())
-                .and()
-                .csrf().disable()
-                .authorizeRequests().anyRequest().permitAll();
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeRequests(requests -> requests.anyRequest().permitAll());
         return http.build();
     }
 
