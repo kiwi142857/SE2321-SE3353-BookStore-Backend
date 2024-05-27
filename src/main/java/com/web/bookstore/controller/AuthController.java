@@ -19,6 +19,8 @@ import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.dto.LoginRequestDTO;
 import com.web.bookstore.dto.RegisterRequestDTO;
+import com.web.bookstore.util.SessionUtils;
+import com.web.bookstore.model.Auth;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,6 +40,8 @@ public class AuthController {
             cookie.setMaxAge(24 * 60 * 60);
             cookie.setPath("/");
             response.addCookie(cookie);
+            Auth auth = service.getAuthByToken(token).get();
+            SessionUtils.setSession(auth);
 
             return ResponseEntity.ok(new LoginOkResponseDTO(true, token));
         } catch (AuthenticationException e) {
