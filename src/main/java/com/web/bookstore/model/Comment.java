@@ -28,7 +28,7 @@ public class Comment {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "date")
+    @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date date;
 
     @ManyToOne
