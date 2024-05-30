@@ -10,7 +10,7 @@ public class CartItemDTO {
 
     private Integer id;
 
-    private Book book;
+    private BookBreifDTO book;
 
     private Integer number;
 
@@ -19,7 +19,7 @@ public class CartItemDTO {
 
     public CartItemDTO(CartItem cartItem) {
         this.id = cartItem.getId();
-        this.book = cartItem.getBook();
+        this.book = new BookBreifDTO(cartItem.getBook());
         this.number = cartItem.getNumber();
     }
 }
