@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.One;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 @Data
@@ -60,6 +62,7 @@ public class Book {
     private Integer oneStarNumber;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
+    @JsonManagedReference
     private List<Comment> comments;
 
     @Column(name = "cover")
@@ -72,6 +75,7 @@ public class Book {
     private String tag;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
+    @JsonManagedReference
     private List<BookRate> bookRates;
 
     public Book() {

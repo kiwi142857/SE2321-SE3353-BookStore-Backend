@@ -1,5 +1,7 @@
 package com.web.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ public class CartItem {
     private Integer id;
 
     @ManyToOne
+    @JsonBackReference
     private Cart cart;
 
     @ManyToOne
