@@ -54,6 +54,9 @@ public class BookController {
     @GetMapping("/search")
     public ResponseEntity<Object> searchBook(@RequestParam String searchType, @RequestParam String keyWord,
             @RequestParam Integer pageSize, @RequestParam Integer pageIndex) {
+        if (pageIndex < 0 || pageSize <= 0)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseDTO(false, "Invalid page index or page size"));
         try {
             return ResponseEntity.ok(bookService.searchBooks(searchType, keyWord, pageIndex, pageSize));
         } catch (Exception e) {

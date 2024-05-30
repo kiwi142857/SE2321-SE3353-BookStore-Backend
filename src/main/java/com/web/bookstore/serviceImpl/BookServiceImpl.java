@@ -1,7 +1,10 @@
 package com.web.bookstore.serviceimpl;
 
 import java.util.NoSuchElementException;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
 
 import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.repository.BookRepository;
@@ -47,20 +50,20 @@ public class BookServiceImpl implements BookService {
     }
 
     public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {
-        List<Book> bookList;
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Book> bookPage;
         if (searchType.equals("title")) {
-            bookList = bookDAO.findByTitleContaining(keyWord);
+            bookPage = bookDAO.findByTitleContaining(keyWord, pageable);
         } else if (searchType.equals("tag")) {
-            bookList = bookDAO.findByTag(keyWord);
+            bookPage = bookDAO.findByTag(keyWord, pageable);
         } else {
-            bookList = bookDAO.findByAuthorContaining(keyWord);
+            bookPage = bookDAO.findByAuthorContaining(keyWord, pageable);
         }
         // System.out.println(bookList);
-        Integer total = bookList.size();
-        bookList = bookList.stream().skip((page) * size).limit(size).collect(Collectors.toList());
+        List<Book> bookList = bookPage.getContent();
         List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
         // System.out.println(bookBreifDTOList);
-        return new GetBookListDTO(bookBreifDTOList, total);
+        return new GetBookListDTO(bookBreifDTOList, bookPage.getTotalElements());
     }
 
     public GetBookListDTO getRankList(Integer pageSize, Integer sizeIndex) {

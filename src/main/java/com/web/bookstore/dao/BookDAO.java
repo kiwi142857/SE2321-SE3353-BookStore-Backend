@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Service
 public class BookDAO {
 
@@ -17,24 +20,24 @@ public class BookDAO {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> findByTitleContaining(String title) {
-        return bookRepository.findByTitleContaining(title);
+    public Page<Book> findByTitleContaining(String title, Pageable pageable) {
+        return bookRepository.findByTitleContaining(title, pageable);
     }
 
-    public List<Book> findByAuthorContaining(String author) {
-        return bookRepository.findByAuthorContaining(author);
+    public Page<Book> findByAuthorContaining(String author, Pageable pageable) {
+        return bookRepository.findByAuthorContaining(author, pageable);
     }
 
     public Optional<Book> findById(Integer id) {
         return bookRepository.findById(id);
     }
 
-    public List<Book> findByTag(String tag) {
-        return bookRepository.findByTag(tag);
+    public Page<Book> findByTag(String tag, Pageable pageable) {
+        return bookRepository.findByTag(tag, pageable);
     }
 
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public Page<Book> findAll(Pageable pageable) {
+        return bookRepository.findAll(pageable);
     }
 
     public Book save(Book book) {
