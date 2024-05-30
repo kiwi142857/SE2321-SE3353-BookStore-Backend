@@ -23,4 +23,8 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Integer
     Optional<Book> findById(Integer id);
 
     Page<Book> findByTag(String tag, Pageable pageable);
+
+    Book save(Book book);
+
+    Page<Book> findAllByOrderBySalesDesc(Pageable pageable);
 }

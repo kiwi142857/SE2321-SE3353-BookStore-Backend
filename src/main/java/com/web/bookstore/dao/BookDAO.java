@@ -43,4 +43,8 @@ public class BookDAO {
     public Book save(Book book) {
         return bookRepository.save(book);
     }
+
+    public Page<Book> findAllByOrderBySalesDesc(Pageable pageable) {
+        return bookRepository.findAllByOrderBySalesDesc(pageable);
+    }
 }
