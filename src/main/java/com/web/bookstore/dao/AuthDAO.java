@@ -16,10 +16,6 @@ public class AuthDAO {
         this.authRepository = authRepository;
     }
 
-    public Optional<Auth> findByToken(String token) {
-        return authRepository.findByToken(token);
-    }
-
     public Optional<Auth> findByUser(User user) {
         return authRepository.findByUser(user);
     }

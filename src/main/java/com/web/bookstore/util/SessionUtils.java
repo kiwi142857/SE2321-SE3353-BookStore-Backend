@@ -1,6 +1,7 @@
 package com.web.bookstore.util;
 
 import com.web.bookstore.model.Auth;
+import com.web.bookstore.model.User;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 public class SessionUtils {
-    public static void setSession(Auth Auth) {
+    public static void setSession(User user) {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder
                 .getRequestAttributes();
         if (servletRequestAttributes != null) {
             HttpServletRequest request = servletRequestAttributes.getRequest();
             HttpSession session = request.getSession();
-            session.setAttribute("userId", Auth.getUser().getId());
-            session.setAttribute("token", Auth.getToken());
+            session.setAttribute("user", user);
         }
     }
 
@@ -28,6 +28,14 @@ public class SessionUtils {
         if (requestAttributes != null) {
             HttpServletRequest request = requestAttributes.getRequest();
             return request.getSession(false);
+        }
+        return null;
+    }
+
+    public static User getUser() {
+        HttpSession session = getSession();
+        if (session != null) {
+            return (User) session.getAttribute("user");
         }
         return null;
     }

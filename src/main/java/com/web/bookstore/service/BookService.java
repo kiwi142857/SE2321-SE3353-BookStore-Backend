@@ -2,6 +2,7 @@ package com.web.bookstore.service;
 
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
+import com.web.bookstore.model.User;
 import com.web.bookstore.dto.GetBookDetailDTO;
 
 import java.util.NoSuchElementException;
@@ -19,15 +20,15 @@ public interface BookService {
 
     GetBookListDTO getRankList(Integer pageSize, Integer sizeIndex);
 
-    GetBookRateDTO getBookRate(String token, Integer bookId);
+    GetBookRateDTO getBookRate(User user, Integer bookId);
 
-    ResponseDTO rateBook(String token, Integer bookId, Integer rate);
+    ResponseDTO rateBook(User user, Integer bookId, Integer rate);
 
     GetCommentListDTO getCommentList(Integer bookId, Integer pageSize, Integer pageIndex);
 
-    ResponseDTO addComment(String token, Integer bookId, String content);
+    ResponseDTO addComment(User user, Integer bookId, String content);
 
-    ResponseDTO replyComment(String token, Integer bookId, String content, String reply);
+    ResponseDTO replyComment(User user, Integer bookId, String content, String reply);
 
     void updateBook(Book book);
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.service.BookService;
 import com.web.bookstore.service.CommentService;
+import com.web.bookstore.util.SessionUtils;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import com.web.bookstore.dto.CommentRequestDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.Comment;
+import com.web.bookstore.model.User;
 
 import java.util.Optional;
 
@@ -35,15 +37,15 @@ public class CommentController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<Object> replyComment(@PathVariable Integer id,
-            @CookieValue(value = "token") String token, @RequestBody CommentRequestDTO request) {
+    public ResponseEntity<Object> replyComment(@PathVariable Integer id, @RequestBody CommentRequestDTO request) {
         try {
+            User user = SessionUtils.getUser();
             Optional<Comment> comment = commentService.getCommentById(id);
             if (comment.isPresent()) {
                 Integer bookId = comment.get().getBook().getId();
                 String reply = comment.get().getUser().getName();
                 return ResponseEntity
-                        .ok(bookService.replyComment(token, bookId, request.getContent(), reply));
+                        .ok(bookService.replyComment(user, bookId, request.getContent(), reply));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, "Comment not found"));
             }

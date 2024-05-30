@@ -42,8 +42,7 @@ public class UserServiceImpl implements UserService {
 
     public ResponseDTO updateUserInfo(
             UpdateUserInfoRequestDTO updateUserInfoRequestDTO,
-            String token) throws AuthenticationException {
-        User requestUser = authService.getUserByToken(token);
+            User requestUser) throws AuthenticationException {
         String name = updateUserInfoRequestDTO.getName();
         Optional<User> optionalUser = userDAO.findByName(name);
         if (optionalUser.isPresent() && !(optionalUser.get().getId() == requestUser.getId())) {
@@ -56,12 +55,12 @@ public class UserServiceImpl implements UserService {
         return new ResponseDTO(true, "Update user info successfully");
     }
 
-    public ResponseDTO changePassword(String token, String oldPassword, String newPassword) {
-        User user = authService.getUserByToken(token);
-        Optional<Auth> optionalAuth = authService.getAuthByToken(token);
+    public ResponseDTO changePassword(User user, String oldPassword, String newPassword) {
+
+        Optional<Auth> optionalAuth = authService.findByUser(user);
 
         if (optionalAuth.isEmpty()) {
-            throw new NoSuchElementException("Auth not found for token: " + token);
+            throw new NoSuchElementException("Auth not found for user: " + user.getId());
         }
         if (!passwordEncoder.matches(oldPassword, optionalAuth.get().getPassword())) {
             System.out.println("Old password is incorrect");

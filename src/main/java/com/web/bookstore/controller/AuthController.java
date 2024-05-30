@@ -2,6 +2,8 @@ package com.web.bookstore.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,7 @@ import com.web.bookstore.dto.LoginRequestDTO;
 import com.web.bookstore.dto.RegisterRequestDTO;
 import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.model.Auth;
+import com.web.bookstore.model.User;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,18 +35,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO loginDTO, HttpServletResponse response) {
+    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO loginDTO) {
         try {
             // 更新Cookies
-            String token = service.login(loginDTO);
-            Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-            Auth auth = service.getAuthByToken(token).get();
-            SessionUtils.setSession(auth);
+            Auth auth = service.login(loginDTO);
+            User user = auth.getUser();
+            SessionUtils.setSession(user);
 
-            return ResponseEntity.ok(new LoginOkResponseDTO(true, token));
+            return ResponseEntity.ok(new LoginOkResponseDTO(true, "login success"));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));
@@ -62,32 +61,11 @@ public class AuthController {
     }
 
     @PutMapping("/logout")
-    public ResponseEntity<Object> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", "");
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-        return ResponseEntity.ok(new ResponseDTO(true, ""));
+    public ResponseEntity<Object> logout(HttpSession session) {
+
+        session.invalidate();
+
+        return ResponseEntity.ok(new ResponseDTO(true, "logout success"));
     }
 
-    @PostMapping("/jaccountLogin")
-    public ResponseEntity<Object> jaccountLogin(@RequestBody String jsonString, HttpServletResponse response) {
-        JSONObject jsonObject = new JSONObject(jsonString);
-        String code = jsonObject.getString("code");
-        System.out.println(code);
-
-        try {
-            // 更新Cookies
-            String token = service.jaccountLogin(code);
-            Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            return ResponseEntity.ok(new LoginOkResponseDTO(true, token));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseDTO(false, e.getMessage()));
-        }
-    }
 }

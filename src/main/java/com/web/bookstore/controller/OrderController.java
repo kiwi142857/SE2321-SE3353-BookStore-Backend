@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 
 import com.web.bookstore.dto.PostOrderDTO;
 import com.web.bookstore.dto.ResponseDTO;
+import com.web.bookstore.model.User;
+import com.web.bookstore.util.SessionUtils;
 
 import java.util.Optional;
 
@@ -30,16 +32,16 @@ public class OrderController {
 
     @GetMapping("")
     public ResponseEntity<Object> getOrderList(@RequestParam Optional<Integer> pageSize,
-            @RequestParam Optional<Integer> pageIndex,
-            @CookieValue(value = "token") String token) {
+            @RequestParam Optional<Integer> pageIndex) {
         try {
-            System.out.println("pageSize: " + pageSize.orElse(null));
-            System.out.println("pageIndex: " + pageIndex.orElse(null));
-            System.out.println("token: " + token);
+            User user = SessionUtils.getUser();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO(false, "Unauthorized"));
+            }
             if (pageSize.isPresent() && pageIndex.isPresent()) {
-                return ResponseEntity.ok(orderService.getOrderList(pageSize.get(), pageIndex.get(), token));
+                return ResponseEntity.ok(orderService.getOrderList(pageSize.get(), pageIndex.get(), user));
             } else {
-                return ResponseEntity.ok(orderService.getAllOrders(token));
+                return ResponseEntity.ok(orderService.getAllOrders(user));
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
@@ -47,11 +49,14 @@ public class OrderController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> createOrder(@RequestBody PostOrderDTO postOrderDTO,
-            @CookieValue(value = "token") String token) {
+    public ResponseEntity<Object> createOrder(@RequestBody PostOrderDTO postOrderDTO) {
         try {
+            User user = SessionUtils.getUser();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO(false, "Unauthorized"));
+            }
             System.out.println("postOrderDTO: " + postOrderDTO.getItems().get(0));
-            return ResponseEntity.ok(orderService.createOrder(postOrderDTO, token));
+            return ResponseEntity.ok(orderService.createOrder(postOrderDTO, user));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, e.getMessage()));
         }

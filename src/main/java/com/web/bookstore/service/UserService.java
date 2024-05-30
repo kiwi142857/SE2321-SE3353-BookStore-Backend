@@ -20,11 +20,11 @@ public interface UserService {
      * @brief 更新用户信息
      * @param id                       用户id
      * @param updateUserInfoRequestDTO 更新用户信息请求
-     * @param token                    用户token
+     * @param user                     用户
      */
     ResponseDTO updateUserInfo(
             UpdateUserInfoRequestDTO updateUserInfoRequestDTO,
-            String token) throws AuthenticationException;
+            User user) throws AuthenticationException;
 
-    ResponseDTO changePassword(String token, String oldPassword, String newPassword);
+    ResponseDTO changePassword(User user, String oldPassword, String newPassword);
 }

@@ -6,14 +6,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.NoSuchElementException;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
 import com.web.bookstore.dto.UserDTO;
+import com.web.bookstore.model.User;
 import com.web.bookstore.dto.PasswordChangeRequestDTO;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
+import com.web.bookstore.util.SessionUtils;
 
 @RestController
 @RequestMapping("/api/user")
@@ -37,10 +38,15 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Object> getMyProfile(@CookieValue(value = "token") String token) {
-        System.out.println("token: " + token);
+    public ResponseEntity<Object> getMyProfile() {
+
         try {
-            return ResponseEntity.ok(new UserDTO(authService.getUserByToken(token)));
+            User user = SessionUtils.getUser();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ResponseDTO(false, "Please login first"));
+            }
+            return ResponseEntity.ok(new UserDTO(user));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseDTO(false, e.getMessage()));
@@ -49,10 +55,14 @@ public class UserController {
 
     @PutMapping("/me")
     public ResponseEntity<Object> updateUserProfile(
-            @CookieValue(value = "token") String token,
             @RequestBody UpdateUserInfoRequestDTO updateUserInfoRequestDTO) {
         try {
-            return ResponseEntity.ok(service.updateUserInfo(updateUserInfoRequestDTO, token));
+            User user = SessionUtils.getUser();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ResponseDTO(false, "Please login first"));
+            }
+            return ResponseEntity.ok(service.updateUserInfo(updateUserInfoRequestDTO, user));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));
@@ -64,10 +74,14 @@ public class UserController {
 
     @PutMapping("/me/password")
     public ResponseEntity<Object> changePassword(
-            @CookieValue(value = "token") String token,
             @RequestBody PasswordChangeRequestDTO request) {
         try {
-            return ResponseEntity.ok(service.changePassword(token, request.getOldPassword(), request.getNewPassword()));
+            User user = SessionUtils.getUser();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ResponseDTO(false, "Please login first"));
+            }
+            return ResponseEntity.ok(service.changePassword(user, request.getOldPassword(), request.getNewPassword()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.web.bookstore.service.BookService;
+import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.Book;
@@ -24,6 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import com.web.bookstore.model.User;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
 
@@ -75,22 +79,29 @@ public class BookController {
         }
     }
 
-    // 获取用户对书籍的评分，需要token来验证用户身份
     @GetMapping("/{id}/rate")
-    public ResponseEntity<Object> getBookRate(@PathVariable Integer id,
-            @CookieValue(value = "token") String token) {
+    public ResponseEntity<Object> getBookRate(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(bookService.getBookRate(token, id));
+
+            User user = SessionUtils.getUser();
+            if (user == null) {
+                throw new Exception("User not logged in");
+            }
+            return ResponseEntity.ok(bookService.getBookRate(user, id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
     }
 
     @PostMapping("/{id}/rate")
-    public ResponseEntity<Object> rateBook(@PathVariable Integer id, @CookieValue(value = "token") String token,
+    public ResponseEntity<Object> rateBook(@PathVariable Integer id,
             @RequestParam Integer rate) {
         try {
-            return ResponseEntity.ok(bookService.rateBook(token, id, rate));
+            User user = SessionUtils.getUser();
+            if (user == null) {
+                throw new Exception("User not logged in");
+            }
+            return ResponseEntity.ok(bookService.rateBook(user, id, rate));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
@@ -108,10 +119,14 @@ public class BookController {
     }
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity<Object> addBookComment(@PathVariable Integer id, @CookieValue(value = "token") String token,
+    public ResponseEntity<Object> addBookComment(@PathVariable Integer id,
             @RequestBody CommentRequestDTO request) {
         try {
-            return ResponseEntity.ok(bookService.addComment(token, id, request.getContent()));
+            User user = SessionUtils.getUser();
+            if (user == null) {
+                throw new Exception("User not logged in");
+            }
+            return ResponseEntity.ok(bookService.addComment(user, id, request.getContent()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }

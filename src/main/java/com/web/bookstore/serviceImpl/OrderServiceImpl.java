@@ -28,17 +28,15 @@ import java.time.Instant;
 public class OrderServiceImpl implements OrderService {
 
     private OrderDAO orderDAO;
-    private AuthService authService;
     private CartService cartService;
 
-    public OrderServiceImpl(OrderDAO orderDAO, AuthService authService, CartService cartService) {
+    public OrderServiceImpl(OrderDAO orderDAO, CartService cartService) {
         this.orderDAO = orderDAO;
-        this.authService = authService;
         this.cartService = cartService;
     }
 
-    public List<GetOrderOkDTO> getOrderList(Integer pageSize, Integer pageNumber, String token) {
-        User user = authService.getUserByToken(token);
+    public List<GetOrderOkDTO> getOrderList(Integer pageSize, Integer pageNumber, User user) {
+
         List<Order> orderList = orderDAO.findByUser(user);
 
         // 使用流操作将orderList转换为GetOrderOkDTO
@@ -56,8 +54,7 @@ public class OrderServiceImpl implements OrderService {
         return getOrderOkDTOList;
     }
 
-    public List<GetOrderOkDTO> getAllOrders(String token) {
-        User user = authService.getUserByToken(token);
+    public List<GetOrderOkDTO> getAllOrders(User user) {
         List<Order> orderList = orderDAO.findByUser(user);
 
         // 使用流操作将orderList转换为GetOrderOkDTO
@@ -69,9 +66,8 @@ public class OrderServiceImpl implements OrderService {
         return getOrderOkDTOList;
     }
 
-    public ResponseDTO createOrder(PostOrderDTO postOrderDTO, String token) {
+    public ResponseDTO createOrder(PostOrderDTO postOrderDTO, User user) {
 
-        User user = authService.getUserByToken(token);
         List<CartItem> cartItemList = cartService.getCartItemListByIds(postOrderDTO.getItems());
         Cart cart = user.getCart();
 

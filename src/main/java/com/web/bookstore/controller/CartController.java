@@ -1,7 +1,6 @@
 package com.web.bookstore.controller;
 
 import org.apache.catalina.connector.Response;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.CartService;
+import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.model.User;
 
 @RestController
@@ -31,10 +31,9 @@ public class CartController {
     }
 
     @PutMapping("")
-    public ResponseEntity<Object> addCartItem(@RequestParam Integer bookId,
-            @CookieValue(value = "token") String token) {
+    public ResponseEntity<Object> addCartItem(@RequestParam Integer bookId) {
         try {
-            User user = authService.getUserByToken(token);
+            User user = SessionUtils.getUser();
             if (user == null) {
                 return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
             }
@@ -45,9 +44,9 @@ public class CartController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Object> getCart(@CookieValue(value = "token") String token) {
+    public ResponseEntity<Object> getCart() {
         try {
-            User user = authService.getUserByToken(token);
+            User user = SessionUtils.getUser();
             if (user == null) {
                 return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
             }
@@ -58,10 +57,9 @@ public class CartController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCartItem(@PathVariable Integer id,
-            @CookieValue(value = "token") String token) {
+    public ResponseEntity<Object> deleteCartItem(@PathVariable Integer id) {
         try {
-            User user = authService.getUserByToken(token);
+            User user = SessionUtils.getUser();
             if (user == null) {
                 return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
             }
@@ -72,10 +70,9 @@ public class CartController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateCartItem(@PathVariable Integer id, @RequestParam Integer number,
-            @CookieValue(value = "token") String token) {
+    public ResponseEntity<Object> updateCartItem(@PathVariable Integer id, @RequestParam Integer number) {
         try {
-            User user = authService.getUserByToken(token);
+            User user = SessionUtils.getUser();
             if (user == null) {
                 return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
             }

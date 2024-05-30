@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String login(LoginRequestDTO dto) throws AuthenticationException {
+    public Auth login(LoginRequestDTO dto) throws AuthenticationException {
         Optional<User> optionalUser = userDAO.findByName(dto.getUsername());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
             }
             Auth auth = optionalAuth.get();
             if (passwordEncoder.matches(dto.getPassword(), auth.getPassword())) {
-                return generateAuthToken(user);
+                return auth;
             }
         }
         throw new AuthenticationException("Invalid username or password");
@@ -76,117 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    private String generateAuthToken(User user) {
-        Optional<Auth> optionalAuth = authDAO.findByUser(user);
-        Auth auth;
-        if (optionalAuth.isPresent()) {
-            // 用户已经拥有令牌
-            auth = optionalAuth.get();
-            auth.updateToken();
-        } else {
-            // 用户没有令牌
-            auth = new Auth(user);
-        }
-
-        authDAO.save(auth);
-        return auth.getToken();
-    }
-
-    public User getUserByToken(String token) {
-        // TODO: 登录请求应该抛出401(未授权)异常
-        Auth auth = authDAO.findByToken(token)
-                .orElseThrow(() -> new NoSuchElementException("Invalid token"));
-
-        // Check if the token has expired
-        if (auth.getExpirationTime().before(new Date())) {
-            throw new NoSuchElementException("Token expired");
-        }
-
-        return auth.getUser();
-    }
-
-    public String requestAccessToken(String code) throws AuthenticationException {
-        String client_id = "ov3SLrO4HyZSELxcHiqS";
-        String client_secret = "B9919DDA3BD9FBF7ADB9F84F67920D8CB6528620B9586D1C";
-        Unirest.setTimeouts(0, 0);
-        HttpResponse<String> response = null;
-        try {
-            response = Unirest.post("http://jaccount.sjtu.edu.cn/oauth2/token")
-                    .header("Authorization",
-                            "Basic b3YzU0xyTzRIeVpTRUx4Y0hpcVM6Qjk5MTlEREEzQkQ5RkJGN0FEQjlGODRGNjc5MjBEOENCNjUyODYyMEI5NTg2RDFD")
-                    .header("User-Agent", "Apifox/1.0.0 (https://apifox.com)")
-                    .header("Content-Type", "application/x-www-form-urlencoded")
-                    .header("Accept", "*/* ")
-                    .header("Host", "jaccount.sjtu.edu.cn")
-                    .header("Connection", "keep-alive")
-                    .field("grant_type", "authorization_code")
-                    .field("code", code)
-                    .field("client_id", client_id)
-                    .field("client_secret", client_secret)
-                    .field("redirect_uri", "http://localhost:3000/login")
-                    .asString();
-        } catch (UnirestException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject responseBody = null;
-        try {
-            responseBody = new JSONObject(response.getBody());
-        } catch (JSONException e) {
-            throw new AuthenticationException("Request access token failed");
-        }
-        String accessToken;
-        try {
-            accessToken = responseBody.getString("access_token");
-        } catch (JSONException e) {
-            throw new AuthenticationException("Request access token failed");
-        }
-        return accessToken;
-    }
-
-    public String jaccountLogin(String code) throws AuthenticationException {
-        String accessToken;
-        try {
-            accessToken = requestAccessToken(code);
-        } catch (AuthenticationException e) {
-            throw new AuthenticationException("Jaccount login failed");
-        }
-
-        User user = sendGetRequest("https://api.sjtu.edu.cn/v1/me/profile?access_token=" + accessToken);
-
-        // 查找是否已经注册
-        Optional<User> optionalUser = userDAO.findByAccount(user.getAccount());
-        if (optionalUser.isPresent()) {
-            return generateAuthToken(optionalUser.get());
-        }
-        userDAO.save(user);
-        String token = generateAuthToken(user);
-        System.out.println("token" + token);
-        return token;
-    }
-
-    private User sendGetRequest(String urlStr) throws AuthenticationException {
-        try {
-            Unirest.setTimeouts(300, 3000);
-            HttpResponse<String> response = Unirest.get(urlStr)
-                    .header("User-Agent", "Apifox/1.0.0 (https://apifox.com)")
-                    .header("Accept", "*/*")
-                    .header("Host", "api.sjtu.edu.cn")
-                    .header("Connection", "keep-alive")
-                    .asString();
-            if (response.getStatus() == HttpURLConnection.HTTP_OK) {
-                ObjectMapper mapper = new ObjectMapper();
-                JaccountResponseDTO jaccountResponse = mapper.readValue(response.getBody(), JaccountResponseDTO.class);
-                return new User(jaccountResponse.getUsers().get(0));
-            } else {
-                throw new AuthenticationException("GET request not worked");
-            }
-        } catch (Exception e) {
-            throw new AuthenticationException("Sending GET request failed");
-        }
-    }
-
-    public Optional<Auth> getAuthByToken(String token) {
-        return authDAO.findByToken(token);
+    public Optional<Auth> findByUser(User user) {
+        return authDAO.findByUser(user);
     }
 }

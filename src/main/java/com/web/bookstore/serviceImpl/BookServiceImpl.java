@@ -75,15 +75,12 @@ public class BookServiceImpl implements BookService {
         return new GetBookListDTO(bookBreifDTOList, pageSize);
     }
 
-    public GetBookRateDTO getBookRate(String token, Integer bookId) {
+    public GetBookRateDTO getBookRate(User user, Integer bookId) {
         Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
-        User user = authService.getUserByToken(token);
-        if (user == null) {
-            throw new NoSuchElementException("User not found");
-        }
+
         Optional<BookRate> bookRate = bookRateDAO.findByUserAndBook(user, book.get());
         if (bookRate.isEmpty()) {
             return new GetBookRateDTO(0);
@@ -91,15 +88,12 @@ public class BookServiceImpl implements BookService {
         return new GetBookRateDTO(bookRate.get().getRate());
     }
 
-    public ResponseDTO rateBook(String token, Integer bookId, Integer rate) {
+    public ResponseDTO rateBook(User user, Integer bookId, Integer rate) {
         Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
-        User user = authService.getUserByToken(token);
-        if (user == null) {
-            throw new NoSuchElementException("User not found");
-        }
+
         Optional<BookRate> bookRate = bookRateDAO.findByUserAndBook(user, book.get());
         if (bookRate.isEmpty()) {
             // 对书籍的评分更新
@@ -130,14 +124,10 @@ public class BookServiceImpl implements BookService {
         return new GetCommentListDTO(total, comments);
     }
 
-    public ResponseDTO addComment(String token, Integer bookId, String content) {
+    public ResponseDTO addComment(User user, Integer bookId, String content) {
         Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
-        }
-        User user = authService.getUserByToken(token);
-        if (user == null) {
-            throw new NoSuchElementException("User not found");
         }
         // 评论内容不能为空
         if (content == null || content.equals("")) {
@@ -149,15 +139,12 @@ public class BookServiceImpl implements BookService {
         return new ResponseDTO(true, "Comment success");
     }
 
-    public ResponseDTO replyComment(String token, Integer bookId, String content, String reply) {
+    public ResponseDTO replyComment(User user, Integer bookId, String content, String reply) {
         Optional<Book> book = bookDAO.findById(bookId);
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
-        User user = authService.getUserByToken(token);
-        if (user == null) {
-            throw new NoSuchElementException("User not found");
-        }
+
         // 评论内容不能为空
         if (content == null || content.equals("")) {
             throw new IllegalArgumentException("Comment content can not be empty");
