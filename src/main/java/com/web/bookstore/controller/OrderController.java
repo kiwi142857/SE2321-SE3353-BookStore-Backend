@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.bookstore.service.OrderService;
+import com.web.bookstore.service.UserService;
 
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,19 +26,22 @@ import java.util.Optional;
 @RequestMapping("/api/order")
 public class OrderController {
     public final OrderService orderService;
+    public final UserService userService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, UserService userService) {
         this.orderService = orderService;
+        this.userService = userService;
     }
 
     @GetMapping("")
     public ResponseEntity<Object> getOrderList(@RequestParam Optional<Integer> pageSize,
             @RequestParam Optional<Integer> pageIndex) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO(false, "Unauthorized"));
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
             if (pageSize.isPresent() && pageIndex.isPresent()) {
                 return ResponseEntity.ok(orderService.getOrderList(pageSize.get(), pageIndex.get(), user));
             } else {
@@ -51,10 +55,11 @@ public class OrderController {
     @PostMapping("")
     public ResponseEntity<Object> createOrder(@RequestBody PostOrderDTO postOrderDTO) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO(false, "Unauthorized"));
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
             System.out.println("postOrderDTO: " + postOrderDTO.getItems().get(0));
             return ResponseEntity.ok(orderService.createOrder(postOrderDTO, user));
         } catch (Exception e) {

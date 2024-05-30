@@ -41,14 +41,17 @@ public class UserController {
     public ResponseEntity<Object> getMyProfile() {
 
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ResponseDTO(false, "Please login first"));
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = service.findUserById(sessionUser.getId());
             return ResponseEntity.ok(new UserDTO(user));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));
         }
     }
@@ -57,17 +60,20 @@ public class UserController {
     public ResponseEntity<Object> updateUserProfile(
             @RequestBody UpdateUserInfoRequestDTO updateUserInfoRequestDTO) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ResponseDTO(false, "Please login first"));
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = service.findUserById(sessionUser.getId());
             return ResponseEntity.ok(service.updateUserInfo(updateUserInfoRequestDTO, user));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseDTO(false, e.getMessage()));
         }
     }
@@ -76,11 +82,11 @@ public class UserController {
     public ResponseEntity<Object> changePassword(
             @RequestBody PasswordChangeRequestDTO request) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ResponseDTO(false, "Please login first"));
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = service.findUserById(sessionUser.getId());
             return ResponseEntity.ok(service.changePassword(user, request.getOldPassword(), request.getNewPassword()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

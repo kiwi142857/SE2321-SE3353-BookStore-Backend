@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.CartService;
+import com.web.bookstore.service.UserService;
 import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.model.User;
 
@@ -23,20 +24,21 @@ import com.web.bookstore.model.User;
 public class CartController {
 
     private final CartService cartService;
-    private final AuthService authService;
+    private final UserService userService;
 
-    public CartController(CartService cartService, AuthService authService) {
+    public CartController(CartService cartService, UserService userService) {
         this.cartService = cartService;
-        this.authService = authService;
+        this.userService = userService;
     }
 
     @PutMapping("")
     public ResponseEntity<Object> addCartItem(@RequestParam Integer bookId) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
             return ResponseEntity.ok(cartService.addCartItem(user, bookId));
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -46,10 +48,11 @@ public class CartController {
     @GetMapping("")
     public ResponseEntity<Object> getCart() {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
             return ResponseEntity.ok(cartService.getCart(user));
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -59,10 +62,11 @@ public class CartController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCartItem(@PathVariable Integer id) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
             return ResponseEntity.ok(cartService.deleteCartItem(user, id));
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -72,10 +76,11 @@ public class CartController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateCartItem(@PathVariable Integer id, @RequestParam Integer number) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
-                return ResponseEntity.status(Response.SC_UNAUTHORIZED).body("Please login first");
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
             return ResponseEntity.ok(cartService.updateCartItem(user, id, number));
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());

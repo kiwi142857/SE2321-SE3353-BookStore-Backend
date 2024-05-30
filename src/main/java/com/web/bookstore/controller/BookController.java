@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.web.bookstore.service.BookService;
+import com.web.bookstore.service.UserService;
 import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.dto.ResponseDTO;
@@ -36,9 +37,11 @@ import java.util.Optional;
 public class BookController {
 
     private final BookService bookService;
+    private final UserService userService;
 
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, UserService userService) {
         this.bookService = bookService;
+        this.userService = userService;
     }
 
     @GetMapping("/{id}")
@@ -83,10 +86,11 @@ public class BookController {
     public ResponseEntity<Object> getBookRate(@PathVariable Integer id) {
         try {
 
-            User user = SessionUtils.getUser();
-            if (user == null) {
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
                 throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
             return ResponseEntity.ok(bookService.getBookRate(user, id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
@@ -97,10 +101,12 @@ public class BookController {
     public ResponseEntity<Object> rateBook(@PathVariable Integer id,
             @RequestParam Integer rate) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
                 throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
+            System.out.println("userId: " + user.getId());
             return ResponseEntity.ok(bookService.rateBook(user, id, rate));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
@@ -122,10 +128,11 @@ public class BookController {
     public ResponseEntity<Object> addBookComment(@PathVariable Integer id,
             @RequestBody CommentRequestDTO request) {
         try {
-            User user = SessionUtils.getUser();
-            if (user == null) {
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
                 throw new Exception("User not logged in");
             }
+            User user = userService.findUserById(sessionUser.getId());
             return ResponseEntity.ok(bookService.addComment(user, id, request.getContent()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));

@@ -15,6 +15,8 @@ import jakarta.persistence.GenerationType;
 
 import jakarta.persistence.Table;
 
+import jakarta.persistence.FetchType;
+
 @Entity
 @Data
 @Table(name = "cart")

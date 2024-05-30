@@ -93,7 +93,8 @@ public class BookServiceImpl implements BookService {
         if (book.isEmpty()) {
             throw new NoSuchElementException("Book not found");
         }
-
+        System.out.println("rate: " + rate);
+        System.out.println("userId: " + user.getId());
         Optional<BookRate> bookRate = bookRateDAO.findByUserAndBook(user, book.get());
         if (bookRate.isEmpty()) {
             // 对书籍的评分更新

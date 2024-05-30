@@ -21,8 +21,10 @@ public class BookBreifDTO {
 
     private Integer sales;
 
+    private Integer discount;
+
     public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag,
-            Integer sales) {
+            Integer sales, Integer discount) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -30,6 +32,7 @@ public class BookBreifDTO {
         this.cover = cover;
         this.tag = tag;
         this.sales = sales;
+        this.discount = discount;
     }
 
     public BookBreifDTO(Book book) {
@@ -40,5 +43,6 @@ public class BookBreifDTO {
         this.cover = book.getCover();
         this.tag = book.getTag();
         this.sales = book.getSales();
+        this.discount = book.getDiscount();
     }
 }

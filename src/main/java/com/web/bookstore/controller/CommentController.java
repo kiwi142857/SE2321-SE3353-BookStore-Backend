@@ -21,6 +21,7 @@ import com.web.bookstore.dto.CommentRequestDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.Comment;
 import com.web.bookstore.model.User;
+import com.web.bookstore.service.UserService;
 
 import java.util.Optional;
 
@@ -30,16 +31,22 @@ public class CommentController {
 
     private final BookService bookService;
     private final CommentService commentService;
+    private final UserService userService;
 
-    public CommentController(BookService bookService, CommentService commentService) {
+    public CommentController(BookService bookService, CommentService commentService, UserService userService) {
         this.bookService = bookService;
         this.commentService = commentService;
+        this.userService = userService;
     }
 
     @PostMapping("/{id}")
     public ResponseEntity<Object> replyComment(@PathVariable Integer id, @RequestBody CommentRequestDTO request) {
         try {
-            User user = SessionUtils.getUser();
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
+            }
+            User user = userService.findUserById(sessionUser.getId());
             Optional<Comment> comment = commentService.getCommentById(id);
             if (comment.isPresent()) {
                 Integer bookId = comment.get().getBook().getId();

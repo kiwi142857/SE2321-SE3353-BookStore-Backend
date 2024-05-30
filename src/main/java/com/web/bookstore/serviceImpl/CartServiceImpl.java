@@ -18,6 +18,7 @@ import com.web.bookstore.repository.CartItemRepository;
 import com.web.bookstore.repository.CartRepository;
 import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dao.CartDAO;
+import com.web.bookstore.dao.UserDAO;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -29,11 +30,13 @@ public class CartServiceImpl implements CartService {
     private final CartDAO cartDAO;
     private final CartItemDAO cartItemDAO;
     private final BookService bookService;
+    private final UserDAO userDAO;
 
-    public CartServiceImpl(CartDAO cartDAO, CartItemDAO cartItemDAO, BookService bookService) {
+    public CartServiceImpl(CartDAO cartDAO, CartItemDAO cartItemDAO, BookService bookService, UserDAO userDAO) {
         this.cartDAO = cartDAO;
         this.cartItemDAO = cartItemDAO;
         this.bookService = bookService;
+        this.userDAO = userDAO;
     }
 
     public ResponseDTO addCartItem(User user, Integer bookId) {
