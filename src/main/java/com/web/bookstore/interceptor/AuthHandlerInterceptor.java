@@ -19,6 +19,7 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
         }
 
         String token = null;
+        String JSSESSIONID = null;
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -26,10 +27,13 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
                     token = cookie.getValue();
                     break;
                 }
+                if ("JSESSIONID".equals(cookie.getName())) {
+                    JSSESSIONID = cookie.getValue();
+                }
             }
         }
 
-        if (token == null || token.trim().isEmpty()) {
+        if ((token == null || token.trim().isEmpty()) && (JSSESSIONID == null || JSSESSIONID.trim().isEmpty())) {
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
