@@ -34,19 +34,17 @@ public class OrderController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Object> getOrderList(@RequestParam Optional<Integer> pageSize,
-            @RequestParam Optional<Integer> pageIndex) {
+    public ResponseEntity<Object> getOrderList(@RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "0") Integer pageIndex) {
         try {
             User sessionUser = SessionUtils.getUser();
             if (sessionUser == null) {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
-            if (pageSize.isPresent() && pageIndex.isPresent()) {
-                return ResponseEntity.ok(orderService.getOrderList(pageSize.get(), pageIndex.get(), user));
-            } else {
-                return ResponseEntity.ok(orderService.getAllOrders(user));
-            }
+
+            return ResponseEntity.ok(orderService.getOrderList(pageSize, pageIndex, user));
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }

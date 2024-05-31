@@ -14,5 +14,4 @@ public interface OrderService {
 
     public ResponseDTO createOrder(PostOrderDTO postOrderDTO, User user);
 
-    public List<GetOrderOkDTO> getAllOrders(User user);
 }

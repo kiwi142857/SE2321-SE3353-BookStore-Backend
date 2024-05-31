@@ -2,6 +2,7 @@ package com.web.bookstore.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import com.web.bookstore.dto.JaccountUserDTO;
 
 @Data
 @Entity
+@EqualsAndHashCode(exclude = "auth")
 @Table(name = "user")
 public class User {
 

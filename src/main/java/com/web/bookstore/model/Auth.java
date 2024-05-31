@@ -2,6 +2,7 @@ package com.web.bookstore.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import java.util.UUID;
  */
 @Data
 @Entity
+@EqualsAndHashCode(exclude = "user")
 @Table(name = "auth")
 public class Auth {
     @Id

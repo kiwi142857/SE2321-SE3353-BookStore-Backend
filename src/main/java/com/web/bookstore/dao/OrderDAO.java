@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Service
 public class OrderDAO {
 
@@ -16,8 +19,8 @@ public class OrderDAO {
         this.orderRepository = orderRepository;
     }
 
-    public List<Order> findByUser(User user) {
-        return orderRepository.findByUser(user);
+    public Page<Order> findByUser(User user, Pageable pageable) {
+        return orderRepository.findByUser(user, pageable);
     }
 
     public void save(Order order) {

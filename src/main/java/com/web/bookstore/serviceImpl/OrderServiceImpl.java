@@ -24,6 +24,10 @@ import com.web.bookstore.dao.OrderDAO;
 import java.util.Comparator;
 import java.time.Instant;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -36,32 +40,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public List<GetOrderOkDTO> getOrderList(Integer pageSize, Integer pageNumber, User user) {
+        PageRequest pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Order> orderPage = orderDAO.findByUser(user, pageable);
 
-        List<Order> orderList = orderDAO.findByUser(user);
-
-        // 使用流操作将orderList转换为GetOrderOkDTO
-        List<GetOrderOkDTO> getOrderOkDTOList = orderList.stream()
-                // 按照订单号逆序排序
-                .sorted(Comparator.comparing(Order::getId).reversed())
-                // 跳过前 (pageNumber * pageSize) 个元素
-                .skip(pageNumber * pageSize)
-                // 取 pageSize 个元素
-                .limit(pageSize)
-                // 将 Order 转换为 GetOrderOkDTO
+        List<GetOrderOkDTO> getOrderOkDTOList = orderPage.stream()
                 .map(order -> new GetOrderOkDTO(order))
                 .collect(Collectors.toList());
-
-        return getOrderOkDTOList;
-    }
-
-    public List<GetOrderOkDTO> getAllOrders(User user) {
-        List<Order> orderList = orderDAO.findByUser(user);
-
-        // 使用流操作将orderList转换为GetOrderOkDTO
-        List<GetOrderOkDTO> getOrderOkDTOList = orderList.stream().map(order -> {
-            GetOrderOkDTO getOrderOkDTO = new GetOrderOkDTO(order);
-            return getOrderOkDTO;
-        }).collect(Collectors.toList());
 
         return getOrderOkDTOList;
     }
