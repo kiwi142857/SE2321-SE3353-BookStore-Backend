@@ -49,7 +49,7 @@ public class User {
     @JsonManagedReference
     private List<BookRate> bookRates = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Auth auth;
 
     public User(RegisterRequestDTO dto) {

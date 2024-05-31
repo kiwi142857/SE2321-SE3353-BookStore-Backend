@@ -32,6 +32,7 @@ public class UserDAO {
     }
 
     public Optional<User> findByNameAndPassword(String name, String password) {
+        System.out.println("name: " + name + " password: " + password);
         return userRepository.findByNameAndPassword(name, password);
     }
 }
