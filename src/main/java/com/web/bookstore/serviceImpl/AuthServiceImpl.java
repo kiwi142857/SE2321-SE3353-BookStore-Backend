@@ -49,20 +49,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public Auth login(LoginRequestDTO dto) throws AuthenticationException {
-        Optional<User> optionalUser = userDAO.findByName(dto.getUsername());
+        String hashedPassword = passwordEncoder.encode(dto.getPassword());
+        Optional<User> optionalUser = userDAO.findByNameAndPassword(dto.getUsername(), hashedPassword);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             Optional<Auth> optionalAuth = authDAO.findByUser(user);
-            if (optionalAuth.isEmpty()) {
-                throw new AuthenticationException("Invalid username or password");
-            }
-            Auth auth = optionalAuth.get();
-            if (passwordEncoder.matches(dto.getPassword(), auth.getPassword())) {
-                return auth;
+            if (optionalAuth.isPresent()) {
+                return optionalAuth.get();
             }
         }
         throw new AuthenticationException("Invalid username or password");
-
     }
 
     public void register(RegisterRequestDTO dto) {

@@ -49,6 +49,9 @@ public class User {
     @JsonManagedReference
     private List<BookRate> bookRates = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user")
+    private Auth auth;
+
     public User(RegisterRequestDTO dto) {
         this.name = dto.getUsername();
         this.email = dto.getEmail();

@@ -30,4 +30,8 @@ public class UserDAO {
     public void save(User user) {
         userRepository.save(user);
     }
+
+    public Optional<User> findByNameAndPassword(String name, String password) {
+        return userRepository.findByNameAndPassword(name, password);
+    }
 }
