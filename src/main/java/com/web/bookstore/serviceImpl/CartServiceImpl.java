@@ -24,6 +24,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -120,8 +123,7 @@ public class CartServiceImpl implements CartService {
 
     }
 
-    public GetCartOkDTO getCart(User user) throws NoSuchElementException {
-
+    public GetCartOkDTO getCart(User user, Integer page, Integer size) throws NoSuchElementException {
         Cart cart = user.getCart();
 
         if (cart == null) {
@@ -130,8 +132,14 @@ public class CartServiceImpl implements CartService {
             user.setCart(cart);
         }
 
-        return new GetCartOkDTO(cart);
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<CartItem> cartItemPage = cartItemDAO.findByCart(cart, pageable);
 
+        List<CartItem> cartItems = cartItemPage.getContent();
+
+        GetCartOkDTO response = new GetCartOkDTO(cartItems, (int) cartItemPage.getTotalElements());
+
+        return response;
     }
 
     public Optional<CartItem> getCartItemById(Integer cartItemId) {

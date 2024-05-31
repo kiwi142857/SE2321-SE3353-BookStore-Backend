@@ -45,15 +45,17 @@ public class CartController {
         }
     }
 
+    // 增加分页处理
     @GetMapping("")
-    public ResponseEntity<Object> getCart() {
+    public ResponseEntity<Object> getCart(@RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "10", required = false) Integer size) {
         try {
             User sessionUser = SessionUtils.getUser();
             if (sessionUser == null) {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
-            return ResponseEntity.ok(cartService.getCart(user));
+            return ResponseEntity.ok(cartService.getCart(user, page, size));
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

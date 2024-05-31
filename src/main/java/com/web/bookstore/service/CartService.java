@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CartService {
 
-    public GetCartOkDTO getCart(User user);
+    public GetCartOkDTO getCart(User user, Integer page, Integer size);
 
     public ResponseDTO addCartItem(User user, Integer bookId);
 

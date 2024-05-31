@@ -4,6 +4,9 @@ import com.web.bookstore.model.Book;
 import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.CartItem;
 import com.web.bookstore.repository.CartItemRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +23,10 @@ public class CartItemDAO {
 
     public List<CartItem> findByCart(Cart cart) {
         return cartItemRepository.findByCart(cart);
+    }
+
+    public Page<CartItem> findByCart(Cart cart, Pageable pageable) {
+        return cartItemRepository.findByCart(cart, pageable);
     }
 
     public Optional<CartItem> findByCartAndBook(Cart cart, Book book) {

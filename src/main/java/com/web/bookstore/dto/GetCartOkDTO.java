@@ -15,6 +15,7 @@ import com.web.bookstore.model.Cart;
 public class GetCartOkDTO {
 
     List<CartItemDTO> cartItems;
+    int total;
 
     public GetCartOkDTO(Cart cart) {
         if (cart.getItems() != null) {
@@ -22,5 +23,26 @@ public class GetCartOkDTO {
         } else {
             this.cartItems = new ArrayList<>();
         }
+    }
+
+    public void setTotalItems(int totalItems) {
+        this.total = totalItems;
+    }
+
+    public GetCartOkDTO(List<CartItem> cartItems) {
+        if (cartItems != null) {
+            this.cartItems = cartItems.stream().map(CartItemDTO::new).collect(Collectors.toList());
+        } else {
+            this.cartItems = new ArrayList<>();
+        }
+    }
+
+    public GetCartOkDTO(List<CartItem> cartItems, int total) {
+        if (cartItems != null) {
+            this.cartItems = cartItems.stream().map(CartItemDTO::new).collect(Collectors.toList());
+        } else {
+            this.cartItems = new ArrayList<>();
+        }
+        this.total = total;
     }
 }
