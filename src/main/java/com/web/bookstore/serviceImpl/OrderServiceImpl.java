@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import java.util.stream.Collectors;
 import com.web.bookstore.dto.GetOrderOkDTO;
+import com.web.bookstore.dto.GetOrderOkDTOList;
 import com.web.bookstore.dto.PostOrderDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.repository.OrderRepository;
@@ -39,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
         this.cartService = cartService;
     }
 
-    public List<GetOrderOkDTO> getOrderList(Integer pageSize, Integer pageNumber, User user) {
+    public GetOrderOkDTOList getOrderList(Integer pageSize, Integer pageNumber, User user) {
         PageRequest pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Page<Order> orderPage = orderDAO.findByUser(user, pageable);
 
@@ -47,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(order -> new GetOrderOkDTO(order))
                 .collect(Collectors.toList());
 
-        return getOrderOkDTOList;
+        return new GetOrderOkDTOList(getOrderOkDTOList, (int) orderPage.getTotalElements());
     }
 
     public ResponseDTO createOrder(PostOrderDTO postOrderDTO, User user) {
@@ -63,6 +64,16 @@ public class OrderServiceImpl implements OrderService {
         for (CartItem cartItem : cartItemList) {
             if (cartItem.getCart() != cart) {
                 return new ResponseDTO(false, "The cart item does not belong to the user");
+            }
+        }
+
+        // for each cartitem, check whether the book is still in stock, if so update the
+        // stock,else return error
+        for (CartItem cartItem : cartItemList) {
+            if (cartItem.getBook().getStock() < cartItem.getNumber()) {
+                return new ResponseDTO(false, "The book is out of stock");
+            } else {
+                cartItem.getBook().setStock(cartItem.getBook().getStock() - cartItem.getNumber());
             }
         }
 
