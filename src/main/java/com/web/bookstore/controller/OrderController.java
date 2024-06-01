@@ -47,7 +47,7 @@ public class OrderController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(orderService.getOrderList(pageSize, pageIndex, user, startTime, endTime, keyWord));
 
@@ -67,7 +67,7 @@ public class OrderController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             System.out.println("postOrderDTO: " + postOrderDTO.getItems().get(0));
             return ResponseEntity.ok(orderService.createOrder(postOrderDTO, user));
@@ -95,7 +95,7 @@ public class OrderController {
                 throw new Exception("Permission denied");
             }
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(orderService.getOrderListAdmin(pageSize, pageIndex, startTime, endTime, keyWord));
         } catch (UserBannedException e) {

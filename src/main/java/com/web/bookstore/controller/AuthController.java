@@ -43,7 +43,7 @@ public class AuthController {
             User user = auth.getUser();
             SessionUtils.setSession(user);
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
 
             return ResponseEntity.ok(new LoginOkResponseDTO(true, "login success"));

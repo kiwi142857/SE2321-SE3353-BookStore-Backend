@@ -50,7 +50,7 @@ public class UserController {
             }
             User user = service.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(new UserDTO(user));
         } catch (NoSuchElementException e) {
@@ -75,7 +75,7 @@ public class UserController {
             }
             User user = service.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(service.updateUserInfo(updateUserInfoRequestDTO, user));
         } catch (AuthenticationException e) {
@@ -103,7 +103,7 @@ public class UserController {
             }
             User user = service.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(service.changePassword(user, request.getOldPassword(), request.getNewPassword()));
         } catch (AuthenticationException e) {
@@ -135,7 +135,7 @@ public class UserController {
                 throw new Exception("Permission denied");
             }
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(service.getUserList(pageSize, pageIndex, keyWord, id));
         } catch (NoSuchElementException e) {
@@ -163,7 +163,7 @@ public class UserController {
                 throw new Exception("Permission denied");
             }
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             User targetUser = service.findUserById(id);
             if (targetUser.getStatus() == 1) {

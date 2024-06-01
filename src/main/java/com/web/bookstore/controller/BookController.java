@@ -75,7 +75,7 @@ public class BookController {
                 throw new Exception("Permission denied");
             }
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             // 如果id 是-1，说明是新书
             if (id == -1) {
@@ -103,7 +103,7 @@ public class BookController {
                 throw new Exception("Permission denied");
             }
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(bookService.deleteBook(id));
         } catch (UserBannedException e) {
@@ -147,7 +147,7 @@ public class BookController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(bookService.getBookRate(user, id));
         } catch (UserBannedException e) {
@@ -167,7 +167,7 @@ public class BookController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             System.out.println("userId: " + user.getId());
             return ResponseEntity.ok(bookService.rateBook(user, id, rate));
@@ -199,7 +199,7 @@ public class BookController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(bookService.addComment(user, id, request.getContent()));
         } catch (UserBannedException e) {

@@ -49,7 +49,7 @@ public class CommentController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             Optional<Comment> comment = commentService.getCommentById(id);
             if (comment.isPresent()) {

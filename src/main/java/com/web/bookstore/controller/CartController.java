@@ -41,7 +41,7 @@ public class CartController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(cartService.addCartItem(user, bookId));
         } catch (UserBannedException e) {
@@ -62,7 +62,7 @@ public class CartController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(cartService.getCart(user, pageIndex, pageSize));
         } catch (UserBannedException e) {
@@ -81,7 +81,7 @@ public class CartController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(cartService.deleteCartItem(user, id));
         } catch (UserBannedException e) {
@@ -100,7 +100,7 @@ public class CartController {
             }
             User user = userService.findUserById(sessionUser.getId());
             if (user.getStatus() == 1) {
-                throw new UserBannedException("User is banned");
+                throw new UserBannedException("您的账号已被禁用");
             }
             return ResponseEntity.ok(cartService.updateCartItem(user, id, number));
         } catch (UserBannedException e) {
