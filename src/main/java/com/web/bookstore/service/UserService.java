@@ -1,8 +1,12 @@
 package com.web.bookstore.service;
 
 import com.web.bookstore.model.User;
+
+import jakarta.persistence.criteria.CriteriaBuilder.In;
+
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
 import com.web.bookstore.dto.ResponseDTO;
+import com.web.bookstore.dto.GetUserListOk;
 import javax.security.sasl.AuthenticationException;
 
 import org.apache.catalina.connector.Response;
@@ -27,4 +31,10 @@ public interface UserService {
             User user) throws AuthenticationException;
 
     ResponseDTO changePassword(User user, String oldPassword, String newPassword);
+
+    GetUserListOk getUserList(Integer pageSize, Integer pageIndex, String keyWord, Integer id);
+
+    ResponseDTO banUser(User targetUser);
+
+    ResponseDTO unbanUser(User targetUser);
 }

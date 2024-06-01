@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Service
 public class UserDAO {
 
@@ -34,5 +37,9 @@ public class UserDAO {
     public Optional<User> findByNameAndPassword(String name, String password) {
         System.out.println("name: " + name + " password: " + password);
         return userRepository.findByNameAndPassword(name, password);
+    }
+
+    public Page<User> findByNameContaining(String name, Pageable pageable) {
+        return userRepository.findUsersContainingName(name, pageable);
     }
 }

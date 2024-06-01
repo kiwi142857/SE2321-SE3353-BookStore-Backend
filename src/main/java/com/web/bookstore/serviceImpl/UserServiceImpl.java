@@ -1,5 +1,7 @@
 package com.web.bookstore.serviceimpl;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,11 @@ import com.web.bookstore.repository.UserRepository;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
 import com.web.bookstore.dao.UserDAO;
+import com.web.bookstore.dto.UserDTO;
+import com.web.bookstore.dto.GetUserListOk;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -70,5 +77,36 @@ public class UserServiceImpl implements UserService {
         optionalAuth.get().setPassword(newPassword);
         userDAO.save(user);
         return new ResponseDTO(true, "Change password successfully");
+    }
+
+    public GetUserListOk getUserList(Integer pageSize, Integer pageIndex, String keyWord, Integer id) {
+
+        PageRequest pageable = PageRequest.of(pageIndex, pageSize);
+
+        if (id != -1) {
+            Optional<User> optionalUser = userDAO.findById(id);
+            if (optionalUser.isEmpty()) {
+                throw new NoSuchElementException("User not found for ID: " + id);
+            }
+            List<User> userList = new ArrayList<>();
+            userList.add(optionalUser.get());
+            return new GetUserListOk(userList, 1);
+        }
+
+        Page<User> userPage = userDAO.findByNameContaining(keyWord, pageable);
+        List<User> userList = userPage.stream().collect(Collectors.toList());
+        return new GetUserListOk(userList, (int) userPage.getTotalElements());
+    }
+
+    public ResponseDTO banUser(User targetUser) {
+        targetUser.setStatus(1);
+        userDAO.save(targetUser);
+        return new ResponseDTO(true, "Ban user successfully");
+    }
+
+    public ResponseDTO unbanUser(User targetUser) {
+        targetUser.setStatus(0);
+        userDAO.save(targetUser);
+        return new ResponseDTO(true, "Unban user successfully");
     }
 }

@@ -58,6 +58,10 @@ public class User {
     @Column(name = "role")
     private Integer role = 0;
 
+    // 用户状态，0为正常，1为封禁
+    @Column(name = "status")
+    private Integer status = 0;
+
     public User(RegisterRequestDTO dto) {
         this.name = dto.getUsername();
         this.email = dto.getEmail();

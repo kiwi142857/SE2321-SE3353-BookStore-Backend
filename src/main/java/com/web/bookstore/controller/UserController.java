@@ -16,6 +16,8 @@ import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
 import com.web.bookstore.util.SessionUtils;
 
+import jakarta.persistence.criteria.CriteriaBuilder.In;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -88,6 +90,49 @@ public class UserController {
             }
             User user = service.findUserById(sessionUser.getId());
             return ResponseEntity.ok(service.changePassword(user, request.getOldPassword(), request.getNewPassword()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
+    // 管理员获取用户列表
+    @GetMapping("/list")
+    public ResponseEntity<Object> getUserList(Integer pageSize, Integer pageIndex, String keyWord, Integer id) {
+        try {
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
+            }
+            User user = service.findUserById(sessionUser.getId());
+            if (user.getRole() == 0) {
+                throw new Exception("Permission denied");
+            }
+            return ResponseEntity.ok(service.getUserList(pageSize, pageIndex, keyWord, id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
+    // 管理员封禁用户/解封用户
+    @PutMapping("/ban/{id}")
+    public ResponseEntity<Object> banUser(@PathVariable Integer id) {
+        try {
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
+            }
+            User user = service.findUserById(sessionUser.getId());
+            if (user.getRole() == 0) {
+                throw new Exception("Permission denied");
+            }
+            User targetUser = service.findUserById(id);
+            if (targetUser.getStatus() == 1) {
+                return ResponseEntity.ok(service.unbanUser(targetUser));
+            } else {
+                return ResponseEntity.ok(service.banUser(targetUser));
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));
