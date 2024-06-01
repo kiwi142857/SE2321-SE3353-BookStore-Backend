@@ -54,6 +54,10 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Auth auth;
 
+    // 用户身份，0为普通用户，1为管理员，2为超级管理员
+    @Column(name = "role")
+    private Integer role = 0;
+
     public User(RegisterRequestDTO dto) {
         this.name = dto.getUsername();
         this.email = dto.getEmail();
