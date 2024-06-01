@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
 import com.web.bookstore.dto.UserDTO;
+import com.web.bookstore.exception.UserBannedException;
 import com.web.bookstore.model.User;
 import com.web.bookstore.dto.PasswordChangeRequestDTO;
 import com.web.bookstore.service.AuthService;
@@ -48,9 +49,15 @@ public class UserController {
                 throw new Exception("User not logged in");
             }
             User user = service.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(new UserDTO(user));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -67,12 +74,18 @@ public class UserController {
                 throw new Exception("User not logged in");
             }
             User user = service.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(service.updateUserInfo(updateUserInfoRequestDTO, user));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -89,11 +102,24 @@ public class UserController {
                 throw new Exception("User not logged in");
             }
             User user = service.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(service.changePassword(user, request.getOldPassword(), request.getNewPassword()));
-        } catch (Exception e) {
+        } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseDTO(false, e.getMessage()));
         }
+
     }
 
     // 管理员获取用户列表
@@ -108,7 +134,16 @@ public class UserController {
             if (user.getRole() == 0) {
                 throw new Exception("Permission denied");
             }
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(service.getUserList(pageSize, pageIndex, keyWord, id));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));
@@ -127,12 +162,21 @@ public class UserController {
             if (user.getRole() == 0) {
                 throw new Exception("Permission denied");
             }
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             User targetUser = service.findUserById(id);
             if (targetUser.getStatus() == 1) {
                 return ResponseEntity.ok(service.unbanUser(targetUser));
             } else {
                 return ResponseEntity.ok(service.banUser(targetUser));
             }
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(false, e.getMessage()));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));

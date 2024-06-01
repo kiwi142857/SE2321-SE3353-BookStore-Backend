@@ -24,6 +24,7 @@ import com.web.bookstore.dto.RegisterRequestDTO;
 import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.model.Auth;
 import com.web.bookstore.model.User;
+import com.web.bookstore.exception.UserBannedException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -41,8 +42,14 @@ public class AuthController {
             Auth auth = service.login(loginDTO);
             User user = auth.getUser();
             SessionUtils.setSession(user);
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
 
             return ResponseEntity.ok(new LoginOkResponseDTO(true, "login success"));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ResponseDTO(false, e.getMessage()));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseDTO(false, e.getMessage()));

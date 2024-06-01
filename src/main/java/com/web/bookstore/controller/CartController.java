@@ -18,6 +18,7 @@ import com.web.bookstore.service.CartService;
 import com.web.bookstore.service.UserService;
 import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.model.User;
+import com.web.bookstore.exception.UserBannedException;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -39,7 +40,12 @@ public class CartController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(cartService.addCartItem(user, bookId));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(Response.SC_FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -55,7 +61,12 @@ public class CartController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(cartService.getCart(user, pageIndex, pageSize));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(Response.SC_FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -69,7 +80,12 @@ public class CartController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(cartService.deleteCartItem(user, id));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(Response.SC_FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -83,7 +99,12 @@ public class CartController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(cartService.updateCartItem(user, id, number));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(Response.SC_FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

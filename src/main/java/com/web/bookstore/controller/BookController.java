@@ -17,6 +17,7 @@ import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.CommentRequestDTO;
 import com.web.bookstore.dto.PostBookDTO;
+import com.web.bookstore.exception.UserBannedException;
 
 import javax.swing.text.html.Option;
 
@@ -73,11 +74,16 @@ public class BookController {
             if (user.getRole() == 0) {
                 throw new Exception("Permission denied");
             }
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             // 如果id 是-1，说明是新书
             if (id == -1) {
                 return ResponseEntity.ok(bookService.addBook(id, book));
             }
             return ResponseEntity.ok(bookService.postBook(id, book));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
@@ -96,7 +102,12 @@ public class BookController {
             if (user.getRole() == 0) {
                 throw new Exception("Permission denied");
             }
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(bookService.deleteBook(id));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
@@ -135,7 +146,12 @@ public class BookController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(bookService.getBookRate(user, id));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
@@ -150,8 +166,13 @@ public class BookController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             System.out.println("userId: " + user.getId());
             return ResponseEntity.ok(bookService.rateBook(user, id, rate));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
@@ -177,7 +198,12 @@ public class BookController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(bookService.addComment(user, id, request.getContent()));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }

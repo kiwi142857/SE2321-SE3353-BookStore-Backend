@@ -22,6 +22,7 @@ import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.Comment;
 import com.web.bookstore.model.User;
 import com.web.bookstore.service.UserService;
+import com.web.bookstore.exception.UserBannedException;
 
 import java.util.Optional;
 
@@ -47,6 +48,9 @@ public class CommentController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             Optional<Comment> comment = commentService.getCommentById(id);
             if (comment.isPresent()) {
                 Integer bookId = comment.get().getBook().getId();
@@ -56,6 +60,8 @@ public class CommentController {
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, "Comment not found"));
             }
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }

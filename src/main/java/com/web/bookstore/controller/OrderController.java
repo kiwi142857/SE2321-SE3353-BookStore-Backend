@@ -19,6 +19,7 @@ import com.web.bookstore.dto.PostOrderDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.User;
 import com.web.bookstore.util.SessionUtils;
+import com.web.bookstore.exception.UserBannedException;
 
 import java.util.Optional;
 
@@ -45,9 +46,13 @@ public class OrderController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
-
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(orderService.getOrderList(pageSize, pageIndex, user, startTime, endTime, keyWord));
 
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
@@ -61,8 +66,13 @@ public class OrderController {
                 throw new Exception("User not logged in");
             }
             User user = userService.findUserById(sessionUser.getId());
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             System.out.println("postOrderDTO: " + postOrderDTO.getItems().get(0));
             return ResponseEntity.ok(orderService.createOrder(postOrderDTO, user));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, e.getMessage()));
         }
@@ -84,7 +94,12 @@ public class OrderController {
             if (user.getRole() == 0) {
                 throw new Exception("Permission denied");
             }
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("User is banned");
+            }
             return ResponseEntity.ok(orderService.getOrderListAdmin(pageSize, pageIndex, startTime, endTime, keyWord));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }
