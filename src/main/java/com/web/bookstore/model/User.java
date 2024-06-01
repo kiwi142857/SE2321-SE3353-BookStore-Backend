@@ -62,6 +62,10 @@ public class User {
     @Column(name = "status")
     private Integer status = 0;
 
+    // 用户余额，单位为分，初始值为100000
+    @Column(name = "balance")
+    private Integer balance = 100000;
+
     public User(RegisterRequestDTO dto) {
         this.name = dto.getUsername();
         this.email = dto.getEmail();

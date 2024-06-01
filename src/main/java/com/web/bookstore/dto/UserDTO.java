@@ -16,6 +16,7 @@ public class UserDTO {
     private String email;
     private Integer role;
     private Integer status;
+    private Integer balance;
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -26,5 +27,6 @@ public class UserDTO {
         this.role = user.getRole();
         this.email = user.getEmail();
         this.status = user.getStatus();
+        this.balance = user.getBalance();
     }
 }

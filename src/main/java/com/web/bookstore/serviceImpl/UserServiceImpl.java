@@ -109,4 +109,8 @@ public class UserServiceImpl implements UserService {
         userDAO.save(targetUser);
         return new ResponseDTO(true, "Unban user successfully");
     }
+
+    public void save(User user) {
+        userDAO.save(user);
+    }
 }

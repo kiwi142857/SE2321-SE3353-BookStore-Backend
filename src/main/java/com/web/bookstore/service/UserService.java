@@ -37,4 +37,6 @@ public interface UserService {
     ResponseDTO banUser(User targetUser);
 
     ResponseDTO unbanUser(User targetUser);
+
+    void save(User user);
 }

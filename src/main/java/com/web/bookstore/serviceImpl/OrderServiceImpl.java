@@ -1,6 +1,8 @@
 package com.web.bookstore.serviceimpl;
 
 import com.web.bookstore.service.OrderService;
+import com.web.bookstore.service.UserService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,10 +39,12 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderDAO orderDAO;
     private CartService cartService;
+    private UserService userService;
 
-    public OrderServiceImpl(OrderDAO orderDAO, CartService cartService) {
+    public OrderServiceImpl(OrderDAO orderDAO, CartService cartService, UserService userService) {
         this.orderDAO = orderDAO;
         this.cartService = cartService;
+        this.userService = userService;
     }
 
     public GetOrderOkDTOList getOrderList(Integer pageSize, Integer pageNumber, User user, String startTime,
@@ -86,6 +90,17 @@ public class OrderServiceImpl implements OrderService {
                 cartItem.getBook().setStock(cartItem.getBook().getStock() - cartItem.getNumber());
             }
         }
+
+        // for each cartitem, calculate the total price,and update the user's balance
+        Integer totalPrice = 0;
+        for (CartItem cartItem : cartItemList) {
+            totalPrice += cartItem.getBook().getPrice() * cartItem.getNumber();
+        }
+        if (user.getBalance() < totalPrice) {
+            return new ResponseDTO(false, "The balance is not enough");
+        }
+        user.setBalance(user.getBalance() - totalPrice);
+        userService.save(user);
 
         Order order = new Order(user, postOrderDTO.getReceiver(), postOrderDTO.getAddress(), postOrderDTO.getTel(),
                 Instant.now(), cartItemList);
