@@ -65,4 +65,25 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/admin")
+    public ResponseEntity<Object> getOrderListByAdmin(
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "0") Integer pageIndex,
+            @RequestParam(required = false) String startTime,
+            @RequestParam(required = false) String endTime,
+            @RequestParam(required = false) String keyWord) {
+        try {
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
+            }
+            User user = userService.findUserById(sessionUser.getId());
+            if (user.getRole() == 0) {
+                throw new Exception("Permission denied");
+            }
+            return ResponseEntity.ok(orderService.getOrderListAdmin(pageSize, pageIndex, startTime, endTime, keyWord));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
 }

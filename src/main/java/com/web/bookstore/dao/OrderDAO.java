@@ -5,6 +5,8 @@ import com.web.bookstore.model.User;
 import com.web.bookstore.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -25,5 +27,9 @@ public class OrderDAO {
 
     public void save(Order order) {
         orderRepository.save(order);
+    }
+
+    public Page<Order> findOrders(String keyWord, Instant startTime, Instant endTime, Pageable pageable) {
+        return orderRepository.findOrders(keyWord, startTime, endTime, pageable);
     }
 }

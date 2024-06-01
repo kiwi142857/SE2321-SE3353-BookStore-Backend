@@ -15,4 +15,6 @@ public interface OrderService {
 
     public ResponseDTO createOrder(PostOrderDTO postOrderDTO, User user);
 
+    public GetOrderOkDTOList getOrderListAdmin(Integer pageSize, Integer pageIndex, String startTime, String endTime,
+            String keyWord);
 }

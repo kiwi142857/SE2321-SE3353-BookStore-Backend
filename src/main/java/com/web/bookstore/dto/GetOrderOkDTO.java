@@ -20,6 +20,7 @@ public class GetOrderOkDTO {
     public String tel;
     // created At
     public Instant createdAt;
+    public Integer userId;
 
     public List<OrderItemDTO> items;
 
@@ -31,6 +32,7 @@ public class GetOrderOkDTO {
         this.createdAt = order.getCreatedAt();
         this.items = order.getItems().stream().map(orderItem -> new OrderItemDTO(orderItem))
                 .collect(Collectors.toList());
+        this.userId = order.getUser().getId();
     }
 
     public GetOrderOkDTO() {

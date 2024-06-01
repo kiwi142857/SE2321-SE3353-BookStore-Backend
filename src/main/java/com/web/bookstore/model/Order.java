@@ -41,7 +41,7 @@ public class Order {
     @Column(name = "createdAt")
     private Instant createdAt;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderItem> items;
 
     public Order() {

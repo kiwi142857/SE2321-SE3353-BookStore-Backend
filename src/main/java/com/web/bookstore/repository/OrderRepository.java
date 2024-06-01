@@ -10,14 +10,18 @@ import com.web.bookstore.model.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
+import java.time.Instant;
 import java.util.ArrayList;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface OrderRepository extends PagingAndSortingRepository<Order, Integer> {
@@ -26,4 +30,8 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Integ
     Optional<Order> findById(Integer id);
 
     Order save(Order order);
+
+    @Query("SELECT o FROM Order o JOIN o.items i JOIN i.book b WHERE (:keyWord IS NULL OR b.title LIKE CONCAT('%', :keyWord, '%')) AND (:startTime IS NULL OR o.createdAt >= :startTime) AND (:endTime IS NULL OR o.createdAt <= :endTime)")
+    Page<Order> findOrders(@Param("keyWord") String keyWord, @Param("startTime") Instant startTime,
+            @Param("endTime") Instant endTime, Pageable pageable);
 }

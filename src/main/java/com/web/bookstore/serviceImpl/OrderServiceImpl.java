@@ -23,6 +23,9 @@ import com.web.bookstore.service.CartService;
 import com.web.bookstore.dao.OrderDAO;
 
 import java.util.Comparator;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 
 import org.springframework.data.domain.PageRequest;
@@ -91,5 +94,22 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return new ResponseDTO(true, "The order has been created");
+    }
+
+    public GetOrderOkDTOList getOrderListAdmin(Integer pageSize, Integer pageNumber, String startTime, String endTime,
+            String keyWord) {
+        PageRequest pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+
+        // Convert startTime and endTime to Instant
+        Instant startInstant = startTime != null ? Instant.parse(startTime) : null;
+        Instant endInstant = endTime != null ? Instant.parse(endTime) : null;
+
+        Page<Order> orderPage = orderDAO.findOrders(keyWord, startInstant, endInstant, pageable);
+
+        List<GetOrderOkDTO> getOrderOkDTOList = orderPage.stream()
+                .map(order -> new GetOrderOkDTO(order))
+                .collect(Collectors.toList());
+
+        return new GetOrderOkDTOList(getOrderOkDTOList, (int) orderPage.getTotalElements());
     }
 }
