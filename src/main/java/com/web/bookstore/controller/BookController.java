@@ -16,6 +16,7 @@ import com.web.bookstore.model.Book;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.CommentRequestDTO;
+import com.web.bookstore.dto.PostBookDTO;
 
 import javax.swing.text.html.Option;
 
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -53,6 +55,48 @@ public class BookController {
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, "Book not found"));
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
+    // 修改/新增书籍信息
+    @PostMapping("/{id}")
+    public ResponseEntity<Object> updateBook(@PathVariable Integer id, @RequestBody PostBookDTO book) {
+        try {
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
+            }
+            User user = userService.findUserById(sessionUser.getId());
+            // check user's role
+            if (user.getRole() == 0) {
+                throw new Exception("Permission denied");
+            }
+            // 如果id 是-1，说明是新书
+            if (id == -1) {
+                return ResponseEntity.ok(bookService.addBook(id, book));
+            }
+            return ResponseEntity.ok(bookService.postBook(id, book));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
+    // 删除书籍
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteBook(@PathVariable Integer id) {
+        try {
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
+            }
+            User user = userService.findUserById(sessionUser.getId());
+            // check user's role
+            if (user.getRole() == 0) {
+                throw new Exception("Permission denied");
+            }
+            return ResponseEntity.ok(bookService.deleteBook(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
         }

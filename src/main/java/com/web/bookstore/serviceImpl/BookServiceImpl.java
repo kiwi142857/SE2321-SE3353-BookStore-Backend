@@ -32,6 +32,7 @@ import com.web.bookstore.model.Comment;
 import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.dao.BookRateDAO;
 import com.web.bookstore.dao.AuthDAO;
+import com.web.bookstore.dto.PostBookDTO;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -158,5 +159,31 @@ public class BookServiceImpl implements BookService {
 
     public void updateBook(Book book) {
         bookDAO.save(book);
+    }
+
+    public ResponseDTO postBook(Integer id, PostBookDTO book) {
+        Optional<Book> bookOptional = bookDAO.findById(id);
+        if (bookOptional.isEmpty()) {
+            return new ResponseDTO(false, "Book not found");
+        }
+        Book bookToUpdate = bookOptional.get();
+        bookToUpdate.updateBook(book);
+        bookDAO.save(bookToUpdate);
+        return new ResponseDTO(true, "Update success");
+    }
+
+    public ResponseDTO addBook(Integer id, PostBookDTO book) {
+        Book newBook = new Book(book);
+        bookDAO.save(newBook);
+        return new ResponseDTO(true, "Add success");
+    }
+
+    public ResponseDTO deleteBook(Integer id) {
+        Optional<Book> book = bookDAO.findById(id);
+        if (book.isEmpty()) {
+            return new ResponseDTO(false, "Book not found");
+        }
+        bookDAO.delete(book.get());
+        return new ResponseDTO(true, "Delete success");
     }
 }

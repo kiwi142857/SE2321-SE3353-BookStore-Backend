@@ -26,5 +26,7 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Integer
 
     Book save(Book book);
 
+    void delete(Book book);
+
     Page<Book> findAllByOrderBySalesDesc(Pageable pageable);
 }

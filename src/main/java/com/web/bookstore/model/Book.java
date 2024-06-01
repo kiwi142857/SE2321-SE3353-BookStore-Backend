@@ -16,6 +16,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.One;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.web.bookstore.dto.PostBookDTO;
 
 import lombok.Data;
 
@@ -142,4 +143,41 @@ public class Book {
         }
     }
 
+    public void updateBook(PostBookDTO book) {
+        this.title = book.getTitle();
+        this.author = book.getAuthor();
+        this.description = book.getDescription();
+        this.printYear = book.getPrintYear();
+        this.price = book.getPrice();
+        this.discount = book.getDiscount();
+        this.fiveStarNumber = book.getFiveStarNumber();
+        this.fourStarNumber = book.getFourStarNumber();
+        this.threeStarNumber = book.getThreeStarNumber();
+        this.twoStarNumber = book.getTwoStarNumber();
+        this.oneStarNumber = book.getOneStarNumber();
+        this.cover = book.getCover();
+        this.tag = book.getTag();
+        this.sales = book.getSales();
+        this.isbn = book.getIsbn();
+        this.stock = book.getStock();
+    }
+
+    public Book(PostBookDTO book) {
+        this.title = book.getTitle();
+        this.author = book.getAuthor();
+        this.description = book.getDescription();
+        this.printYear = book.getPrintYear();
+        this.price = book.getPrice();
+        this.discount = book.getDiscount();
+        this.fiveStarNumber = book.getFiveStarNumber();
+        this.fourStarNumber = book.getFourStarNumber();
+        this.threeStarNumber = book.getThreeStarNumber();
+        this.twoStarNumber = book.getTwoStarNumber();
+        this.oneStarNumber = book.getOneStarNumber();
+        this.cover = book.getCover();
+        this.tag = book.getTag();
+        this.sales = book.getSales();
+        this.isbn = book.getIsbn();
+        this.stock = book.getStock();
+    }
 }

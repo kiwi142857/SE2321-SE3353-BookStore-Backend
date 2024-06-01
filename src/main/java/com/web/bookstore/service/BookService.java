@@ -11,6 +11,7 @@ import java.util.Optional;
 import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.GetCommentListDTO;
+import com.web.bookstore.dto.PostBookDTO;
 
 public interface BookService {
 
@@ -31,4 +32,10 @@ public interface BookService {
     ResponseDTO replyComment(User user, Integer bookId, String content, String reply);
 
     void updateBook(Book book);
+
+    ResponseDTO postBook(Integer id, PostBookDTO book);
+
+    ResponseDTO addBook(Integer id, PostBookDTO book);
+
+    ResponseDTO deleteBook(Integer id);
 }

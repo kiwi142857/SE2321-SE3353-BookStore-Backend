@@ -44,7 +44,12 @@ public class BookDAO {
         return bookRepository.save(book);
     }
 
+    public void delete(Book book) {
+        bookRepository.delete(book);
+    }
+
     public Page<Book> findAllByOrderBySalesDesc(Pageable pageable) {
         return bookRepository.findAllByOrderBySalesDesc(pageable);
     }
+
 }
