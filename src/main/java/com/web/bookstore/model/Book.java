@@ -78,6 +78,14 @@ public class Book {
     @JsonManagedReference
     private List<BookRate> bookRates;
 
+    // 由于定长，所以使用char而不是默认的varchar
+    @Column(name = "isbn", length = 13)
+    private String isbn;
+
+    // 库存
+    @Column(name = "stock")
+    private Integer stock;
+
     public Book() {
     }
 

@@ -23,8 +23,14 @@ public class BookBreifDTO {
 
     private Integer discount;
 
+    // ISBN
+    private String isbn;
+
+    // stock
+    private Integer stock;
+
     public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag,
-            Integer sales, Integer discount) {
+            Integer sales, Integer discount, String isbn, Integer stock) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -33,6 +39,8 @@ public class BookBreifDTO {
         this.tag = tag;
         this.sales = sales;
         this.discount = discount;
+        this.isbn = isbn;
+        this.stock = stock;
     }
 
     public BookBreifDTO(Book book) {
@@ -44,5 +52,7 @@ public class BookBreifDTO {
         this.tag = book.getTag();
         this.sales = book.getSales();
         this.discount = book.getDiscount();
+        this.isbn = book.getIsbn();
+        this.stock = book.getStock();
     }
 }
