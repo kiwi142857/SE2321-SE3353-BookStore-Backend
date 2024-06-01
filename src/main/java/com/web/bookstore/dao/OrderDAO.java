@@ -25,6 +25,10 @@ public class OrderDAO {
         return orderRepository.findByUser(user, pageable);
     }
 
+    public Page<Order> findByUser(User user, Pageable pageable, Instant startTime, Instant endTime, String keyWord) {
+        return orderRepository.findByUser(user, pageable, startTime, endTime, keyWord);
+    }
+
     public void save(Order order) {
         orderRepository.save(order);
     }

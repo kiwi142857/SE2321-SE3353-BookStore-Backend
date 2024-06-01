@@ -33,9 +33,12 @@ public class OrderController {
         this.userService = userService;
     }
 
-    @GetMapping("")
+    @GetMapping("/search")
     public ResponseEntity<Object> getOrderList(@RequestParam(required = false, defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false, defaultValue = "0") Integer pageIndex) {
+            @RequestParam(required = false, defaultValue = "0") Integer pageIndex,
+            @RequestParam(required = false) String startTime,
+            @RequestParam(required = false) String endTime,
+            @RequestParam(required = false) String keyWord) {
         try {
             User sessionUser = SessionUtils.getUser();
             if (sessionUser == null) {
@@ -43,7 +46,7 @@ public class OrderController {
             }
             User user = userService.findUserById(sessionUser.getId());
 
-            return ResponseEntity.ok(orderService.getOrderList(pageSize, pageIndex, user));
+            return ResponseEntity.ok(orderService.getOrderList(pageSize, pageIndex, user, startTime, endTime, keyWord));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));

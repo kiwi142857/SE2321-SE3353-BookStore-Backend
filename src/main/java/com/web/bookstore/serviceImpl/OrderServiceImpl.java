@@ -43,9 +43,16 @@ public class OrderServiceImpl implements OrderService {
         this.cartService = cartService;
     }
 
-    public GetOrderOkDTOList getOrderList(Integer pageSize, Integer pageNumber, User user) {
+    public GetOrderOkDTOList getOrderList(Integer pageSize, Integer pageNumber, User user, String startTime,
+            String endTime,
+            String keyWord) {
         PageRequest pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Order> orderPage = orderDAO.findByUser(user, pageable);
+
+        // Convert startTime and endTime to Instant
+        Instant startInstant = startTime != null ? Instant.parse(startTime) : null;
+        Instant endInstant = endTime != null ? Instant.parse(endTime) : null;
+
+        Page<Order> orderPage = orderDAO.findByUser(user, pageable, startInstant, endInstant, keyWord);
 
         List<GetOrderOkDTO> getOrderOkDTOList = orderPage.stream()
                 .map(order -> new GetOrderOkDTO(order))

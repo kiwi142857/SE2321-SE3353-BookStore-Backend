@@ -27,6 +27,9 @@ import org.springframework.data.repository.query.Param;
 public interface OrderRepository extends PagingAndSortingRepository<Order, Integer> {
     Page<Order> findByUser(User user, Pageable pageable);
 
+    @Query("SELECT o FROM Order o JOIN o.items i JOIN i.book b WHERE o.user = :user AND (:keyWord IS NULL OR b.title LIKE CONCAT('%', :keyWord, '%')) AND (:startTime IS NULL OR o.createdAt >= :startTime) AND (:endTime IS NULL OR o.createdAt <= :endTime)")
+    Page<Order> findByUser(User user, Pageable pageable, Instant startTime, Instant endTime, String keyWord);
+
     Optional<Order> findById(Integer id);
 
     Order save(Order order);
