@@ -38,5 +38,7 @@ public interface UserService {
 
     ResponseDTO unbanUser(User targetUser);
 
+    GetUserListOk getSalesRankList(Integer pageIndex, Integer pageSize, String startTime, String endTime);
+
     void save(User user);
 }

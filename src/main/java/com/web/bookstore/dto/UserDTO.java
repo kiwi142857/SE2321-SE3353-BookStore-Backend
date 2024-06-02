@@ -17,6 +17,7 @@ public class UserDTO {
     private Integer role;
     private Integer status;
     private Integer balance;
+    private Long consumeInTime;
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -28,5 +29,19 @@ public class UserDTO {
         this.email = user.getEmail();
         this.status = user.getStatus();
         this.balance = user.getBalance();
+        this.consumeInTime = 0L;
+    }
+
+    public UserDTO(User user, Long consumeInTime) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.avatar = user.getAvatar();
+        this.description = user.getDescription();
+        this.account = user.getAccount();
+        this.role = user.getRole();
+        this.email = user.getEmail();
+        this.status = user.getStatus();
+        this.balance = user.getBalance();
+        this.consumeInTime = consumeInTime;
     }
 }

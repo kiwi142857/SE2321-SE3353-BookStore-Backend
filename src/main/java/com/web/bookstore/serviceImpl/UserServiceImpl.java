@@ -10,10 +10,16 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.Map;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Auth;
+import com.web.bookstore.model.Order;
+import com.web.bookstore.model.OrderItem;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
 import com.web.bookstore.repository.UserRepository;
@@ -21,6 +27,7 @@ import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
 import com.web.bookstore.dao.UserDAO;
 import com.web.bookstore.dto.UserDTO;
+import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dto.GetUserListOk;
 
 import org.springframework.data.domain.Page;
@@ -29,13 +36,16 @@ import org.springframework.data.domain.Pageable;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
+    private final OrderDAO orderDAO;
     private final AuthService authService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserDAO userDAO, AuthService authService, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDAO userDAO, AuthService authService, BCryptPasswordEncoder passwordEncoder,
+            OrderDAO orderDAO) {
         this.userDAO = userDAO;
         this.authService = authService;
         this.passwordEncoder = passwordEncoder;
+        this.orderDAO = orderDAO;
     }
 
     public User findUserById(Integer id) {
@@ -90,12 +100,16 @@ public class UserServiceImpl implements UserService {
             }
             List<User> userList = new ArrayList<>();
             userList.add(optionalUser.get());
-            return new GetUserListOk(userList, 1);
+            // covert to UserDTO
+            List<UserDTO> userDTOList = userList.stream().map(UserDTO::new).collect(Collectors.toList());
+            return new GetUserListOk(userDTOList, 1);
         }
 
         Page<User> userPage = userDAO.findByNameContaining(keyWord, pageable);
         List<User> userList = userPage.stream().collect(Collectors.toList());
-        return new GetUserListOk(userList, (int) userPage.getTotalElements());
+        // covert to UserDTO
+        List<UserDTO> userDTOList = userList.stream().map(UserDTO::new).collect(Collectors.toList());
+        return new GetUserListOk(userDTOList, (int) userPage.getTotalElements());
     }
 
     public ResponseDTO banUser(User targetUser) {
@@ -108,6 +122,59 @@ public class UserServiceImpl implements UserService {
         targetUser.setStatus(0);
         userDAO.save(targetUser);
         return new ResponseDTO(true, "Unban user successfully");
+    }
+
+    public GetUserListOk getSalesRankList(Integer pageIndex, Integer pageSize, String startTime, String endTime) {
+        // Convert startTime and endTime to Instant
+        Instant startInstant = Instant.EPOCH;
+        Instant endInstant = Instant.now();
+
+        try {
+            if (startTime != null && !startTime.isEmpty() && !startTime.equals("undefined")) {
+                startInstant = Instant.parse(startTime);
+            }
+        } catch (DateTimeParseException e) {
+            System.err.println("Failed to parse start time: " + e.getMessage());
+        }
+
+        try {
+            if (endTime != null && !endTime.isEmpty() && !endTime.equals("undefined")) {
+                endInstant = Instant.parse(endTime);
+            }
+        } catch (DateTimeParseException e) {
+            System.err.println("Failed to parse end time: " + e.getMessage());
+        }
+
+        // Find all orders in the time range
+        List<Order> orders = orderDAO.findAllByCreatedAtBetween(startInstant, endInstant);
+
+        // Calculate the total price for each user
+        Map<User, Long> userTotalPrice = new HashMap<>();
+        for (Order order : orders) {
+            User user = order.getUser();
+            long totalPrice = order.getItems().stream()
+                    .mapToLong(item -> item.getBook().getPrice() * item.getNumber())
+                    .sum();
+            userTotalPrice.put(user, userTotalPrice.getOrDefault(user, 0L) + totalPrice);
+        }
+
+        // Sort the users by total price
+        List<User> sortedUsers = userTotalPrice.entrySet().stream()
+                .sorted(Map.Entry.<User, Long>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        // Get the page of users
+        int start = pageIndex * pageSize;
+        int end = Math.min(start + pageSize, sortedUsers.size());
+        List<User> userList = sortedUsers.subList(start, end);
+
+        // Convert to UserDTO with the data of total price
+        List<UserDTO> userDTOList = userList.stream()
+                .map(user -> new UserDTO(user, userTotalPrice.get(user)))
+                .collect(Collectors.toList());
+
+        return new GetUserListOk(userDTOList, sortedUsers.size());
     }
 
     public void save(User user) {

@@ -23,8 +23,8 @@ public class GetUserListOk {
     public GetUserListOk() {
     }
 
-    public GetUserListOk(List<User> users, int total) {
-        this.users = users.stream().map(UserDTO::new).collect(Collectors.toList());
+    public GetUserListOk(List<UserDTO> users, int total) {
+        this.users = users;
         this.total = total;
     }
 }
