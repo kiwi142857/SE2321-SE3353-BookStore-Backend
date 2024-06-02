@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
         }
         User user = new User(dto);
         userDAO.save(user);
-        Auth auth = new Auth(user, passwordEncoder.encode(dto.getPassword()));
+        Auth auth = new Auth(user, dto.getPassword());
         authDAO.save(auth);
 
     }
