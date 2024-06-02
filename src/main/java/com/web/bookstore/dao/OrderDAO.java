@@ -36,4 +36,8 @@ public class OrderDAO {
     public Page<Order> findOrders(String keyWord, Instant startTime, Instant endTime, Pageable pageable) {
         return orderRepository.findOrders(keyWord, startTime, endTime, pageable);
     }
+
+    public List<Order> findAllByCreatedAtBetween(Instant startTime, Instant endTime) {
+        return orderRepository.findAllByCreatedAtBetween(startTime, endTime);
+    }
 }

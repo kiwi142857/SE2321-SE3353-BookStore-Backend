@@ -13,13 +13,16 @@ import com.web.bookstore.service.BookService;
 import com.web.bookstore.dto.BookBreifDTO;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
+import com.web.bookstore.model.OrderItem;
 import com.web.bookstore.model.BookRate;
 
 import java.util.stream.Collectors;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+import java.util.Map;
 import java.util.Optional;
 
 import com.web.bookstore.dto.GetBookRateDTO;
@@ -29,8 +32,10 @@ import com.web.bookstore.repository.BookRateRepository;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Comment;
+import com.web.bookstore.model.Order;
 import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.dao.BookRateDAO;
+import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dao.AuthDAO;
 import com.web.bookstore.dto.PostBookDTO;
 
@@ -39,12 +44,14 @@ public class BookServiceImpl implements BookService {
 
     public final BookDAO bookDAO;
     public final BookRateDAO bookRateDAO;
+    public final OrderDAO orderDAO;
     public final AuthService authService;
 
-    public BookServiceImpl(BookDAO bookDAO, BookRateDAO bookRateDAO, AuthService authService) {
+    public BookServiceImpl(BookDAO bookDAO, BookRateDAO bookRateDAO, AuthService authService, OrderDAO orderDAO) {
         this.bookDAO = bookDAO;
         this.bookRateDAO = bookRateDAO;
         this.authService = authService;
+        this.orderDAO = orderDAO;
     }
 
     public Optional<Book> getBookById(Integer id) {
@@ -185,5 +192,58 @@ public class BookServiceImpl implements BookService {
         }
         bookDAO.delete(book.get());
         return new ResponseDTO(true, "Delete success");
+    }
+
+    public GetBookListDTO getSalesRankList(Integer pageIndex, Integer pageSize, String startTime, String endTime) {
+        // Convert startTime and endTime to Instant
+        Instant startInstant = Instant.EPOCH;
+        Instant endInstant = Instant.now();
+
+        try {
+            if (startTime != null && !startTime.isEmpty() && !startTime.equals("undefined")) {
+                startInstant = Instant.parse(startTime);
+            }
+        } catch (DateTimeParseException e) {
+            System.err.println("Failed to parse start time: " + e.getMessage());
+        }
+
+        try {
+            if (endTime != null && !endTime.isEmpty() && !endTime.equals("undefined")) {
+                endInstant = Instant.parse(endTime);
+            }
+        } catch (DateTimeParseException e) {
+            System.err.println("Failed to parse end time: " + e.getMessage());
+        }
+
+        // Find all orders in the time range
+        List<Order> orders = orderDAO.findAllByCreatedAtBetween(startInstant, endInstant);
+
+        // Get all order items from these orders
+        List<OrderItem> orderItems = orders.stream()
+                .flatMap(order -> order.getItems().stream())
+                .collect(Collectors.toList());
+
+        // Calculate the sales for each book
+        Map<Book, Long> bookSales = orderItems.stream()
+                .collect(Collectors.groupingBy(OrderItem::getBook, Collectors.summingLong(OrderItem::getNumber)));
+
+        // Sort the books by sales
+        List<Book> sortedBooks = bookSales.entrySet().stream()
+                .sorted(Map.Entry.<Book, Long>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        int size = sortedBooks.size();
+        // Get the page of books
+        int start = pageIndex * pageSize;
+        int end = Math.min(start + pageSize, sortedBooks.size());
+        List<Book> bookPage = sortedBooks.subList(start, end);
+
+        // Convert the books to DTOs, add the sales to the DTOs when creating them
+        List<BookBreifDTO> bookBreifDTOList = bookPage.stream()
+                .map(book -> new BookBreifDTO(book, bookSales.get(book)))
+                .collect(Collectors.toList());
+
+        return new GetBookListDTO(bookBreifDTOList, size);
     }
 }

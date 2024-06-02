@@ -137,6 +137,34 @@ public class BookController {
         }
     }
 
+    // 获取时间范围内，按照销量的书籍排名，具有分页功能
+    @GetMapping("/rank/sales")
+    public ResponseEntity<Object> getSalesRankList(
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "0") Integer pageIndex,
+            @RequestParam(required = false) String startTime,
+            @RequestParam(required = false) String endTime) {
+        try {
+            // check if the user is logged in & admin
+            User sessionUser = SessionUtils.getUser();
+            if (sessionUser == null) {
+                throw new Exception("User not logged in");
+            }
+            User user = userService.findUserById(sessionUser.getId());
+            if (user.getRole() == 0) {
+                throw new Exception("Permission denied");
+            }
+            if (user.getStatus() == 1) {
+                throw new UserBannedException("您的账号已被禁用");
+            }
+            return ResponseEntity.ok(bookService.getSalesRankList(pageIndex, pageSize, startTime, endTime));
+        } catch (UserBannedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
     @GetMapping("/{id}/rate")
     public ResponseEntity<Object> getBookRate(@PathVariable Integer id) {
         try {

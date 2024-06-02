@@ -37,4 +37,6 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Integ
     @Query("SELECT o FROM Order o JOIN o.items i JOIN i.book b WHERE (:keyWord IS NULL OR b.title LIKE CONCAT('%', :keyWord, '%')) AND (:startTime IS NULL OR o.createdAt >= :startTime) AND (:endTime IS NULL OR o.createdAt <= :endTime)")
     Page<Order> findOrders(@Param("keyWord") String keyWord, @Param("startTime") Instant startTime,
             @Param("endTime") Instant endTime, Pageable pageable);
+
+    List<Order> findAllByCreatedAtBetween(Instant startTime, Instant endTime);
 }

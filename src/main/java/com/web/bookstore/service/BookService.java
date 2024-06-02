@@ -38,4 +38,6 @@ public interface BookService {
     ResponseDTO addBook(Integer id, PostBookDTO book);
 
     ResponseDTO deleteBook(Integer id);
+
+    GetBookListDTO getSalesRankList(Integer pageIndex, Integer pageSize, String startTime, String endTime);
 }
