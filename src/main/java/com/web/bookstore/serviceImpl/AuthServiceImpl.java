@@ -49,8 +49,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public Auth login(LoginRequestDTO dto) throws AuthenticationException {
-        String hashedPassword = passwordEncoder.encode(dto.getPassword());
-        Optional<User> optionalUser = userDAO.findByNameAndPassword(dto.getUsername(), hashedPassword);
+
+        Optional<User> optionalUser = userDAO.findByNameAndPassword(dto.getUsername(), dto.getPassword());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             Optional<Auth> optionalAuth = authDAO.findByUser(user);
