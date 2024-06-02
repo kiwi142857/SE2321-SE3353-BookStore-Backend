@@ -6,17 +6,11 @@ import com.web.bookstore.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-
 import java.util.stream.Collectors;
 import com.web.bookstore.dto.GetOrderOkDTO;
 import com.web.bookstore.dto.GetOrderOkDTOList;
 import com.web.bookstore.dto.PostOrderDTO;
 import com.web.bookstore.dto.ResponseDTO;
-import com.web.bookstore.repository.OrderRepository;
-import com.web.bookstore.repository.AuthRepository;
-import com.web.bookstore.service.AuthService;
-import com.web.bookstore.service.BookService;
 import com.web.bookstore.model.CartItem;
 import com.web.bookstore.model.Order;
 import com.web.bookstore.model.User;
@@ -24,10 +18,6 @@ import com.web.bookstore.model.Cart;
 import com.web.bookstore.service.CartService;
 import com.web.bookstore.dao.OrderDAO;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 
 import org.springframework.data.domain.PageRequest;

@@ -1,7 +1,6 @@
 package com.web.bookstore.serviceimpl;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +18,8 @@ import java.util.HashMap;
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Auth;
 import com.web.bookstore.model.Order;
-import com.web.bookstore.model.OrderItem;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
-import com.web.bookstore.repository.UserRepository;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
 import com.web.bookstore.dao.UserDAO;
@@ -31,7 +28,6 @@ import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dto.GetUserListOk;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 @Service
 public class UserServiceImpl implements UserService {

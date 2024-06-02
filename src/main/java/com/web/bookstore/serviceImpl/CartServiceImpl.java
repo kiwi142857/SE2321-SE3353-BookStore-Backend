@@ -6,19 +6,11 @@ import com.web.bookstore.service.CartService;
 import org.springframework.stereotype.Service;
 import com.web.bookstore.service.BookService;
 import com.web.bookstore.model.CartItem;
-import com.web.bookstore.repository.CartItemRepository;
-import com.web.bookstore.repository.CartRepository;
-import com.web.bookstore.dto.GetCartOkDTO;
-
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.Book;
-import com.web.bookstore.model.CartItem;
-import com.web.bookstore.repository.CartItemRepository;
-import com.web.bookstore.repository.CartRepository;
 import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dao.CartDAO;
-import com.web.bookstore.dao.UserDAO;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,13 +25,11 @@ public class CartServiceImpl implements CartService {
     private final CartDAO cartDAO;
     private final CartItemDAO cartItemDAO;
     private final BookService bookService;
-    private final UserDAO userDAO;
 
-    public CartServiceImpl(CartDAO cartDAO, CartItemDAO cartItemDAO, BookService bookService, UserDAO userDAO) {
+    public CartServiceImpl(CartDAO cartDAO, CartItemDAO cartItemDAO, BookService bookService) {
         this.cartDAO = cartDAO;
         this.cartItemDAO = cartItemDAO;
         this.bookService = bookService;
-        this.userDAO = userDAO;
     }
 
     public ResponseDTO addCartItem(User user, Integer bookId) {

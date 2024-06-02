@@ -1,10 +1,7 @@
 package com.web.bookstore.util;
 
-import com.web.bookstore.model.Auth;
 import com.web.bookstore.model.User;
 
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 

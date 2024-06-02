@@ -2,7 +2,6 @@ package com.web.bookstore.controller;
 
 import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,9 +10,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpServletResponse;
-
-import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.CartService;
 import com.web.bookstore.service.UserService;
 import com.web.bookstore.util.SessionUtils;

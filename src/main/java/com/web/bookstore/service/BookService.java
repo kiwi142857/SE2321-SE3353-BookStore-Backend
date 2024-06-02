@@ -3,9 +3,6 @@ package com.web.bookstore.service;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.model.User;
-import com.web.bookstore.dto.GetBookDetailDTO;
-
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.web.bookstore.dto.GetBookRateDTO;

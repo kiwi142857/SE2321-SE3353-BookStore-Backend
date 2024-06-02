@@ -1,7 +1,6 @@
 package com.web.bookstore.dto;
 
 import com.web.bookstore.model.OrderItem;
-import com.web.bookstore.service.BookService;
 
 import lombok.Data;
 

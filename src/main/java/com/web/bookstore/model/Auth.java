@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Date;
-import java.util.UUID;
-
 /**
  * @brief 身份认证的类
  */

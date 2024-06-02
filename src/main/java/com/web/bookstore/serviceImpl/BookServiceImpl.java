@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
-import com.web.bookstore.dto.GetBookDetailDTO;
-import com.web.bookstore.repository.BookRepository;
 import com.web.bookstore.service.BookService;
 import com.web.bookstore.dto.BookBreifDTO;
 import com.web.bookstore.dto.GetBookListDTO;
@@ -19,8 +17,6 @@ import com.web.bookstore.model.BookRate;
 import java.util.stream.Collectors;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +24,6 @@ import java.util.Optional;
 import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.GetCommentListDTO;
 import com.web.bookstore.dto.ResponseDTO;
-import com.web.bookstore.repository.BookRateRepository;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Comment;
@@ -36,7 +31,6 @@ import com.web.bookstore.model.Order;
 import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.dao.BookRateDAO;
 import com.web.bookstore.dao.OrderDAO;
-import com.web.bookstore.dao.AuthDAO;
 import com.web.bookstore.dto.PostBookDTO;
 
 @Service

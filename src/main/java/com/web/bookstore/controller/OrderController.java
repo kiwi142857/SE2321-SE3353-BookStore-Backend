@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.web.bookstore.service.OrderService;
 import com.web.bookstore.service.UserService;
 
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 
 import com.web.bookstore.dto.PostOrderDTO;
@@ -20,8 +18,6 @@ import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.User;
 import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.exception.UserBannedException;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/order")

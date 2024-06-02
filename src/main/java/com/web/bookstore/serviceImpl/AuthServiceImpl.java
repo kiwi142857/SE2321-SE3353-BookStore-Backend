@@ -6,34 +6,14 @@ import com.web.bookstore.service.AuthService;
 import com.web.bookstore.dto.LoginRequestDTO;
 import com.web.bookstore.model.Auth;
 import com.web.bookstore.model.User;
-import com.web.bookstore.repository.AuthRepository;
-import com.web.bookstore.repository.UserRepository;
 import com.web.bookstore.dao.AuthDAO;
 import com.web.bookstore.dao.UserDAO;
-import com.web.bookstore.dto.JaccountResponseDTO;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.json.JSONObject;
 
 import javax.naming.AuthenticationException;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import org.json.JSONException;
-
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-
-import java.util.Date;
 
 @Service
 public class AuthServiceImpl implements AuthService {

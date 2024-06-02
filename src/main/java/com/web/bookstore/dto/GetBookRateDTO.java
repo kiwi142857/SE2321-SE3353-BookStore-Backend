@@ -1,7 +1,5 @@
 package com.web.bookstore.dto;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
-
 @lombok.Data
 public class GetBookRateDTO {
 

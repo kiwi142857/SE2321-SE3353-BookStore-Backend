@@ -10,8 +10,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import com.web.bookstore.model.Book;
-
 @Entity
 @Data
 @Table(name = "order_item")

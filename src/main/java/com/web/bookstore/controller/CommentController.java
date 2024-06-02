@@ -1,12 +1,9 @@
 package com.web.bookstore.controller;
 
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.web.bookstore.model.Book;
 import com.web.bookstore.service.BookService;
 import com.web.bookstore.service.CommentService;
 import com.web.bookstore.util.SessionUtils;

@@ -1,11 +1,9 @@
 package com.web.bookstore.dao;
 
 import com.web.bookstore.model.Book;
-import com.web.bookstore.model.User;
 import com.web.bookstore.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;

@@ -2,7 +2,6 @@ package com.web.bookstore.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,26 +12,17 @@ import com.web.bookstore.util.SessionUtils;
 import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.Book;
-import com.web.bookstore.dto.GetBookListDTO;
-import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.CommentRequestDTO;
 import com.web.bookstore.dto.PostBookDTO;
 import com.web.bookstore.exception.UserBannedException;
 
-import javax.swing.text.html.Option;
-
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.web.bookstore.model.User;
-import jakarta.servlet.http.HttpSession;
-
 import java.util.Optional;
 
 @RestController

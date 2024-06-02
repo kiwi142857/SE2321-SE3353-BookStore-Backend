@@ -13,21 +13,16 @@ import com.web.bookstore.dto.UserDTO;
 import com.web.bookstore.exception.UserBannedException;
 import com.web.bookstore.model.User;
 import com.web.bookstore.dto.PasswordChangeRequestDTO;
-import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
 import com.web.bookstore.util.SessionUtils;
-
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService service;
-    private final AuthService authService;
 
-    public UserController(UserService service, AuthService authService) {
+    public UserController(UserService service) {
         this.service = service;
-        this.authService = authService;
     }
 
     @GetMapping("/{id}")

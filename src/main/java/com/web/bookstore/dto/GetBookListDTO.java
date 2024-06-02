@@ -1,6 +1,5 @@
 package com.web.bookstore.dto;
 
-import com.web.bookstore.dto.BookBreifDTO;
 import lombok.Data;
 import java.util.List;
 

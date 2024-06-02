@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import lombok.Data;
 
-import com.web.bookstore.dto.CommentDTO;
 import com.web.bookstore.model.Comment;
 
 @Data

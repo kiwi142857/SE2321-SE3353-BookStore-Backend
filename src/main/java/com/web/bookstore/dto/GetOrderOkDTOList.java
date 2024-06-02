@@ -1,7 +1,6 @@
 package com.web.bookstore.dto;
 
 import java.util.List;
-import com.web.bookstore.dto.GetOrderOkDTO;
 
 import lombok.Data;
 

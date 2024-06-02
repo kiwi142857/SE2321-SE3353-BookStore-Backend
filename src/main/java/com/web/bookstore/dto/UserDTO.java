@@ -4,8 +4,6 @@ import lombok.Data;
 
 import com.web.bookstore.model.User;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
-
 @Data
 public class UserDTO {
     private Integer id;

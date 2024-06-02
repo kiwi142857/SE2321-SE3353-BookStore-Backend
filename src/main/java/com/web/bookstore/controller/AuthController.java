@@ -1,7 +1,5 @@
 package com.web.bookstore.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.AuthenticationException;
-
-import org.json.JSONObject;
 
 import com.web.bookstore.dto.LoginOkResponseDTO;
 import com.web.bookstore.dto.ResponseDTO;
