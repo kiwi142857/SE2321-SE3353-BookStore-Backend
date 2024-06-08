@@ -22,8 +22,8 @@ import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.UpdateUserInfoRequestDTO;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
-import com.web.bookstore.dao.UserDAO;
 import com.web.bookstore.dto.UserDTO;
+import com.web.bookstore.dao.UserDAO;
 import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dto.GetUserListOk;
 

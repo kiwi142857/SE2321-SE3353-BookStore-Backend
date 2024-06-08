@@ -1,45 +1,22 @@
 package com.web.bookstore.dao;
 
 import com.web.bookstore.model.User;
-import com.web.bookstore.repository.UserRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-@Service
-public class UserDAO {
+import java.util.Optional;
 
-    private final UserRepository userRepository;
+public interface UserDAO {
 
-    public UserDAO(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    Optional<User> findByName(String name);
 
-    public Optional<User> findByName(String name) {
-        return userRepository.findByName(name);
-    }
+    Optional<User> findByAccount(String account);
 
-    public Optional<User> findByAccount(String account) {
-        return userRepository.findByAccount(account);
-    }
+    Optional<User> findById(Integer id);
 
-    public Optional<User> findById(Integer id) {
-        return userRepository.findById(id);
-    }
+    void save(User user);
 
-    public void save(User user) {
-        userRepository.save(user);
-    }
+    Optional<User> findByNameAndPassword(String name, String password);
 
-    public Optional<User> findByNameAndPassword(String name, String password) {
-        System.out.println("name: " + name + " password: " + password);
-        return userRepository.findByNameAndPassword(name, password);
-    }
-
-    public Page<User> findByNameContaining(String name, Pageable pageable) {
-        return userRepository.findUsersContainingName(name, pageable);
-    }
+    Page<User> findByNameContaining(String name, Pageable pageable);
 }

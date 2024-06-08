@@ -3,49 +3,25 @@ package com.web.bookstore.dao;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.CartItem;
-import com.web.bookstore.repository.CartItemRepository;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class CartItemDAO {
+public interface CartItemDAO {
 
-    private final CartItemRepository cartItemRepository;
+    List<CartItem> findByCart(Cart cart);
 
-    public CartItemDAO(CartItemRepository cartItemRepository) {
-        this.cartItemRepository = cartItemRepository;
-    }
+    Page<CartItem> findByCart(Cart cart, Pageable pageable);
 
-    public List<CartItem> findByCart(Cart cart) {
-        return cartItemRepository.findByCart(cart);
-    }
+    Optional<CartItem> findByCartAndBook(Cart cart, Book book);
 
-    public Page<CartItem> findByCart(Cart cart, Pageable pageable) {
-        return cartItemRepository.findByCart(cart, pageable);
-    }
+    Optional<CartItem> findById(Integer id);
 
-    public Optional<CartItem> findByCartAndBook(Cart cart, Book book) {
-        return cartItemRepository.findByCartAndBook(cart, book);
-    }
+    List<CartItem> findAllById(Iterable<Integer> ids);
 
-    public Optional<CartItem> findById(Integer id) {
-        return cartItemRepository.findById(id);
-    }
+    void save(CartItem cartItem);
 
-    public List<CartItem> findAllById(Iterable<Integer> ids) {
-        return cartItemRepository.findAllById(ids);
-    }
-
-    public void save(CartItem cartItem) {
-        cartItemRepository.save(cartItem);
-    }
-
-    public void delete(CartItem cartItem) {
-        cartItemRepository.delete(cartItem);
-    }
+    void delete(CartItem cartItem);
 }

@@ -2,41 +2,21 @@ package com.web.bookstore.dao;
 
 import com.web.bookstore.model.Order;
 import com.web.bookstore.model.User;
-import com.web.bookstore.repository.OrderRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.Instant;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+public interface OrderDAO {
 
-@Service
-public class OrderDAO {
+    Page<Order> findByUser(User user, Pageable pageable);
 
-    private final OrderRepository orderRepository;
+    Page<Order> findByUser(User user, Pageable pageable, Instant startTime, Instant endTime, String keyWord);
 
-    public OrderDAO(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
+    void save(Order order);
 
-    public Page<Order> findByUser(User user, Pageable pageable) {
-        return orderRepository.findByUser(user, pageable);
-    }
+    Page<Order> findOrders(String keyWord, Instant startTime, Instant endTime, Pageable pageable);
 
-    public Page<Order> findByUser(User user, Pageable pageable, Instant startTime, Instant endTime, String keyWord) {
-        return orderRepository.findByUser(user, pageable, startTime, endTime, keyWord);
-    }
-
-    public void save(Order order) {
-        orderRepository.save(order);
-    }
-
-    public Page<Order> findOrders(String keyWord, Instant startTime, Instant endTime, Pageable pageable) {
-        return orderRepository.findOrders(keyWord, startTime, endTime, pageable);
-    }
-
-    public List<Order> findAllByCreatedAtBetween(Instant startTime, Instant endTime) {
-        return orderRepository.findAllByCreatedAtBetween(startTime, endTime);
-    }
+    List<Order> findAllByCreatedAtBetween(Instant startTime, Instant endTime);
 }

@@ -1,5 +1,7 @@
 package com.web.bookstore.serviceimpl;
 
+import com.web.bookstore.dao.CartDAO;
+import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dto.GetCartOkDTO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.service.CartService;
@@ -9,8 +11,6 @@ import com.web.bookstore.model.CartItem;
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.Book;
-import com.web.bookstore.dao.CartItemDAO;
-import com.web.bookstore.dao.CartDAO;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;

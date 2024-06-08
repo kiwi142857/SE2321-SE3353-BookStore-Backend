@@ -2,9 +2,9 @@ package com.web.bookstore.serviceimpl;
 
 import org.springframework.stereotype.Service;
 
+import com.web.bookstore.dao.CommentDAO;
 import com.web.bookstore.model.Comment;
 import com.web.bookstore.service.CommentService;
-import com.web.bookstore.dao.CommentDAO;
 
 import java.util.Optional;
 

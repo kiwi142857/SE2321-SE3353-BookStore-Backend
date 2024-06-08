@@ -2,12 +2,11 @@ package com.web.bookstore.serviceimpl;
 
 import com.web.bookstore.dto.RegisterRequestDTO;
 import com.web.bookstore.service.AuthService;
-
+import com.web.bookstore.dao.AuthDAO;
+import com.web.bookstore.dao.UserDAO;
 import com.web.bookstore.dto.LoginRequestDTO;
 import com.web.bookstore.model.Auth;
 import com.web.bookstore.model.User;
-import com.web.bookstore.dao.AuthDAO;
-import com.web.bookstore.dao.UserDAO;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

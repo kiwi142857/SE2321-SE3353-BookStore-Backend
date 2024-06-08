@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
 import com.web.bookstore.service.BookService;
+import com.web.bookstore.dao.BookDAO;
+import com.web.bookstore.dao.BookRateDAO;
+import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dto.BookBreifDTO;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
@@ -28,9 +31,6 @@ import com.web.bookstore.service.AuthService;
 import com.web.bookstore.model.User;
 import com.web.bookstore.model.Comment;
 import com.web.bookstore.model.Order;
-import com.web.bookstore.dao.BookDAO;
-import com.web.bookstore.dao.BookRateDAO;
-import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dto.PostBookDTO;
 
 @Service

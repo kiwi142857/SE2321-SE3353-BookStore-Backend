@@ -2,29 +2,14 @@ package com.web.bookstore.dao;
 
 import com.web.bookstore.model.Order;
 import com.web.bookstore.model.OrderItem;
-import com.web.bookstore.repository.OrderItemRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class OrderItemDAO {
+public interface OrderItemDAO {
 
-    private final OrderItemRepository orderItemRepository;
+    List<OrderItem> findByOrderId(Integer orderId);
 
-    public OrderItemDAO(OrderItemRepository orderItemRepository) {
-        this.orderItemRepository = orderItemRepository;
-    }
+    List<OrderItem> findByOrder(Order order);
 
-    public List<OrderItem> findByOrderId(Integer orderId) {
-        return orderItemRepository.findByOrderId(orderId);
-    }
-
-    public List<OrderItem> findByOrder(Order order) {
-        return orderItemRepository.findByOrder(order);
-    }
-
-    public void save(OrderItem orderItem) {
-        orderItemRepository.save(orderItem);
-    }
+    void save(OrderItem orderItem);
 }
