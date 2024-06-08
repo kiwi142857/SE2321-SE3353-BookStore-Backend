@@ -4,6 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import com.web.bookstore.model.User;
+import com.web.bookstore.util.SessionUtils;
+
 import org.springframework.web.method.HandlerMethod;
 import jakarta.servlet.http.Cookie;
 
@@ -29,6 +33,11 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
             }
         }
 
+        User user = SessionUtils.getUser();
+        if (user == null) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
+        }
         if (JSSESSIONID == null || JSSESSIONID.trim().isEmpty()) {
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
