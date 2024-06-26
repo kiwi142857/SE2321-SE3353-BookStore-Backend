@@ -3,7 +3,6 @@ package com.web.bookstore.repository;
 import com.web.bookstore.model.Book;
 import org.springframework.stereotype.Repository;
 
-import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;

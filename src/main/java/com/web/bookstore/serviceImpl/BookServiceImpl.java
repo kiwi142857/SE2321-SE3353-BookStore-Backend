@@ -12,7 +12,6 @@ import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.dao.BookRateDAO;
 import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dao.OrderDAO;
-import com.web.bookstore.dao.OrderItemDAO;
 import com.web.bookstore.dto.BookBreifDTO;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
