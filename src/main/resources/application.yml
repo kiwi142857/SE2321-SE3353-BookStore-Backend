@@ -10,4 +10,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
-
+cos:
+  secretId: AKIDjKhrCQTVdtvhDTUSYkpfFafXRiATWbgg
+  secretKey: DPadT5kFWZTIBC5xeDe5e8e8PSJwaBal
+  region: ap-shanghai
+  bucketName: web-data-1319894912
