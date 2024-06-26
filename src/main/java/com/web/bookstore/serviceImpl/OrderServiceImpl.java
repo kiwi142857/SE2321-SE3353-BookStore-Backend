@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
         // for each cartitem, calculate the total price,and update the user's balance
         Integer totalPrice = 0;
         for (CartItem cartItem : cartItemList) {
-            totalPrice += cartItem.getBook().getPrice() * cartItem.getNumber();
+            totalPrice += cartItem.getBook().getPrice() * cartItem.getNumber() * cartItem.getBook().getDiscount() / 10;
         }
         if (user.getBalance() < totalPrice) {
             return new ResponseDTO(false, "The balance is not enough");

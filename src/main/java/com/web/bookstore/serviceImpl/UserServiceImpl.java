@@ -24,6 +24,7 @@ import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.UserService;
 import com.web.bookstore.dto.UserDTO;
 import com.web.bookstore.dao.UserDAO;
+import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dto.GetUserListOk;
 
@@ -33,15 +34,17 @@ import org.springframework.data.domain.Page;
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
     private final OrderDAO orderDAO;
+    private final BookDAO bookDAO;
     private final AuthService authService;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserDAO userDAO, AuthService authService, BCryptPasswordEncoder passwordEncoder,
-            OrderDAO orderDAO) {
+            OrderDAO orderDAO, BookDAO bookDAO) {
         this.userDAO = userDAO;
         this.authService = authService;
         this.passwordEncoder = passwordEncoder;
         this.orderDAO = orderDAO;
+        this.bookDAO = bookDAO;
     }
 
     public User findUserById(Integer id) {
@@ -149,7 +152,7 @@ public class UserServiceImpl implements UserService {
         for (Order order : orders) {
             User user = order.getUser();
             long totalPrice = order.getItems().stream()
-                    .mapToLong(item -> item.getBook().getPrice() * item.getNumber())
+                    .mapToLong(item -> (item.getBookPrice() * item.getBookDiscount() / 10) * item.getNumber())
                     .sum();
             userTotalPrice.put(user, userTotalPrice.getOrDefault(user, 0L) + totalPrice);
         }

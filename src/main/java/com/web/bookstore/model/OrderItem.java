@@ -19,9 +19,20 @@ public class OrderItem {
     @Id
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @Column(name = "book")
+    private String bookTitle;
+
+    @Column(name = "book_id")
+    private Integer bookId;
+
+    @Column(name = "book_price")
+    private Integer bookPrice;
+
+    @Column(name = "book_cover")
+    private String bookCover;
+
+    @Column(name = "book_discount")
+    private Integer bookDiscount;
 
     @Column(name = "number")
     private Integer number;
@@ -34,14 +45,23 @@ public class OrderItem {
     }
 
     public OrderItem(Book book, Integer number, Order order) {
-        this.book = book;
+        this.bookTitle = book.getTitle();
+        this.bookId = book.getId();
+        this.bookPrice = book.getPrice();
+        this.bookCover = book.getCover();
+        this.bookDiscount = book.getDiscount();
+
         this.number = number;
         this.order = order;
     }
 
     public OrderItem(CartItem cartItem, Order order) {
-        this.book = cartItem.getBook();
+        this.bookTitle = cartItem.getBook().getTitle();
+        this.bookId = cartItem.getBook().getId();
         this.number = cartItem.getNumber();
+        this.bookPrice = cartItem.getBook().getPrice();
+        this.bookCover = cartItem.getBook().getCover();
+        this.bookDiscount = cartItem.getBook().getDiscount();
         this.order = order;
     }
 }

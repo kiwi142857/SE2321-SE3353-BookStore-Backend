@@ -38,6 +38,10 @@ public class CartItemDAOImpl implements CartItemDAO {
         return cartItemRepository.findById(id);
     }
 
+    public List<CartItem> findAllByBook(Book book) {
+        return cartItemRepository.findAllByBook(book);
+    }
+
     public List<CartItem> findAllById(Iterable<Integer> ids) {
         return cartItemRepository.findAllById(ids);
     }

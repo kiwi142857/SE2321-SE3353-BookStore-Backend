@@ -10,11 +10,17 @@ public interface BookDAO {
 
     Page<Book> findByTitleContaining(String title, Pageable pageable);
 
+    Page<Book> findByStockGreaterThanAndTitleContaining(Integer stock, String title, Pageable pageable);
+
     Page<Book> findByAuthorContaining(String author, Pageable pageable);
+
+    Page<Book> findByAuthorContainingAndStockGreaterThanPageable(String author, Integer stock, Pageable pageable);
 
     Optional<Book> findById(Integer id);
 
     Page<Book> findByTag(String tag, Pageable pageable);
+
+    Page<Book> findByTagAndStockGreaterThanPageable(String tag, Integer stock, Pageable pageable);
 
     Page<Book> findAll(Pageable pageable);
 

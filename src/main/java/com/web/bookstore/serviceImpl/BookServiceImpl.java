@@ -10,12 +10,15 @@ import org.springframework.data.domain.Sort;
 import com.web.bookstore.service.BookService;
 import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.dao.BookRateDAO;
+import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dao.OrderDAO;
+import com.web.bookstore.dao.OrderItemDAO;
 import com.web.bookstore.dto.BookBreifDTO;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.model.OrderItem;
 import com.web.bookstore.model.BookRate;
+import com.web.bookstore.model.CartItem;
 
 import java.util.stream.Collectors;
 import java.time.Instant;
@@ -39,20 +42,23 @@ public class BookServiceImpl implements BookService {
     public final BookDAO bookDAO;
     public final BookRateDAO bookRateDAO;
     public final OrderDAO orderDAO;
+    public final CartItemDAO cartItemDAO;
     public final AuthService authService;
 
-    public BookServiceImpl(BookDAO bookDAO, BookRateDAO bookRateDAO, AuthService authService, OrderDAO orderDAO) {
+    public BookServiceImpl(BookDAO bookDAO, BookRateDAO bookRateDAO, AuthService authService, OrderDAO orderDAO,
+            CartItemDAO cartItemDAO) {
         this.bookDAO = bookDAO;
         this.bookRateDAO = bookRateDAO;
         this.authService = authService;
         this.orderDAO = orderDAO;
+        this.cartItemDAO = cartItemDAO;
     }
 
     public Optional<Book> getBookById(Integer id) {
         return bookDAO.findById(id);
     }
 
-    public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {
+    public GetBookListDTO searchBooksAdmin(String searchType, String keyWord, Integer page, Integer size) {
         PageRequest pageable = PageRequest.of(page, size);
         Page<Book> bookPage;
         if (searchType.equals("title")) {
@@ -61,6 +67,23 @@ public class BookServiceImpl implements BookService {
             bookPage = bookDAO.findByTag(keyWord, pageable);
         } else {
             bookPage = bookDAO.findByAuthorContaining(keyWord, pageable);
+        }
+        // System.out.println(bookList);
+        List<Book> bookList = bookPage.getContent();
+        List<BookBreifDTO> bookBreifDTOList = bookList.stream().map(BookBreifDTO::new).collect(Collectors.toList());
+        // System.out.println(bookBreifDTOList);
+        return new GetBookListDTO(bookBreifDTOList, Math.toIntExact(bookPage.getTotalElements()));
+    }
+
+    public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Book> bookPage;
+        if (searchType.equals("title")) {
+            bookPage = bookDAO.findByStockGreaterThanAndTitleContaining(0, keyWord, pageable);
+        } else if (searchType.equals("tag")) {
+            bookPage = bookDAO.findByTagAndStockGreaterThanPageable(keyWord, 0, pageable);
+        } else {
+            bookPage = bookDAO.findByAuthorContainingAndStockGreaterThanPageable(keyWord, 0, pageable);
         }
         // System.out.println(bookList);
         List<Book> bookList = bookPage.getContent();
@@ -184,6 +207,11 @@ public class BookServiceImpl implements BookService {
         if (book.isEmpty()) {
             return new ResponseDTO(false, "Book not found");
         }
+        // 找到所有购物车中包含该书籍的购物车项，删除
+        List<CartItem> cartItems = cartItemDAO.findAllByBook(book.get());
+        for (CartItem cartItem : cartItems) {
+            cartItemDAO.delete(cartItem);
+        }
         bookDAO.delete(book.get());
         return new ResponseDTO(true, "Delete success");
     }
@@ -219,7 +247,9 @@ public class BookServiceImpl implements BookService {
 
         // Calculate the sales for each book
         Map<Book, Long> bookSales = orderItems.stream()
-                .collect(Collectors.groupingBy(OrderItem::getBook, Collectors.summingLong(OrderItem::getNumber)));
+                .collect(Collectors.groupingBy(
+                        orderItem -> bookDAO.findById(orderItem.getBookId()).get(), // 使用bookId获取Book对象
+                        Collectors.summingLong(OrderItem::getNumber)));
 
         // Sort the books by sales
         List<Book> sortedBooks = bookSales.entrySet().stream()

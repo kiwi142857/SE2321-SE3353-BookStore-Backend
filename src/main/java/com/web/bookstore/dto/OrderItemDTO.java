@@ -8,21 +8,15 @@ import lombok.Data;
 public class OrderItemDTO {
 
     public Integer id;
-    public GetBookDetailDTO book;
+    public OrderBookDTO book;
     public Integer number;
 
     public OrderItemDTO() {
     }
 
-    public OrderItemDTO(Integer id, GetBookDetailDTO book, Integer number) {
-        this.id = id;
-        this.book = book;
-        this.number = number;
-    }
-
     public OrderItemDTO(OrderItem orderItem) {
         this.id = orderItem.getId();
-        this.book = new GetBookDetailDTO(orderItem.getBook());
+        this.book = new OrderBookDTO(orderItem);
         this.number = orderItem.getNumber();
     }
 

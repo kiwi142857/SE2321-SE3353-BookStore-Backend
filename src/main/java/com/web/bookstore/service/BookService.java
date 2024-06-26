@@ -16,6 +16,8 @@ public interface BookService {
 
     GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size);
 
+    GetBookListDTO searchBooksAdmin(String searchType, String keyWord, Integer page, Integer size);
+
     GetBookListDTO getRankList(Integer pageSize, Integer sizeIndex);
 
     GetBookRateDTO getBookRate(User user, Integer bookId);

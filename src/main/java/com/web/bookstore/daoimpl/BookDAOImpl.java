@@ -23,8 +23,17 @@ public class BookDAOImpl implements BookDAO {
         return bookRepository.findByTitleContaining(title, pageable);
     }
 
+    public Page<Book> findByStockGreaterThanAndTitleContaining(Integer stock, String title, Pageable pageable) {
+        return bookRepository.findByStockGreaterThanAndTitleContaining(stock, title, pageable);
+    }
+
     public Page<Book> findByAuthorContaining(String author, Pageable pageable) {
         return bookRepository.findByAuthorContaining(author, pageable);
+    }
+
+    public Page<Book> findByAuthorContainingAndStockGreaterThanPageable(String author, Integer stock,
+            Pageable pageable) {
+        return bookRepository.findByAuthorContainingAndStockGreaterThanPageable(author, stock, pageable);
     }
 
     public Optional<Book> findById(Integer id) {
@@ -33,6 +42,10 @@ public class BookDAOImpl implements BookDAO {
 
     public Page<Book> findByTag(String tag, Pageable pageable) {
         return bookRepository.findByTag(tag, pageable);
+    }
+
+    public Page<Book> findByTagAndStockGreaterThanPageable(String tag, Integer stock, Pageable pageable) {
+        return bookRepository.findByTagAndStockGreaterThanPageable(tag, stock, pageable);
     }
 
     public Page<Book> findAll(Pageable pageable) {

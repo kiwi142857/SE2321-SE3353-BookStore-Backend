@@ -21,6 +21,8 @@ public interface CartItemDAO {
 
     List<CartItem> findAllById(Iterable<Integer> ids);
 
+    List<CartItem> findAllByBook(Book book);
+
     void save(CartItem cartItem);
 
     void delete(CartItem cartItem);

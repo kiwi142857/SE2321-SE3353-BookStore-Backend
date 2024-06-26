@@ -116,6 +116,19 @@ public class BookController {
         }
     }
 
+    @GetMapping("/admin/search")
+    public ResponseEntity<Object> searchBookAdmin(@RequestParam String searchType, @RequestParam String keyWord,
+            @RequestParam Integer pageSize, @RequestParam Integer pageIndex) {
+        if (pageIndex < 0 || pageSize <= 0)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseDTO(false, "Invalid page index or page size"));
+        try {
+            return ResponseEntity.ok(bookService.searchBooksAdmin(searchType, keyWord, pageIndex, pageSize));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(false, e.getMessage()));
+        }
+    }
+
     @GetMapping("/rank")
     public ResponseEntity<Object> getRankList(
             @RequestParam(required = false, defaultValue = "10") Integer pageSize,
