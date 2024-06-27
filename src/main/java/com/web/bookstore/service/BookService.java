@@ -1,5 +1,6 @@
 package com.web.bookstore.service;
 
+import com.web.bookstore.dto.BookAddDTO;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.model.User;
@@ -34,7 +35,7 @@ public interface BookService {
 
     ResponseDTO postBook(Integer id, PostBookDTO book);
 
-    ResponseDTO addBook(Integer id, PostBookDTO book);
+    BookAddDTO addBook(Integer id, PostBookDTO book);
 
     ResponseDTO deleteBook(Integer id);
 

@@ -12,6 +12,7 @@ import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.dao.BookRateDAO;
 import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dao.OrderDAO;
+import com.web.bookstore.dto.BookAddDTO;
 import com.web.bookstore.dto.BookBreifDTO;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.model.Book;
@@ -195,10 +196,10 @@ public class BookServiceImpl implements BookService {
         return new ResponseDTO(true, "Update success");
     }
 
-    public ResponseDTO addBook(Integer id, PostBookDTO book) {
+    public BookAddDTO addBook(Integer id, PostBookDTO book) {
         Book newBook = new Book(book);
         bookDAO.save(newBook);
-        return new ResponseDTO(true, "Add success");
+        return new BookAddDTO(true, "Add success", newBook.getId());
     }
 
     public ResponseDTO deleteBook(Integer id) {
