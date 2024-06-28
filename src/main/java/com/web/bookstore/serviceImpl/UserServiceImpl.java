@@ -109,6 +109,9 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseDTO banUser(User targetUser) {
+        if (targetUser.getRole() == 1) {
+            return new ResponseDTO(false, "Cannot ban admin user");
+        }
         targetUser.setStatus(1);
         userDAO.save(targetUser);
         return new ResponseDTO(true, "Ban user successfully");
