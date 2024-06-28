@@ -18,6 +18,10 @@ public interface BookDAO {
 
     Optional<Book> findById(Integer id);
 
+    Optional<Book> findByIsbnAndIdNot(String isbn, Integer id);
+
+    Optional<Book> findByIsbn(String isbn);
+
     Page<Book> findByTag(String tag, Pageable pageable);
 
     Page<Book> findByTagAndStockGreaterThanPageable(String tag, Integer stock, Pageable pageable);

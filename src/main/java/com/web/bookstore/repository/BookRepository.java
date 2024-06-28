@@ -29,6 +29,10 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Integer
     @Query("SELECT b FROM Book b WHERE b.tag = :tag AND b.stock > :stock")
     Page<Book> findByTagAndStockGreaterThanPageable(String tag, Integer stock, Pageable pageable);
 
+    Optional<Book> findByIsbnAndIdNot(String isbn, Integer id);
+
+    Optional<Book> findByIsbn(String isbn);
+
     Book save(Book book);
 
     void delete(Book book);

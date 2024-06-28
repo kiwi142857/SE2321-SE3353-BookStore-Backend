@@ -64,4 +64,11 @@ public class BookDAOImpl implements BookDAO {
         return bookRepository.findAllByOrderBySalesDesc(pageable);
     }
 
+    public Optional<Book> findByIsbnAndIdNot(String isbn, Integer id) {
+        return bookRepository.findByIsbnAndIdNot(isbn, id);
+    }
+
+    public Optional<Book> findByIsbn(String isbn) {
+        return bookRepository.findByIsbn(isbn);
+    }
 }

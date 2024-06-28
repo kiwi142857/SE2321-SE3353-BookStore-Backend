@@ -190,6 +190,13 @@ public class BookServiceImpl implements BookService {
         if (bookOptional.isEmpty()) {
             return new ResponseDTO(false, "Book not found");
         }
+
+        // 检查是否存在具有相同ISBN但不同ID的书籍
+        Optional<Book> bookWithSameIsbn = bookDAO.findByIsbnAndIdNot(book.getIsbn(), id);
+        if (bookWithSameIsbn.isPresent()) {
+            return new ResponseDTO(false, "ISBN conflict with another book");
+        }
+
         Book bookToUpdate = bookOptional.get();
         bookToUpdate.updateBook(book);
         bookDAO.save(bookToUpdate);
@@ -197,7 +204,13 @@ public class BookServiceImpl implements BookService {
     }
 
     public BookAddDTO addBook(Integer id, PostBookDTO book) {
+        // 检查是否存在具有相同ISBN的书籍
+        Optional<Book> bookWithSameIsbn = bookDAO.findByIsbn(book.getIsbn());
+        if (bookWithSameIsbn.isPresent()) {
+            return new BookAddDTO(false, "ISBN conflict with another book", -1);
+        }
         Book newBook = new Book(book);
+
         bookDAO.save(newBook);
         return new BookAddDTO(true, "Add success", newBook.getId());
     }
