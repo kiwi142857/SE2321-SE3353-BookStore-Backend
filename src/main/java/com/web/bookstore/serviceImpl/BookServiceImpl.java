@@ -26,6 +26,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.GetCommentListDTO;
@@ -260,9 +261,15 @@ public class BookServiceImpl implements BookService {
 
         // Calculate the sales for each book
         Map<Book, Long> bookSales = orderItems.stream()
+                .map(orderItem -> bookDAO.findById(orderItem.getBookId())) // 将OrderItem映射为Optional<Book>
+                .filter(Optional::isPresent) // 过滤出存在的Book
+                .map(Optional::get) // 获取Book对象
                 .collect(Collectors.groupingBy(
-                        orderItem -> bookDAO.findById(orderItem.getBookId()).get(), // 使用bookId获取Book对象
-                        Collectors.summingLong(OrderItem::getNumber)));
+                        Function.identity(), // 使用Book对象本身作为键
+                        Collectors.summingLong(book -> orderItems.stream()
+                                .filter(orderItem -> orderItem.getBookId().equals(book.getId()))
+                                .mapToLong(OrderItem::getNumber)
+                                .sum())));
 
         // Sort the books by sales
         List<Book> sortedBooks = bookSales.entrySet().stream()
