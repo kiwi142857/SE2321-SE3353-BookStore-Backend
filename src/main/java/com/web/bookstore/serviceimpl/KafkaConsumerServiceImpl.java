@@ -29,16 +29,16 @@ public final class KafkaConsumerServiceImpl implements KafkaConsumerService {
     }
 
     @KafkaListener(topics = "order-to-process", id = "order1")
-    public void listen(String in) {
+    public void listenOrderToProcess(String in) {
         System.out.println("Received message from Kafka, the topic is: order-to-process, the message is: " + in);
         KafkaPostOrderDTO postOrderDTO = null;
         try {
             postOrderDTO = new ObjectMapper().readValue(in, KafkaPostOrderDTO.class);
         } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
 

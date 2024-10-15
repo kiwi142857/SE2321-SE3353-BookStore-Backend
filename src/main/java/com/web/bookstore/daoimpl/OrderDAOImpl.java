@@ -6,13 +6,13 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.model.Order;
 import com.web.bookstore.model.User;
 import com.web.bookstore.repository.OrderRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class OrderDAOImpl implements OrderDAO {
@@ -33,9 +33,10 @@ public class OrderDAOImpl implements OrderDAO {
         return orderRepository.findByUser(user, pageable, startTime, endTime, keyWord);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void save(Order order) {
+        // int a = 1 / 0;
         orderRepository.save(order);
     }
 

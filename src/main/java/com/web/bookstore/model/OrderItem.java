@@ -56,6 +56,8 @@ public class OrderItem {
     }
 
     public OrderItem(CartItem cartItem, Order order) {
+
+        // int a = 1 / 0;
         this.bookTitle = cartItem.getBook().getTitle();
         this.bookId = cartItem.getBook().getId();
         this.number = cartItem.getNumber();

@@ -7,12 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.web.bookstore.model.Book;
 import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.CartItem;
-
-import jakarta.transaction.Transactional;
 
 @Repository
 public interface CartItemRepository extends PagingAndSortingRepository<CartItem, Integer> {

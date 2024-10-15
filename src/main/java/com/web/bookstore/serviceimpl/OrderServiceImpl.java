@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dao.OrderDAO;
@@ -20,12 +21,11 @@ import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.CartItem;
 import com.web.bookstore.model.Order;
+import com.web.bookstore.model.OrderItem;
 import com.web.bookstore.model.User;
 import com.web.bookstore.service.CartService;
 import com.web.bookstore.service.OrderService;
 import com.web.bookstore.service.UserService;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -34,12 +34,14 @@ public class OrderServiceImpl implements OrderService {
     private final CartService cartService;
     private final CartItemDAO cartItemDAO;
     private final UserService userService;
+    private final OrderItemDAO orderItemDAO;
 
     public OrderServiceImpl(OrderDAO orderDAO, CartService cartService, UserService userService, OrderItemDAO orderItemDAO, CartItemDAO cartItemDAO) {
         this.orderDAO = orderDAO;
         this.cartService = cartService;
         this.userService = userService;
         this.cartItemDAO = cartItemDAO;
+        this.orderItemDAO = orderItemDAO;
     }
 
     @Override
@@ -110,21 +112,23 @@ public class OrderServiceImpl implements OrderService {
                     Instant.now(), cartItemList);
 
             // delete all cart items、
-            System.out.println("Ready to delete cart items");
+            // System.out.println("Ready to delete cart items");
             // cartService.updateCartAfterOrder(user, cartItemList);
             // for (CartItem cartItem : cartItemList) {
             //     cartService.deleteCartItem(user, cartItem.getId());
             // }
-            for (CartItem cartItem : cartItemList) {
-                System.out.println("Deleting cart item: " + cartItem.getId() + " in createOrder");
-                cartItemDAO.delete(cartItem);
-            }
-
-            System.out.println("Cart items deleted");
-
+            // for (CartItem cartItem : cartItemList) {
+            //     System.out.println("Deleting cart item: " + cartItem.getId() + " in createOrder");
+            //     cartItemDAO.delete(cartItem);
+            // }
+            // System.out.println("Cart items deleted");
             // print the order id
             System.out.println("order id: " + order.getId());
             orderDAO.save(order);
+            List<OrderItem> orderItems = order.getItems();
+            for (OrderItem orderItem : orderItems) {
+                orderItemDAO.save(orderItem);
+            }
 
             return new ResponseDTO(true, "The order has been created");
         } catch (Exception e) {
