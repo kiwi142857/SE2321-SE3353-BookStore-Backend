@@ -1,7 +1,11 @@
 package com.web.bookstore.serviceimpl;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.lang.NonNull;
@@ -10,32 +14,30 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.model.User;
-import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.KafkaConsumerService;
 import com.web.bookstore.service.OrderWebSocketService;
-import com.web.bookstore.util.SessionUtils;
 
-@EnableWebSocketMessageBroker
 @CrossOrigin(origins = "http://localhost:3000")
 @Service
 public class OrderWebSocketServiceImpl extends TextWebSocketHandler implements OrderWebSocketService, KafkaConsumerService {
 
-    private final AuthService authService;
     private final Map<Integer, WebSocketSession> userSocketMap = new ConcurrentHashMap<>();
 
-    public OrderWebSocketServiceImpl(AuthService authService) {
-        this.authService = authService;
+    private final CartItemDAO cartItemDAO;
+
+    public OrderWebSocketServiceImpl(CartItemDAO cartItemDAO) {
+        this.cartItemDAO = cartItemDAO;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        User user = SessionUtils.getUser();
+        User user = (User) session.getAttributes().get("user");
         if (user != null) {
             userSocketMap.put(user.getId(), session);
             System.out.println("User " + user.getId() + " connected with session " + session.getId());
@@ -72,34 +74,36 @@ public class OrderWebSocketServiceImpl extends TextWebSocketHandler implements O
     public void listenOrderToProcess(String in) {
         System.out.println("Received message from Kafka, the topic is: order-processed, the message is: " + in);
         try {
-            // 解析 Kafka 消息
-
             ObjectMapper objectMapper = new ObjectMapper();
             ResponseDTO responseDTO = objectMapper.readValue(in, ResponseDTO.class);
-            // 获取用户信息
-            // Integer userId = responseDTO.getUserId();
-            // if (user != null) {
-            //     // 根据解析结果发送消息
-            //     if (responseDTO.isOk()) {
-            //         sendMessageToUser(user, "订单已完成处理: " + responseDTO.getMessage());
-            //     } else {
-            //         sendMessageToUser(user, "订单处理失败: " + responseDTO.getMessage());
-            //     }
-            // } else {
-            //     System.out.println("User not found for ID: " + responseDTO.getUserId());
-            // }
             Boolean isOk = responseDTO.isOk();
             String message = responseDTO.getMessage();
-            // message 格式为 userId:message
             String[] parts = message.split(":");
             Integer userId = Integer.valueOf(parts[0]);
-            // User user = authService.findUserById(userId);
+            // parts[1] is the cartItemIds, such as [1, 2, 3]
+            // we need to convert it to a list of integers
+            System.out.println("parts[1]: " + parts[1]);
+            String[] cartItemIds = parts[1].substring(1, parts[1].length() - 1).split(",");
+            // System.out.println("cartItemIds: " + cartItemIds);
+            // we need to delete the cart items from the cart
+            List<Integer> itemIds = Arrays.stream(cartItemIds)
+                    .map(String::trim) // 去掉空格
+                    .map(Integer::valueOf)
+                    .collect(Collectors.toList());
+            for (Integer itemId : itemIds) {
+                cartItemDAO.deleteById(itemId);
+                System.out.println("Deleted cart item: " + itemId);
+            }
+
+            // 将parts[2]的订单信息发送给用户,先组装成json格式 {"message": parts[2]}
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("message", parts[2]);
+            messageMap.put("ok", isOk);
+
+            String jsonMessage = objectMapper.writeValueAsString(messageMap);
+
             if (userId != null) {
-                if (isOk) {
-                    sendMessageToUser(userId, "订单已完成处理: " + parts[1]);
-                } else {
-                    sendMessageToUser(userId, "订单处理失败: " + parts[1]);
-                }
+                sendMessageToUser(userId, jsonMessage);
             } else {
                 System.out.println("User not found for ID: " + userId);
             }

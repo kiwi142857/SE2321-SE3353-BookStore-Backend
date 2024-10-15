@@ -113,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
 
             // delete all cart items、
             // System.out.println("Ready to delete cart items");
-            // cartService.updateCartAfterOrder(user, cartItemList);
+            cartService.updateCartAfterOrder(user, cartItemList);
             // for (CartItem cartItem : cartItemList) {
             //     cartService.deleteCartItem(user, cartItem.getId());
             // }

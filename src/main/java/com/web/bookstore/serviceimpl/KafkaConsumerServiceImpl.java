@@ -1,5 +1,7 @@
 package com.web.bookstore.serviceimpl;
 
+import java.util.stream.Collectors;
+
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +47,7 @@ public final class KafkaConsumerServiceImpl implements KafkaConsumerService {
         System.out.println("Processing message...");
         ResponseDTO responseDTO = createOrder(postOrderDTO);
         if (responseDTO.isOk() == true) {
-            System.out.println("Order created successfully.");
+            System.out.println("Order created successfully." + " The message is " + responseDTO.getMessage());
         } else {
             System.out.println("Order creation failed.");
         }
@@ -73,11 +75,16 @@ public final class KafkaConsumerServiceImpl implements KafkaConsumerService {
             System.out.println("postOrderDTO: " + postOrderDTO.getItems().get(0));
             ResponseDTO res = orderService.createOrder(postOrderDTO2, user);
             System.out.println("res: " + res);
+
+            String itemIds = postOrderDTO.getItems().stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(","));
+            String message = userId + ":[" + itemIds + "]:" + res.getMessage();
             if (!res.isOk()) {
-                return new ResponseDTO(false, userId + ":" + res.getMessage());
+                return new ResponseDTO(false, message);
             }
 
-            return new ResponseDTO(true, userId + ":" + res.getMessage());
+            return new ResponseDTO(true, message);
         } catch (UserBannedException e) {
             return new ResponseDTO(false, e.getMessage());
         } catch (NumberFormatException e) {

@@ -33,7 +33,7 @@ public class OrderDAOImpl implements OrderDAO {
         return orderRepository.findByUser(user, pageable, startTime, endTime, keyWord);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void save(Order order) {
         // int a = 1 / 0;
