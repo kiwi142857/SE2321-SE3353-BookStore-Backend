@@ -1,18 +1,18 @@
 package com.web.bookstore.repository;
 
-import com.web.bookstore.model.CartItem;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-
-import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.Book;
+import com.web.bookstore.model.Cart;
+import com.web.bookstore.model.CartItem;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
+import jakarta.transaction.Transactional;
 
 @Repository
 public interface CartItemRepository extends PagingAndSortingRepository<CartItem, Integer> {
@@ -31,5 +31,13 @@ public interface CartItemRepository extends PagingAndSortingRepository<CartItem,
 
     void save(CartItem cartItem);
 
+    @Transactional
     void delete(CartItem cartItem);
+
+    @Transactional
+    void deleteById(Integer id);
+
+    @Transactional
+    void flush();
+
 }

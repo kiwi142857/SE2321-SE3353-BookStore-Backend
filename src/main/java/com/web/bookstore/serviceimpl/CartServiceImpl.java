@@ -1,24 +1,26 @@
 package com.web.bookstore.serviceimpl;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
 import com.web.bookstore.dao.CartDAO;
 import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dto.GetCartOkDTO;
 import com.web.bookstore.dto.ResponseDTO;
-import com.web.bookstore.service.CartService;
-import org.springframework.stereotype.Service;
-import com.web.bookstore.service.BookService;
+import com.web.bookstore.model.Book;
+import com.web.bookstore.model.Cart;
 import com.web.bookstore.model.CartItem;
 import com.web.bookstore.model.User;
-import com.web.bookstore.model.Cart;
-import com.web.bookstore.model.Book;
+import com.web.bookstore.service.BookService;
+import com.web.bookstore.service.CartService;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.List;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Page;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -65,8 +67,10 @@ public class CartServiceImpl implements CartService {
 
     }
 
+    @Override
     public ResponseDTO deleteCartItem(User user, Integer cartItemId) {
 
+        System.out.println("Deleting cart item: " + cartItemId + " in CartServiceImpl");
         Cart cart = user.getCart();
 
         if (cart == null) {
@@ -80,15 +84,17 @@ public class CartServiceImpl implements CartService {
         }
 
         // Check if the cartItem in the cart
-        if (cartItem.get().getCart() != cart) {
+        if (!Objects.equals(cartItem.get().getCart().getId(), cart.getId())) {
             return new ResponseDTO(false, "The book is not in the cart");
         }
 
+        System.out.println("Deleting cart item: " + cartItem.get().getId() + "In deleteCartItem");
         cartItemDAO.delete(cartItem.get());
         return new ResponseDTO(true, "The book has been removed from the cart");
 
     }
 
+    @Override
     public ResponseDTO updateCartItem(User user, Integer cartItemId, Integer quantity) {
 
         Cart cart = user.getCart();
@@ -143,6 +149,8 @@ public class CartServiceImpl implements CartService {
         return cartItemList;
     }
 
+    @Override
+    @Transactional
     public ResponseDTO updateCartAfterOrder(User user, List<CartItem> cartItemList) throws Exception {
 
         Cart cart = user.getCart();
@@ -157,14 +165,19 @@ public class CartServiceImpl implements CartService {
             }
         }
 
+        System.err.println("ready to update cart after order");
+
         for (CartItem cartItem : cartItemList) {
             Book book = cartItem.getBook();
             Integer number = cartItem.getNumber();
             book.setSales(number + book.getSales());
-            bookService.updateBook(book);
+
+            System.out.println("cartItem to be deleted: " + cartItem.getId());
             cartItemDAO.delete(cartItem);
+            bookService.updateBook(book);
         }
 
+        // Flush and clear the persistence context to ensure changes are committed
         return new ResponseDTO(true, "The cart has been updated");
 
     }

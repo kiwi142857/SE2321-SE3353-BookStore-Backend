@@ -1,12 +1,15 @@
 package com.web.bookstore.daoimpl;
 
-import com.web.bookstore.model.Order;
-import com.web.bookstore.model.OrderItem;
-import com.web.bookstore.dao.OrderItemDAO;
-import com.web.bookstore.repository.OrderItemRepository;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.web.bookstore.dao.OrderItemDAO;
+import com.web.bookstore.model.Order;
+import com.web.bookstore.model.OrderItem;
+import com.web.bookstore.repository.OrderItemRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class OrderItemDAOImpl implements OrderItemDAO {
@@ -17,14 +20,18 @@ public class OrderItemDAOImpl implements OrderItemDAO {
         this.orderItemRepository = orderItemRepository;
     }
 
+    @Override
     public List<OrderItem> findByOrderId(Integer orderId) {
         return orderItemRepository.findByOrderId(orderId);
     }
 
+    @Override
     public List<OrderItem> findByOrder(Order order) {
         return orderItemRepository.findByOrder(order);
     }
 
+    @Override
+    @Transactional
     public void save(OrderItem orderItem) {
         orderItemRepository.save(orderItem);
     }
