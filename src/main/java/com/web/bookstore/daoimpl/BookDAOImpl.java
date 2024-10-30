@@ -1,20 +1,17 @@
 package com.web.bookstore.daoimpl;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.hibernate.Hibernate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.web.bookstore.dao.BookDAO;
+import com.web.bookstore.dto.BookJsonDTO;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.repository.BookRepository;
 
@@ -46,30 +43,48 @@ public class BookDAOImpl implements BookDAO {
 
     @Override
     public Page<Book> findByAuthorContainingAndStockGreaterThanPageable(String author, Integer stock, Pageable pageable) {
-        // 从Redis中获取书籍ID集合
-        Set<Object> bookIds = redisTemplate.opsForSet().members("author:" + author);
-        if (bookIds == null || bookIds.isEmpty()) {
-            // 如果Redis中没有数据，从数据库中查询并存入Redis
-            Page<Book> books = bookRepository.findByAuthorContainingAndStockGreaterThanPageable(author, stock, pageable);
-            books.forEach(book -> {
-                redisTemplate.opsForSet().add("author:" + author, book.getId());
-                redisTemplate.opsForValue().set("book:" + book.getId(), book);
-            });
-            return books;
-        } else {
-            // 从Redis中获取书籍信息
-            List<Book> books = bookIds.stream()
-                    .map(id -> (Book) redisTemplate.opsForValue().get("book:" + id))
-                    .filter(book -> book != null && book.getStock() > stock)
-                    .collect(Collectors.toList());
-            return new PageImpl<>(books, pageable, books.size());
-        }
+        return bookRepository.findByAuthorContainingAndStockGreaterThanPageable(author, stock, pageable);
     }
 
     @Override
-    @Cacheable(value = "books", key = "#id")
     public Optional<Book> findById(Integer id) {
-        return bookRepository.findById(id);
+        String cacheKey = "book:" + id;
+        Book cachedBook = null;
+        try {
+            // 尝试从Redis缓存中获取数据
+            try {
+
+                cachedBook = new Book((BookJsonDTO) redisTemplate.opsForValue().get(cacheKey));
+
+            } catch (Exception e) {
+                // 记录日志或处理异常
+                System.err.println("Parse redis error: " + e.getMessage());
+            }
+            if (cachedBook != null) {
+                System.out.println("Book cached in redis: " + cachedBook);
+
+                return Optional.of(cachedBook);
+            }
+            System.out.println("Book not cached in redis: " + id);
+        } catch (Exception e) {
+            // 记录日志或处理异常
+            System.err.println("Redis error: " + e.getMessage());
+        }
+
+        // 如果Redis不可用或缓存中没有数据，则从数据库中获取数据
+        Optional<Book> bookFromDb = bookRepository.findById(id);
+        bookFromDb.ifPresent(book -> {
+            try {
+
+                redisTemplate.opsForValue().set(cacheKey, new BookJsonDTO(book));
+                System.out.println("Save book to redis: " + new BookJsonDTO(book));
+            } catch (Exception e) {
+                // 记录日志或处理异常
+                System.err.println("Redis error: " + e.getMessage());
+            }
+        });
+        System.out.println("Book from db: " + bookFromDb);
+        return bookFromDb;
     }
 
     @Override
@@ -83,18 +98,13 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
-    public Page<Book> findAll(Pageable pageable) {
-        return bookRepository.findAll(pageable);
-    }
-
-    @Override
     @CachePut(value = "books", key = "#book.id")
     public Book save(Book book) {
         return bookRepository.save(book);
     }
 
     @Override
-    @CacheEvict(value = "books", key = "#book.id")
+    // @CacheEvict(value = "books", key = "#book.id")
     public void delete(Book book) {
         bookRepository.delete(book);
     }

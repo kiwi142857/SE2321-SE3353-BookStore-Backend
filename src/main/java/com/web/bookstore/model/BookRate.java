@@ -1,22 +1,24 @@
 package com.web.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.web.bookstore.dto.BookRateJsonDTO;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.CascadeType;
-import lombok.Data;
-
-import jakarta.persistence.GenerationType;
-
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Data
 @Table(name = "book_rate")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class BookRate {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +27,7 @@ public class BookRate {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "book_id", referencedColumnName = "id")
-    @JsonBackReference
+    @JsonBackReference("bookRateReference")
     private Book book;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -43,4 +45,18 @@ public class BookRate {
         this.book = book;
         this.rate = rate;
     }
+
+    public BookRate(BookRateJsonDTO bookRateJsonDTO) {
+        this.id = bookRateJsonDTO.getId();
+        this.rate = bookRateJsonDTO.getRate();
+    }
+
+    @Override
+    public String toString() {
+        return "BookRate{"
+                + "id=" + id
+                + ", rate=" + rate
+                + '}';
+    }
+
 }

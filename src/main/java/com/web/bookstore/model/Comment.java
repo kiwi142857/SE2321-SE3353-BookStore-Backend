@@ -1,5 +1,9 @@
 package com.web.bookstore.model;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,11 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import lombok.Data;
-import java.util.Date;
 
 @Data
 @Entity
@@ -31,7 +31,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "book_id")
-    @JsonBackReference
+    @JsonBackReference("commentReference")
     private Book book;
 
     @ManyToOne
@@ -44,12 +44,12 @@ public class Comment {
 
     @Override
     public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", date=" + date +
-                ", reply='" + reply + '\'' +
-                '}';
+        return "Comment{"
+                + "id=" + id
+                + ", content='" + content + '\''
+                + ", date=" + date
+                + ", reply='" + reply + '\''
+                + '}';
     }
 
     public Comment() {
