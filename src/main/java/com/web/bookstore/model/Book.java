@@ -2,7 +2,6 @@ package com.web.bookstore.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -77,7 +76,7 @@ public class Book {
     @Column(name = "tag")
     private String tag;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "book", fetch = FetchType.EAGER)
     @JsonManagedReference("bookRateReference")
     private List<BookRate> bookRates;
 
