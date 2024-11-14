@@ -7,6 +7,7 @@ import org.springframework.cache.interceptor.SimpleCacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +59,13 @@ public class CacheConfig {
 
         template.afterPropertiesSet();
         return template;
+    }
+
+    @Bean
+    public LettuceConnectionFactory redisConnectionFactory() {
+        LettuceConnectionFactory factory = new LettuceConnectionFactory();
+        factory.setTimeout(1000); // 设置超时时间为2秒
+        return factory;
     }
 
     @Bean

@@ -79,6 +79,7 @@ public class BookServiceImpl implements BookService {
     public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {
         PageRequest pageable = PageRequest.of(page, size);
         Page<Book> bookPage;
+        System.out.println("in service handler 0");
         if (searchType.equals("title")) {
             bookPage = bookDAO.findByStockGreaterThanAndTitleContaining(0, keyWord, pageable);
         } else if (searchType.equals("tag")) {
@@ -231,6 +232,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public GetBookListDTO getSalesRankList(Integer pageIndex, Integer pageSize, String startTime, String endTime) {
+        System.out.println("startTime: " + startTime);
         // Convert startTime and endTime to Instant
         Instant startInstant = Instant.EPOCH;
         Instant endInstant = Instant.now();
@@ -258,7 +260,7 @@ public class BookServiceImpl implements BookService {
         List<OrderItem> orderItems = orders.stream()
                 .flatMap(order -> order.getItems().stream())
                 .collect(Collectors.toList());
-
+        System.out.println("step0   in getSale");
         // Calculate the sales for each book
         Map<Book, Long> bookSales = orderItems.stream()
                 .map(orderItem -> bookDAO.findById(orderItem.getBookId())) // 将OrderItem映射为Optional<Book>
@@ -267,9 +269,9 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.groupingBy(
                         Function.identity(), // 使用Book对象本身作为键
                         Collectors.summingLong(book -> orderItems.stream()
-                                .filter(orderItem -> orderItem.getBookId().equals(book.getId()))
-                                .mapToLong(OrderItem::getNumber)
-                                .sum())));
+                        .filter(orderItem -> orderItem.getBookId().equals(book.getId()))
+                        .mapToLong(OrderItem::getNumber)
+                        .sum())));
 
         // Sort the books by sales
         List<Book> sortedBooks = bookSales.entrySet().stream()
@@ -277,11 +279,15 @@ public class BookServiceImpl implements BookService {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
+        System.out.println("step0.5 in getSale");
+
         int size = sortedBooks.size();
         // Get the page of books
         int start = pageIndex * pageSize;
         int end = Math.min(start + pageSize, sortedBooks.size());
         List<Book> bookPage = sortedBooks.subList(start, end);
+
+        System.out.println("step1 in getSale");
 
         // Convert the books to DTOs, add the sales to the DTOs when creating them
         List<BookBreifDTO> bookBreifDTOList = bookPage.stream()

@@ -23,13 +23,15 @@ public class BookDAOImpl implements BookDAO {
     private final BookRepository bookRepository;
     private final RedisTemplate<String, Object> redisTemplate;
 
+    boolean isInitialized = false;
+
     public BookDAOImpl(BookRepository bookRepository, RedisTemplate<String, Object> redisTemplate) {
         this.bookRepository = bookRepository;
         this.redisTemplate = redisTemplate;
         initializeCache();
     }
 
-    private void initializeCache() {
+    public void initializeCache() {
         System.out.println("Initializing cache...");
         try {
             List<Book> books = bookRepository.findAll();
@@ -40,15 +42,20 @@ public class BookDAOImpl implements BookDAO {
                     redisTemplate.opsForValue().set(cacheKey, new BookJsonDTO(book));
                     System.out.println("Cached book in redis");
                 } catch (Exception e) {
+                    isInitialized = false;
                     System.err.println("Redis error: " + e.getMessage());
                 }
             });
+            isInitialized = true;
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Error initializing cache: " + e.getMessage());
         }
     }
 
     public Page<Book> findByTitleContaining(String title, Pageable pageable) {
+        checkAndInitializeCache();
+        System.out.println("step0");
         List<Book> books = new ArrayList<>();
         try {
             // 获取所有键
@@ -64,14 +71,24 @@ public class BookDAOImpl implements BookDAO {
                 }
             }
         } catch (Exception e) {
+            isInitialized = false;
+            System.out.println("step1  error");
             System.err.println("Redis error: " + e.getMessage());
         }
 
+        System.out.println("step1");
         // 分页处理
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), books.size());
-        List<Book> pagedBooks = books.subList(start, end);
 
+        List<Book> pagedBooks = new ArrayList<>();
+        try {
+            pagedBooks = books.subList(start, end);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        System.out.println("step2");
         // 如果缓存中没有数据，则从数据库中读取
         if (pagedBooks.isEmpty()) {
             Page<Book> bookPage = bookRepository.findByTitleContaining(title, pageable);
@@ -80,18 +97,22 @@ public class BookDAOImpl implements BookDAO {
                 try {
                     redisTemplate.opsForValue().set("book:" + book.getId(), new BookJsonDTO(book));
                 } catch (Exception e) {
+                    isInitialized = false;
                     System.err.println("Redis error: " + e.getMessage());
                 }
             });
             return bookPage;
         }
 
+        System.out.println("Here");
         // 返回分页结果
         return new PageImpl<>(pagedBooks, pageable, books.size());
     }
 
     @Override
     public Page<Book> findByStockGreaterThanAndTitleContaining(Integer stock, String title, Pageable pageable) {
+        checkAndInitializeCache();
+        System.out.println("step0");
         List<Book> books = new ArrayList<>();
         try {
             // 获取所有键
@@ -107,24 +128,36 @@ public class BookDAOImpl implements BookDAO {
                 }
             }
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
+
+        System.out.println("step129");
 
         // 分页处理
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), books.size());
-        List<Book> pagedBooks = books.subList(start, end);
+
+        List<Book> pagedBooks = new ArrayList<>();
+        try {
+            pagedBooks = books.subList(start, end);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
         System.out.println("Read from cache: " + pagedBooks.size());
+        System.out.println("size of pagedBooks: " + pagedBooks.size());
 
         // 如果缓存中没有数据，则从数据库中读取
         if (pagedBooks.isEmpty()) {
             Page<Book> bookPage = bookRepository.findByStockGreaterThanAndTitleContaining(stock, title, pageable);
+            System.out.println("Read from database: " + bookPage.getContent().size());
             // 将数据库中的数据缓存到 Redis
             bookPage.forEach(book -> {
                 try {
                     redisTemplate.opsForValue().set("book:" + book.getId(), new BookJsonDTO(book));
                 } catch (Exception e) {
+                    isInitialized = false;
                     System.err.println("Redis error: " + e.getMessage());
                 }
             });
@@ -137,6 +170,7 @@ public class BookDAOImpl implements BookDAO {
 
     @Override
     public Page<Book> findByAuthorContaining(String author, Pageable pageable) {
+        checkAndInitializeCache();
         List<Book> books = new ArrayList<>();
         try {
             // 获取所有键
@@ -152,13 +186,20 @@ public class BookDAOImpl implements BookDAO {
                 }
             }
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
 
         // 分页处理
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), books.size());
-        List<Book> pagedBooks = books.subList(start, end);
+
+        List<Book> pagedBooks = new ArrayList<>();
+        try {
+            pagedBooks = books.subList(start, end);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
         // 如果缓存中没有数据，则从数据库中读取
         if (pagedBooks.isEmpty()) {
@@ -168,6 +209,7 @@ public class BookDAOImpl implements BookDAO {
                 try {
                     redisTemplate.opsForValue().set("book:" + book.getId(), new BookJsonDTO(book));
                 } catch (Exception e) {
+                    isInitialized = false;
                     System.err.println("Redis error: " + e.getMessage());
                 }
             });
@@ -180,6 +222,7 @@ public class BookDAOImpl implements BookDAO {
 
     @Override
     public Page<Book> findByAuthorContainingAndStockGreaterThanPageable(String author, Integer stock, Pageable pageable) {
+        checkAndInitializeCache();
         List<Book> books = new ArrayList<>();
         try {
             // 获取所有键
@@ -195,13 +238,20 @@ public class BookDAOImpl implements BookDAO {
                 }
             }
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
 
         // 分页处理
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), books.size());
-        List<Book> pagedBooks = books.subList(start, end);
+
+        List<Book> pagedBooks = new ArrayList<>();
+        try {
+            pagedBooks = books.subList(start, end);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
         // 如果缓存中没有数据，则从数据库中读取
         if (pagedBooks.isEmpty()) {
@@ -211,6 +261,7 @@ public class BookDAOImpl implements BookDAO {
                 try {
                     redisTemplate.opsForValue().set("book:" + book.getId(), new BookJsonDTO(book));
                 } catch (Exception e) {
+                    isInitialized = false;
                     System.err.println("Redis error: " + e.getMessage());
                 }
             });
@@ -224,6 +275,7 @@ public class BookDAOImpl implements BookDAO {
     @Override
     public Optional<Book> findById(Integer id) {
         String cacheKey = "book:" + id;
+        checkAndInitializeCache();
         Book cachedBook = null;
         try {
             // 尝试从Redis缓存中获取数据
@@ -231,6 +283,7 @@ public class BookDAOImpl implements BookDAO {
                 cachedBook = new Book((BookJsonDTO) redisTemplate.opsForValue().get(cacheKey));
             } catch (Exception e) {
                 // 记录日志或处理异常
+                isInitialized = false;
                 System.err.println("Parse redis error: " + e.getMessage());
             }
             if (cachedBook != null) {
@@ -241,6 +294,7 @@ public class BookDAOImpl implements BookDAO {
             System.out.println("Book not cached in redis: " + id);
         } catch (Exception e) {
             // 记录日志或处理异常
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
 
@@ -253,6 +307,7 @@ public class BookDAOImpl implements BookDAO {
                 System.out.println("Save book to redis");
             } catch (Exception e) {
                 // 记录日志或处理异常
+                isInitialized = false;
                 System.err.println("Redis error: " + e.getMessage());
             }
         });
@@ -262,6 +317,7 @@ public class BookDAOImpl implements BookDAO {
 
     @Override
     public Page<Book> findByTag(String tag, Pageable pageable) {
+        checkAndInitializeCache();
         // try to get from cache
         List<Book> books = new ArrayList<>();
         try {
@@ -277,12 +333,19 @@ public class BookDAOImpl implements BookDAO {
                 }
             }
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
         // 分页处理
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), books.size());
-        List<Book> pagedBooks = books.subList(start, end);
+
+        List<Book> pagedBooks = new ArrayList<>();
+        try {
+            pagedBooks = books.subList(start, end);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
         // 如果缓存中没有数据，则从数据库中读取
         if (pagedBooks.isEmpty()) {
@@ -304,6 +367,7 @@ public class BookDAOImpl implements BookDAO {
     @Override
     public Page<Book> findByTagAndStockGreaterThanPageable(String tag, Integer stock, Pageable pageable) {
         List<Book> books = new ArrayList<>();
+        checkAndInitializeCache();
         try {
             // 获取所有键
             Set<String> keys = redisTemplate.keys("book:*");
@@ -318,13 +382,20 @@ public class BookDAOImpl implements BookDAO {
                 }
             }
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
 
         // 分页处理
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), books.size());
-        List<Book> pagedBooks = books.subList(start, end);
+
+        List<Book> pagedBooks = new ArrayList<>();
+        try {
+            pagedBooks = books.subList(start, end);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
         // 如果缓存中没有数据，则从数据库中读取
         if (pagedBooks.isEmpty()) {
@@ -334,6 +405,7 @@ public class BookDAOImpl implements BookDAO {
                 try {
                     redisTemplate.opsForValue().set("book:" + book.getId(), new BookJsonDTO(book));
                 } catch (Exception e) {
+                    isInitialized = false;
                     System.err.println("Redis error: " + e.getMessage());
                 }
             });
@@ -342,6 +414,12 @@ public class BookDAOImpl implements BookDAO {
 
         // 返回分页结果
         return new PageImpl<>(pagedBooks, pageable, books.size());
+    }
+
+    private void checkAndInitializeCache() {
+        if (!isInitialized) {
+            initializeCache();
+        }
     }
 
     @Override
@@ -356,6 +434,7 @@ public class BookDAOImpl implements BookDAO {
             redisTemplate.opsForValue().set(cacheKey, new BookJsonDTO(savedBook));
             System.out.println("Updated book in redis");
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
         return savedBook;
@@ -364,6 +443,7 @@ public class BookDAOImpl implements BookDAO {
     @Override
     // @CacheEvict(value = "books", key = "#book.id")
     public void delete(Book book) {
+        checkAndInitializeCache();
         bookRepository.delete(book);
 
         // 删除缓存中的记录
@@ -372,12 +452,14 @@ public class BookDAOImpl implements BookDAO {
             redisTemplate.delete(cacheKey);
             System.out.println("Deleted book from redis");
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
     }
 
     @Override
     public Page<Book> findAllByOrderBySalesDesc(Pageable pageable) {
+        checkAndInitializeCache();
         List<Book> books = new ArrayList<>();
         try {
             // 获取所有键
@@ -393,6 +475,7 @@ public class BookDAOImpl implements BookDAO {
                 }
             }
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
 
@@ -402,7 +485,13 @@ public class BookDAOImpl implements BookDAO {
         // 分页处理
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), books.size());
-        List<Book> pagedBooks = books.subList(start, end);
+
+        List<Book> pagedBooks = new ArrayList<>();
+        try {
+            pagedBooks = books.subList(start, end);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
         // 如果缓存中没有数据，则从数据库中读取
         if (pagedBooks.isEmpty()) {
@@ -412,6 +501,7 @@ public class BookDAOImpl implements BookDAO {
                 try {
                     redisTemplate.opsForValue().set("book:" + book.getId(), new BookJsonDTO(book));
                 } catch (Exception e) {
+                    isInitialized = false;
                     System.err.println("Redis error: " + e.getMessage());
                 }
             });
@@ -424,6 +514,7 @@ public class BookDAOImpl implements BookDAO {
 
     @Override
     public Optional<Book> findByIsbnAndIdNot(String isbn, Integer id) {
+        checkAndInitializeCache();
         try {
             // 获取所有键
             Set<String> keys = redisTemplate.keys("book:*");
@@ -441,6 +532,7 @@ public class BookDAOImpl implements BookDAO {
             }
             System.out.println("Book not cached in redis: isbn=" + isbn + ", id!=" + id);
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
 
@@ -452,6 +544,7 @@ public class BookDAOImpl implements BookDAO {
                 redisTemplate.opsForValue().set("book:" + book.getId(), new BookJsonDTO(book));
                 System.out.println("Save book to redis ");
             } catch (Exception e) {
+                isInitialized = false;
                 System.err.println("Redis error: " + e.getMessage());
             }
         });
@@ -460,6 +553,7 @@ public class BookDAOImpl implements BookDAO {
 
     @Override
     public Optional<Book> findByIsbn(String isbn) {
+        checkAndInitializeCache();
         try {
             // 获取所有键
             Set<String> keys = redisTemplate.keys("book:*");
@@ -477,6 +571,7 @@ public class BookDAOImpl implements BookDAO {
             }
             System.out.println("Book not cached in redis: " + isbn);
         } catch (Exception e) {
+            isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
 
@@ -488,6 +583,7 @@ public class BookDAOImpl implements BookDAO {
                 redisTemplate.opsForValue().set("book:" + book.getId(), new BookJsonDTO(book));
                 System.out.println("Save book to redis");
             } catch (Exception e) {
+                isInitialized = false;
                 System.err.println("Redis error: " + e.getMessage());
             }
         });
