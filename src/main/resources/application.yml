@@ -1,0 +1,15 @@
+server:
+  port: 8761  # Eureka Server 的默认端口
+
+eureka:
+  client:
+    register-with-eureka: false  # 自身不注册到Eureka
+    fetch-registry: false        # 自身不拉取服务注册信息
+  server:
+    enable-self-preservation: false  # 关闭自我保护模式，开发环境下可以关闭
+
+# application.yml
+# logging:
+#   level:
+#     com.netflix.eureka: DEBUG
+#     com.netflix.discovery: DEBUG
