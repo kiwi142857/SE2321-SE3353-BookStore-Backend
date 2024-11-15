@@ -1,0 +1,11 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # 指向Eureka Server的URL
+    register-with-eureka: true                    # 启用服务注册
+    fetch-registry: true                          # 从Eureka拉取注册信息
+  instance:
+    appname: MULTI
+
+server:
+  port: 8082
