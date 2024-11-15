@@ -1,0 +1,51 @@
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http: DEBUG
+
+server:
+  port: 8081  # API Gateway的端口，可以根据需要更改
+
+spring:
+  application:
+    name: api-gateway
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # Eureka Server 的地址
+    register-with-eureka: false
+    fetch-registry: true
+
+cloud:
+  gateway:
+    globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - "*"
+    routes:
+      - id: getbookauthor-route
+        uri: lb://GETAUTHOR11  # `lb://`表示负载均衡查找服务
+        predicates:
+          - Path=/api/books/getAuthor     # 将所有/books/*请求路由到book-service服务
+      - id: getprice-route
+        uri: lb://MULTI
+        predicates:
+          - Path=/api/orders/prices    # 将所有/prices/*请求路由到price-service服务
+      - id: bookstore-route
+        uri: lb://bookstore
+        predicates:
+          - Path=/api/
