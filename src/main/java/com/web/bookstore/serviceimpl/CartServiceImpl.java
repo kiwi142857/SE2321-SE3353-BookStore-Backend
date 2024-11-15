@@ -164,7 +164,7 @@ public class CartServiceImpl implements CartService {
             }
         }
 
-        System.err.println("ready to update cart after order");
+        System.out.println("ready to update cart after order");
 
         for (CartItem cartItem : cartItemList) {
             Book book = cartItem.getBook();
@@ -173,8 +173,14 @@ public class CartServiceImpl implements CartService {
 
             System.out.println("cartItem to be deleted: " + cartItem.getId());
             cartItemDAO.delete(cartItem);
-            bookService.updateBook(book);
+            try {
+                bookService.updateBook(book);
+            } catch (Exception e) {
+                System.out.print("Error updating book   " + e.getMessage());
+                e.printStackTrace(); // 打印完整的堆栈跟踪信息
+            }
         }
+        System.out.print("step2");
 
         // Flush and clear the persistence context to ensure changes are committed
         return new ResponseDTO(true, "The cart has been updated");

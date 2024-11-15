@@ -1,11 +1,15 @@
 package com.web.bookstore.dto;
 
+import java.io.Serializable;
+
 import com.web.bookstore.model.BookRate;
 
 import lombok.Data;
 
 @Data
-public class BookRateJsonDTO {
+public class BookRateJsonDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Integer id;
 

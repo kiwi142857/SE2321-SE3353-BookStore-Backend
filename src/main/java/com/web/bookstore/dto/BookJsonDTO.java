@@ -1,5 +1,6 @@
 package com.web.bookstore.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,7 +11,9 @@ import com.web.bookstore.model.Comment;
 import lombok.Data;
 
 @Data
-public class BookJsonDTO {
+public class BookJsonDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Integer id;
     private String title;
@@ -24,7 +27,6 @@ public class BookJsonDTO {
     private Integer threeStarNumber;
     private Integer twoStarNumber;
     private Integer oneStarNumber;
-    private List<Comment> comments;
     private String cover;
     private Integer sales;
     private String tag;
@@ -72,7 +74,6 @@ public class BookJsonDTO {
         this.threeStarNumber = book.getThreeStarNumber();
         this.twoStarNumber = book.getTwoStarNumber();
         this.oneStarNumber = book.getOneStarNumber();
-        this.comments = book.getComments() != null ? book.getComments().stream().collect(Collectors.toList()) : new ArrayList<>();
         this.cover = book.getCover();
         this.sales = book.getSales();
         this.tag = book.getTag();

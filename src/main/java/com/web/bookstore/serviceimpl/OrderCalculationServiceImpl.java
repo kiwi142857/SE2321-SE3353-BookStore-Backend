@@ -10,12 +10,15 @@ import com.web.bookstore.service.OrderCalculationService;
 public class OrderCalculationServiceImpl implements OrderCalculationService {
 
     @Autowired
-    private static RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
-    public static Integer calculateTotalPrice(Integer price, int quantity) {
+    public Integer calculateTotalPrice(Integer price, int quantity) {
+        System.out.println("price: " + price + " quantity: " + quantity);
         // 定义函数式服务的 URI
         String url = "http://localhost:8081/api/orders/price?price={price}&quantity={quantity}";
         // 通过调用函数式服务获取每个 CartItem 的总价
-        return restTemplate.getForObject(url, Integer.class, price, quantity);
+        String response = restTemplate.getForObject(url, String.class, price, quantity);
+        System.out.println("The total price is: " + response);
+        return Integer.parseInt(response);
     }
 }

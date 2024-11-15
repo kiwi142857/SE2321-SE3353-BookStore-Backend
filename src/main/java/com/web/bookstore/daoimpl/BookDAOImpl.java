@@ -426,7 +426,14 @@ public class BookDAOImpl implements BookDAO {
     @CachePut(value = "books", key = "#book.id")
     public Book save(Book book) {
 
-        Book savedBook = bookRepository.save(book);
+        Book savedBook = null;
+        try {
+            savedBook = bookRepository.save(book);
+        } catch (Exception e) {
+            isInitialized = false;
+            System.err.println("Error saving 1book: " + e.getMessage());
+            return null;
+        }
 
         // 更新缓存
         String cacheKey = "book:" + savedBook.getId();
@@ -437,6 +444,7 @@ public class BookDAOImpl implements BookDAO {
             isInitialized = false;
             System.err.println("Redis error: " + e.getMessage());
         }
+        System.out.println("Book saved: " + savedBook.getId());
         return savedBook;
     }
 

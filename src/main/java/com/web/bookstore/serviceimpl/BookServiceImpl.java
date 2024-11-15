@@ -183,8 +183,13 @@ public class BookServiceImpl implements BookService {
         return new ResponseDTO(true, "Comment success");
     }
 
+    @Override
     public void updateBook(Book book) {
-        bookDAO.save(book);
+        try {
+            bookDAO.save(book);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     public ResponseDTO postBook(Integer id, PostBookDTO book) {

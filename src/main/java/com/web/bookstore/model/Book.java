@@ -225,7 +225,7 @@ public class Book {
         this.threeStarNumber = dto.getThreeStarNumber();
         this.twoStarNumber = dto.getTwoStarNumber();
         this.oneStarNumber = dto.getOneStarNumber();
-        this.comments = dto.getComments() != null ? dto.getComments() : new ArrayList<>();
+        this.comments = new ArrayList<>();
         this.cover = dto.getCover();
         this.sales = dto.getSales();
         this.tag = dto.getTag();

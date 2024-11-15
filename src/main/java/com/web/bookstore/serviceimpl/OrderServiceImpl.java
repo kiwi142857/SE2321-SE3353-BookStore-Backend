@@ -26,7 +26,6 @@ import com.web.bookstore.model.User;
 import com.web.bookstore.service.CartService;
 import com.web.bookstore.service.OrderService;
 import com.web.bookstore.service.UserService;
-import com.web.bookstore.serviceimpl.OrderCalculationServiceImpl;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -36,13 +35,15 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemDAO cartItemDAO;
     private final UserService userService;
     private final OrderItemDAO orderItemDAO;
+    private final OrderCalculationServiceImpl calculateTotalPrice;
 
-    public OrderServiceImpl(OrderDAO orderDAO, CartService cartService, UserService userService, OrderItemDAO orderItemDAO, CartItemDAO cartItemDAO) {
+    public OrderServiceImpl(OrderDAO orderDAO, CartService cartService, UserService userService, OrderItemDAO orderItemDAO, CartItemDAO cartItemDAO, OrderCalculationServiceImpl calculateTotalPrice) {
         this.orderDAO = orderDAO;
         this.cartService = cartService;
         this.userService = userService;
         this.cartItemDAO = cartItemDAO;
         this.orderItemDAO = orderItemDAO;
+        this.calculateTotalPrice = calculateTotalPrice;
     }
 
     @Override
@@ -103,20 +104,22 @@ public class OrderServiceImpl implements OrderService {
             for (CartItem cartItem : cartItemList) {
                 totalPrice += cartItem.getBook().getPrice() * cartItem.getNumber() * cartItem.getBook().getDiscount() / 10;
             }
+            System.out.println("step0");
             for (CartItem cartItem : cartItemList) {
                 Integer price = cartItem.getBook().getPrice();
                 Integer quantity = cartItem.getNumber();
                 Integer discount = cartItem.getBook().getDiscount();
 
                 // 计算折后单价
-                Integer discountedPrice = price * (discount / 10);
+                Integer discountedPrice = price * discount / 10;
 
                 // 调用无状态函数式服务计算总价
-                Integer itemTotalPrice = OrderCalculationServiceImpl.calculateTotalPrice(discountedPrice, quantity);
+                Integer itemTotalPrice = calculateTotalPrice.calculateTotalPrice(discountedPrice, quantity);
 
                 // 累加到订单总价
                 totalPrice += itemTotalPrice;
             }
+            System.out.println("step1");
             if (user.getBalance() < totalPrice) {
                 throw new RuntimeException("The balance is not enough");
             }

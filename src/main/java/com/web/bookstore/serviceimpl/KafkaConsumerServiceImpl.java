@@ -43,9 +43,12 @@ public final class KafkaConsumerServiceImpl implements KafkaConsumerService {
 
             e.printStackTrace();
         }
+        // 打印postOrderDTO
+        System.out.println("Here postOrderDTO: " + postOrderDTO);
 
         System.out.println("Processing message...");
         ResponseDTO responseDTO = createOrder(postOrderDTO);
+
         if (responseDTO.isOk() == true) {
             System.out.println("Order created successfully." + " The message is " + responseDTO.getMessage());
         } else {
@@ -63,6 +66,7 @@ public final class KafkaConsumerServiceImpl implements KafkaConsumerService {
                 return new ResponseDTO(false, "User not logged in");
             }
             User user = userService.findUserById(Integer.valueOf(userId));
+
             PostOrderDTO postOrderDTO2 = new PostOrderDTO();
             postOrderDTO2.setReceiver(postOrderDTO.getReceiver());
             postOrderDTO2.setAddress(postOrderDTO.getAddress());
@@ -72,6 +76,8 @@ public final class KafkaConsumerServiceImpl implements KafkaConsumerService {
             if (user.getStatus() == 1) {
                 throw new UserBannedException("您的账号已被禁用");
             }
+            // print userId here
+            System.out.println("here userId: " + user.getId());
             System.out.println("postOrderDTO: " + postOrderDTO.getItems().get(0));
             ResponseDTO res = orderService.createOrder(postOrderDTO2, user);
             System.out.println("res: " + res);
