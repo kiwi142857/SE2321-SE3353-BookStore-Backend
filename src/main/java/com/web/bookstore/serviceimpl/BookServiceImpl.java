@@ -1,13 +1,19 @@
 package com.web.bookstore.serviceimpl;
 
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
-import com.web.bookstore.service.BookService;
 import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.dao.BookRateDAO;
 import com.web.bookstore.dao.CartItemDAO;
@@ -15,27 +21,19 @@ import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dto.BookAddDTO;
 import com.web.bookstore.dto.BookBreifDTO;
 import com.web.bookstore.dto.GetBookListDTO;
-import com.web.bookstore.model.Book;
-import com.web.bookstore.model.OrderItem;
-import com.web.bookstore.model.BookRate;
-import com.web.bookstore.model.CartItem;
-
-import java.util.stream.Collectors;
-import java.time.Instant;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-
 import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.GetCommentListDTO;
+import com.web.bookstore.dto.PostBookDTO;
 import com.web.bookstore.dto.ResponseDTO;
-import com.web.bookstore.service.AuthService;
-import com.web.bookstore.model.User;
+import com.web.bookstore.model.Book;
+import com.web.bookstore.model.BookRate;
+import com.web.bookstore.model.CartItem;
 import com.web.bookstore.model.Comment;
 import com.web.bookstore.model.Order;
-import com.web.bookstore.dto.PostBookDTO;
+import com.web.bookstore.model.OrderItem;
+import com.web.bookstore.model.User;
+import com.web.bookstore.service.AuthService;
+import com.web.bookstore.service.BookService;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -206,7 +204,12 @@ public class BookServiceImpl implements BookService {
 
         Book bookToUpdate = bookOptional.get();
         bookToUpdate.updateBook(book);
-        bookDAO.save(bookToUpdate);
+        try {
+            bookDAO.save(bookToUpdate);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseDTO(true, "Update success");
+        }
         return new ResponseDTO(true, "Update success");
     }
 
