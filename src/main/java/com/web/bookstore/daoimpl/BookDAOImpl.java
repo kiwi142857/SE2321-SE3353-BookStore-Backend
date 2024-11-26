@@ -28,7 +28,7 @@ public class BookDAOImpl implements BookDAO {
     public BookDAOImpl(BookRepository bookRepository, GridFSBucket gridFSBucket) {
         this.bookRepository = bookRepository;
         this.gridFSBucket = gridFSBucket;
-        listAllGridFSFiles();
+        // listAllGridFSFiles();
     }
 
     @Override
@@ -96,11 +96,12 @@ public class BookDAOImpl implements BookDAO {
         return bookRepository.findAll(pageable).map(this::populateCoverContent);
     }
 
-    public byte[] getBookCover(String cover) throws IOException {
+    public byte[] getBookCover(String coverId) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        GridFSFile gridFSFile = gridFSBucket.find(new Document("filename", cover)).first();
+        ObjectId objectId = new ObjectId(coverId);
+        GridFSFile gridFSFile = gridFSBucket.find(new Document("_id", objectId)).first();
         if (gridFSFile == null) {
-            System.out.println("No file found with the filename: " + cover);
+            System.out.println("No file found with the ObjectId: " + coverId);
             return null;
         }
         gridFSBucket.downloadToStream(gridFSFile.getObjectId(), outputStream);
