@@ -1,5 +1,10 @@
 package com.web.bookstore.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.web.bookstore.dto.PostBookDTO;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,12 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.web.bookstore.dto.PostBookDTO;
-
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -65,6 +65,9 @@ public class Book {
     @Column(name = "cover")
     private String cover;
 
+    @Transient
+    private byte[] coverContent;
+
     @Column(name = "sales")
     private Integer sales;
 
@@ -87,55 +90,75 @@ public class Book {
     }
 
     public Integer getBookRate(Integer starNumber) {
-        if (starNumber == 5) {
-            return fiveStarNumber;
-        } else if (starNumber == 4) {
-            return fourStarNumber;
-        } else if (starNumber == 3) {
-            return threeStarNumber;
-        } else if (starNumber == 2) {
-            return twoStarNumber;
-        } else {
+        if (null == starNumber) {
             return oneStarNumber;
+        } else {
+            return switch (starNumber) {
+                case 5 ->
+                    fiveStarNumber;
+                case 4 ->
+                    fourStarNumber;
+                case 3 ->
+                    threeStarNumber;
+                case 2 ->
+                    twoStarNumber;
+                default ->
+                    oneStarNumber;
+            };
         }
     }
 
     public void updateRate(Integer oldStarNumber, Integer newStarNumber) {
-        if (oldStarNumber == 5) {
-            fiveStarNumber--;
-        } else if (oldStarNumber == 4) {
-            fourStarNumber--;
-        } else if (oldStarNumber == 3) {
-            threeStarNumber--;
-        } else if (oldStarNumber == 2) {
-            twoStarNumber--;
-        } else if (oldStarNumber == 1) {
-            oneStarNumber--;
+        if (null != oldStarNumber) {
+            switch (oldStarNumber) {
+                case 5 ->
+                    fiveStarNumber--;
+                case 4 ->
+                    fourStarNumber--;
+                case 3 ->
+                    threeStarNumber--;
+                case 2 ->
+                    twoStarNumber--;
+                case 1 ->
+                    oneStarNumber--;
+                default -> {
+                }
+            }
         }
-        if (newStarNumber == 5) {
-            fiveStarNumber++;
-        } else if (newStarNumber == 4) {
-            fourStarNumber++;
-        } else if (newStarNumber == 3) {
-            threeStarNumber++;
-        } else if (newStarNumber == 2) {
-            twoStarNumber++;
-        } else if (newStarNumber == 1) {
-            oneStarNumber++;
+        if (null != newStarNumber) {
+            switch (newStarNumber) {
+                case 5 ->
+                    fiveStarNumber++;
+                case 4 ->
+                    fourStarNumber++;
+                case 3 ->
+                    threeStarNumber++;
+                case 2 ->
+                    twoStarNumber++;
+                case 1 ->
+                    oneStarNumber++;
+                default -> {
+                }
+            }
         }
     }
 
     public void addRate(Integer starNumber) {
-        if (starNumber == 5) {
-            fiveStarNumber++;
-        } else if (starNumber == 4) {
-            fourStarNumber++;
-        } else if (starNumber == 3) {
-            threeStarNumber++;
-        } else if (starNumber == 2) {
-            twoStarNumber++;
-        } else if (starNumber == 1) {
-            oneStarNumber++;
+        if (null != starNumber) {
+            switch (starNumber) {
+                case 5 ->
+                    fiveStarNumber++;
+                case 4 ->
+                    fourStarNumber++;
+                case 3 ->
+                    threeStarNumber++;
+                case 2 ->
+                    twoStarNumber++;
+                case 1 ->
+                    oneStarNumber++;
+                default -> {
+                }
+            }
         }
     }
 
@@ -156,6 +179,7 @@ public class Book {
         this.sales = book.getSales();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
+        this.coverContent = book.getCoverContent();
     }
 
     public Book(PostBookDTO book) {
@@ -175,5 +199,6 @@ public class Book {
         this.sales = book.getSales();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
+        this.coverContent = book.getCoverContent();
     }
 }

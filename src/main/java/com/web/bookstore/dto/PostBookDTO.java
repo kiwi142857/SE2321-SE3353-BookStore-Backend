@@ -17,6 +17,8 @@ public class PostBookDTO {
     private Integer twoStarNumber;
     private Integer oneStarNumber;
     private String cover;
+    // covercontent
+    private byte[] coverContent;
     private String tag;
     private Integer sales;
     private String isbn;
@@ -26,7 +28,7 @@ public class PostBookDTO {
             Integer discount,
             Integer fiveStarNumber, Integer fourStarNumber, Integer threeStarNumber, Integer twoStarNumber,
             String cover,
-            String tag, Integer sales, String isbn, Integer stock, Integer oneStarNumber) {
+            String tag, Integer sales, String isbn, Integer stock, Integer oneStarNumber, byte[] coverContent) {
         this.title = title;
         this.author = author;
         this.description = description;
@@ -43,6 +45,7 @@ public class PostBookDTO {
         this.sales = sales;
         this.isbn = isbn;
         this.stock = stock;
+        this.coverContent = coverContent;
     }
 
 }

@@ -1,8 +1,8 @@
 package com.web.bookstore.dto;
 
-import lombok.Data;
-
 import com.web.bookstore.model.Book;
+
+import lombok.Data;
 
 @Data
 public class GetBookDetailDTO {
@@ -21,13 +21,14 @@ public class GetBookDetailDTO {
     private Integer twoStarNumber;
     private Integer oneStarNumber;
     private String cover;
+    private byte[] coverContent;
     private Integer sales;
     private String tag;
     private Integer stock;
 
     public GetBookDetailDTO(Integer id, String title, String author, String description, Integer printYear,
             Integer price, Integer discount, Integer fiveStarNumber, Integer fourStarNumber, Integer threeStarNumber,
-            Integer twoStarNumber, Integer oneStarNumber, String cover, Integer sales, String tag, Integer stock) {
+            Integer twoStarNumber, Integer oneStarNumber, String cover, Integer sales, String tag, Integer stock, String isbn, byte[] coverContent) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -44,6 +45,8 @@ public class GetBookDetailDTO {
         this.sales = sales;
         this.tag = tag;
         this.stock = stock;
+        this.isbn = isbn;
+        this.coverContent = coverContent;
     }
 
     public GetBookDetailDTO(Book book) {
@@ -64,6 +67,7 @@ public class GetBookDetailDTO {
         this.tag = book.getTag();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
+        this.coverContent = book.getCoverContent();
     }
 
     public GetBookDetailDTO(GetBookDetailDTO book) {
@@ -84,5 +88,6 @@ public class GetBookDetailDTO {
         this.tag = book.getTag();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
+        this.coverContent = book.getCoverContent();
     }
 }

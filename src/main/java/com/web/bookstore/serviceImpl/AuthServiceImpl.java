@@ -1,21 +1,23 @@
 package com.web.bookstore.serviceimpl;
 
-import com.web.bookstore.dto.RegisterRequestDTO;
-import com.web.bookstore.service.AuthService;
-import com.web.bookstore.dao.AuthDAO;
-import com.web.bookstore.dao.UserDAO;
-import com.web.bookstore.dto.LoginRequestDTO;
-import com.web.bookstore.model.Auth;
-import com.web.bookstore.model.User;
+import java.util.Optional;
+
+import javax.naming.AuthenticationException;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
-import java.util.Optional;
+import com.web.bookstore.dao.AuthDAO;
+import com.web.bookstore.dao.UserDAO;
+import com.web.bookstore.dto.LoginRequestDTO;
+import com.web.bookstore.dto.RegisterRequestDTO;
+import com.web.bookstore.model.Auth;
+import com.web.bookstore.model.User;
+import com.web.bookstore.service.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+
     private final AuthDAO authDAO;
     private final UserDAO userDAO;
     private final BCryptPasswordEncoder passwordEncoder;

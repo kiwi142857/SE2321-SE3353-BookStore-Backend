@@ -23,6 +23,8 @@ public class BookBreifDTO {
 
     private Integer discount;
 
+    private byte[] coverContent;
+
     // ISBN
     private String isbn;
 
@@ -33,7 +35,7 @@ public class BookBreifDTO {
     private Long salesInTime;
 
     public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag,
-            Integer sales, Integer discount, String isbn, Integer stock, Long salesInTime) {
+            Integer sales, Integer discount, String isbn, Integer stock, Long salesInTime, byte[] coverContent) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -45,10 +47,11 @@ public class BookBreifDTO {
         this.isbn = isbn;
         this.stock = stock;
         this.salesInTime = salesInTime;
+        this.coverContent = coverContent;
     }
 
     public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag,
-            Integer sales, Integer discount, String isbn, Integer stock) {
+            Integer sales, Integer discount, String isbn, Integer stock, byte[] coverContent) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -60,6 +63,7 @@ public class BookBreifDTO {
         this.isbn = isbn;
         this.stock = stock;
         this.salesInTime = 0L;
+        this.coverContent = coverContent;
     }
 
     public BookBreifDTO(Book book) {
@@ -74,6 +78,7 @@ public class BookBreifDTO {
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
         this.salesInTime = 0L;
+        this.coverContent = book.getCoverContent();
     }
 
     public BookBreifDTO(Book book, Long salesInTime) {
@@ -87,6 +92,7 @@ public class BookBreifDTO {
         this.discount = book.getDiscount();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
+        this.coverContent = book.getCoverContent();
         this.salesInTime = salesInTime;
     }
 }
