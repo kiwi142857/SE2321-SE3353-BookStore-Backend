@@ -1,5 +1,7 @@
 package com.web.bookstore.dto;
 
+import java.util.List;
+
 import com.web.bookstore.model.Book;
 
 import lombok.Data;
@@ -17,7 +19,7 @@ public class BookBreifDTO {
 
     private String cover;
 
-    private String tag;
+    private List<String> tags;
 
     private Integer sales;
 
@@ -34,14 +36,14 @@ public class BookBreifDTO {
     // 表示在某个时间范围内的销量
     private Long salesInTime;
 
-    public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag,
+    public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, List<String> tags,
             Integer sales, Integer discount, String isbn, Integer stock, Long salesInTime, byte[] coverContent) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.price = price;
         this.cover = cover;
-        this.tag = tag;
+        this.tags = tags;
         this.sales = sales;
         this.discount = discount;
         this.isbn = isbn;
@@ -50,14 +52,14 @@ public class BookBreifDTO {
         this.coverContent = coverContent;
     }
 
-    public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, String tag,
+    public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, List<String> tags,
             Integer sales, Integer discount, String isbn, Integer stock, byte[] coverContent) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.price = price;
         this.cover = cover;
-        this.tag = tag;
+        this.tags = tags;
         this.sales = sales;
         this.discount = discount;
         this.isbn = isbn;
@@ -72,7 +74,7 @@ public class BookBreifDTO {
         this.author = book.getAuthor();
         this.price = book.getPrice();
         this.cover = book.getCover();
-        this.tag = book.getTag();
+        this.tags = book.getTags().stream().map(tag -> tag.getName()).toList();
         this.sales = book.getSales();
         this.discount = book.getDiscount();
         this.isbn = book.getIsbn();
@@ -87,7 +89,7 @@ public class BookBreifDTO {
         this.author = book.getAuthor();
         this.price = book.getPrice();
         this.cover = book.getCover();
-        this.tag = book.getTag();
+        this.tags = book.getTags().stream().map(tag -> tag.getName()).toList();
         this.sales = book.getSales();
         this.discount = book.getDiscount();
         this.isbn = book.getIsbn();

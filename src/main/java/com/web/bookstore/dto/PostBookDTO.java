@@ -1,5 +1,7 @@
 package com.web.bookstore.dto;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -19,7 +21,7 @@ public class PostBookDTO {
     private String cover;
     // covercontent
     private byte[] coverContent;
-    private String tag;
+    private List<String> tags;
     private Integer sales;
     private String isbn;
     private Integer stock;
@@ -28,7 +30,7 @@ public class PostBookDTO {
             Integer discount,
             Integer fiveStarNumber, Integer fourStarNumber, Integer threeStarNumber, Integer twoStarNumber,
             String cover,
-            String tag, Integer sales, String isbn, Integer stock, Integer oneStarNumber, byte[] coverContent) {
+            List<String> tags, Integer sales, String isbn, Integer stock, Integer oneStarNumber, byte[] coverContent) {
         this.title = title;
         this.author = author;
         this.description = description;
@@ -41,7 +43,7 @@ public class PostBookDTO {
         this.twoStarNumber = twoStarNumber;
         this.oneStarNumber = oneStarNumber;
         this.cover = cover;
-        this.tag = tag;
+        this.tags = tags;
         this.sales = sales;
         this.isbn = isbn;
         this.stock = stock;

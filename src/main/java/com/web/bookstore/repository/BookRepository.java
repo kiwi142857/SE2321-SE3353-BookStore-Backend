@@ -1,17 +1,19 @@
 package com.web.bookstore.repository;
 
-import com.web.bookstore.model.Book;
-import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
+
+import com.web.bookstore.model.Book;
+import com.web.bookstore.model.Tag;
 
 @Repository
 public interface BookRepository extends PagingAndSortingRepository<Book, Integer> {
+
     Page<Book> findByTitleContaining(String title, Pageable pageable);
 
     @Query("SELECT b FROM Book b WHERE b.stock > :stock AND b.title LIKE %:title%")
@@ -24,10 +26,11 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Integer
 
     Optional<Book> findById(Integer id);
 
-    Page<Book> findByTag(String tag, Pageable pageable);
+    @Query("SELECT b FROM Book b JOIN b.tags t WHERE t = :tag")
+    Page<Book> findByTag(Tag tag, Pageable pageable);
 
-    @Query("SELECT b FROM Book b WHERE b.tag = :tag AND b.stock > :stock")
-    Page<Book> findByTagAndStockGreaterThanPageable(String tag, Integer stock, Pageable pageable);
+    @Query("SELECT b FROM Book b JOIN b.tags t WHERE t = :tag AND b.stock > :stock")
+    Page<Book> findByTagAndStockGreaterThanPageable(Tag tag, Integer stock, Pageable pageable);
 
     Optional<Book> findByIsbnAndIdNot(String isbn, Integer id);
 

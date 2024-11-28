@@ -1,10 +1,12 @@
 package com.web.bookstore.dao;
 
-import com.web.bookstore.model.Book;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
+import com.web.bookstore.model.Book;
+import com.web.bookstore.model.Tag;
 
 public interface BookDAO {
 
@@ -22,9 +24,9 @@ public interface BookDAO {
 
     Optional<Book> findByIsbn(String isbn);
 
-    Page<Book> findByTag(String tag, Pageable pageable);
+    Page<Book> findByTag(Tag tag, Pageable pageable);
 
-    Page<Book> findByTagAndStockGreaterThanPageable(String tag, Integer stock, Pageable pageable);
+    Page<Book> findByTagAndStockGreaterThanPageable(Tag tag, Integer stock, Pageable pageable);
 
     Page<Book> findAll(Pageable pageable);
 

@@ -1,9 +1,11 @@
 package com.web.bookstore.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.web.bookstore.dto.PostBookDTO;
+import com.web.bookstore.repository.TagRepository;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,6 +13,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -71,8 +76,14 @@ public class Book {
     @Column(name = "sales")
     private Integer sales;
 
-    @Column(name = "tag")
-    private String tag;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "book_tag",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    @JsonManagedReference
+    private List<Tag> tags;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
     @JsonManagedReference
@@ -162,7 +173,7 @@ public class Book {
         }
     }
 
-    public void updateBook(PostBookDTO book) {
+    public void updateBook(PostBookDTO book, TagRepository tagRepository) {
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.description = book.getDescription();
@@ -175,14 +186,16 @@ public class Book {
         this.twoStarNumber = book.getTwoStarNumber();
         this.oneStarNumber = book.getOneStarNumber();
         this.cover = book.getCover();
-        this.tag = book.getTag();
+        this.tags = book.getTags().stream()
+                .map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName)))
+                .collect(Collectors.toList());
         this.sales = book.getSales();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
         this.coverContent = book.getCoverContent();
     }
 
-    public Book(PostBookDTO book) {
+    public Book(PostBookDTO book, TagRepository tagRepository) {
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.description = book.getDescription();
@@ -195,7 +208,9 @@ public class Book {
         this.twoStarNumber = book.getTwoStarNumber();
         this.oneStarNumber = book.getOneStarNumber();
         this.cover = book.getCover();
-        this.tag = book.getTag();
+        this.tags = book.getTags().stream()
+                .map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName)))
+                .collect(Collectors.toList());
         this.sales = book.getSales();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();

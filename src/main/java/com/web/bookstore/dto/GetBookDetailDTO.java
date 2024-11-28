@@ -1,5 +1,7 @@
 package com.web.bookstore.dto;
 
+import java.util.List;
+
 import com.web.bookstore.model.Book;
 
 import lombok.Data;
@@ -23,12 +25,12 @@ public class GetBookDetailDTO {
     private String cover;
     private byte[] coverContent;
     private Integer sales;
-    private String tag;
+    private List<String> tags;
     private Integer stock;
 
     public GetBookDetailDTO(Integer id, String title, String author, String description, Integer printYear,
             Integer price, Integer discount, Integer fiveStarNumber, Integer fourStarNumber, Integer threeStarNumber,
-            Integer twoStarNumber, Integer oneStarNumber, String cover, Integer sales, String tag, Integer stock, String isbn, byte[] coverContent) {
+            Integer twoStarNumber, Integer oneStarNumber, String cover, Integer sales, List<String> tags, Integer stock, String isbn, byte[] coverContent) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -43,7 +45,7 @@ public class GetBookDetailDTO {
         this.oneStarNumber = oneStarNumber;
         this.cover = cover;
         this.sales = sales;
-        this.tag = tag;
+        this.tags = tags;
         this.stock = stock;
         this.isbn = isbn;
         this.coverContent = coverContent;
@@ -64,7 +66,7 @@ public class GetBookDetailDTO {
         this.oneStarNumber = book.getOneStarNumber();
         this.cover = book.getCover();
         this.sales = book.getSales();
-        this.tag = book.getTag();
+        this.tags = book.getTags().stream().map(tag -> tag.getName()).toList();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
         this.coverContent = book.getCoverContent();
@@ -85,7 +87,7 @@ public class GetBookDetailDTO {
         this.oneStarNumber = book.getOneStarNumber();
         this.cover = book.getCover();
         this.sales = book.getSales();
-        this.tag = book.getTag();
+        this.tags = book.getTags();
         this.isbn = book.getIsbn();
         this.stock = book.getStock();
         this.coverContent = book.getCoverContent();

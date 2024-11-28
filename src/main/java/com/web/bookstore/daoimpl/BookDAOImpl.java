@@ -17,6 +17,7 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.model.Book;
+import com.web.bookstore.model.Tag;
 import com.web.bookstore.repository.BookRepository;
 
 @Service
@@ -84,11 +85,11 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
-    public Page<Book> findByTag(String tag, Pageable pageable) {
+    public Page<Book> findByTag(Tag tag, Pageable pageable) {
         return bookRepository.findByTag(tag, pageable).map(this::populateCoverContent);
     }
 
-    public Page<Book> findByTagAndStockGreaterThanPageable(String tag, Integer stock, Pageable pageable) {
+    public Page<Book> findByTagAndStockGreaterThanPageable(Tag tag, Integer stock, Pageable pageable) {
         return bookRepository.findByTagAndStockGreaterThanPageable(tag, stock, pageable).map(this::populateCoverContent);
     }
 
