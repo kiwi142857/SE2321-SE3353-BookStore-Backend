@@ -66,7 +66,13 @@ public class BookServiceImpl implements BookService {
         if (searchType.equals("title")) {
             bookPage = bookDAO.findByTitleContaining(keyWord, pageable);
         } else if (searchType.equals("tag")) {
-            bookPage = bookDAO.findByTag(new Tag(keyWord), pageable);
+            Optional<Tag> tag = tagRepository.findByName(keyWord);
+            if (tag.isPresent()) {
+                bookPage = bookDAO.findByTag(tag.get(), pageable);
+            } else {
+                // 如果未找到对应的 Tag，可以返回空结果或进行其他处理
+                bookPage = Page.empty(pageable);
+            }
         } else {
             bookPage = bookDAO.findByAuthorContaining(keyWord, pageable);
         }
@@ -80,10 +86,17 @@ public class BookServiceImpl implements BookService {
     public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {
         PageRequest pageable = PageRequest.of(page, size);
         Page<Book> bookPage;
+
         if (searchType.equals("title")) {
             bookPage = bookDAO.findByStockGreaterThanAndTitleContaining(0, keyWord, pageable);
         } else if (searchType.equals("tag")) {
-            bookPage = bookDAO.findByTagAndStockGreaterThanPageable(new Tag(keyWord), 0, pageable);
+            Optional<Tag> tag = tagRepository.findByName(keyWord);
+            if (tag.isPresent()) {
+                bookPage = bookDAO.findByTagAndStockGreaterThanPageable(tag.get(), 0, pageable);
+            } else {
+                // 如果未找到对应的 Tag，可以返回空结果或进行其他处理
+                bookPage = Page.empty(pageable);
+            }
         } else {
             bookPage = bookDAO.findByAuthorContainingAndStockGreaterThanPageable(keyWord, 0, pageable);
         }

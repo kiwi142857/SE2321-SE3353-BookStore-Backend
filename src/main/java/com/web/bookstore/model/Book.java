@@ -1,6 +1,7 @@
 package com.web.bookstore.model;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -187,7 +188,18 @@ public class Book {
         this.oneStarNumber = book.getOneStarNumber();
         this.cover = book.getCover();
         this.tags = book.getTags().stream()
-                .map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName)))
+                .map(tagName -> {
+                    // 尝试从数据库中查找 Tag
+                    Optional<Tag> existingTag = tagRepository.findByName(tagName);
+                    if (existingTag.isPresent()) {
+                        return existingTag.get();
+                    } else {
+                        // 如果不存在，创建新的 Tag 并保存
+                        Tag newTag = new Tag(tagName);
+                        tagRepository.save(newTag); // 先保存新创建的 Tag
+                        return newTag;
+                    }
+                })
                 .collect(Collectors.toList());
         this.sales = book.getSales();
         this.isbn = book.getIsbn();
@@ -209,7 +221,18 @@ public class Book {
         this.oneStarNumber = book.getOneStarNumber();
         this.cover = book.getCover();
         this.tags = book.getTags().stream()
-                .map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName)))
+                .map(tagName -> {
+                    // 尝试从数据库中查找 Tag
+                    Optional<Tag> existingTag = tagRepository.findByName(tagName);
+                    if (existingTag.isPresent()) {
+                        return existingTag.get();
+                    } else {
+                        // 如果不存在，创建新的 Tag 并保存
+                        Tag newTag = new Tag(tagName);
+                        tagRepository.save(newTag); // 先保存新创建的 Tag
+                        return newTag;
+                    }
+                })
                 .collect(Collectors.toList());
         this.sales = book.getSales();
         this.isbn = book.getIsbn();
