@@ -28,6 +28,8 @@ public interface BookDAO {
 
     Page<Book> findByTagAndStockGreaterThanPageable(Tag tag, Integer stock, Pageable pageable);
 
+    Page<Book> findByTagWithRelatedTagsAndStockGreaterThanPageable(String tagName, Integer stock, Pageable pageable);
+
     Page<Book> findAll(Pageable pageable);
 
     Book save(Book book);

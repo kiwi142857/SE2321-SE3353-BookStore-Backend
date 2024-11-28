@@ -32,6 +32,7 @@ import com.web.bookstore.model.Order;
 import com.web.bookstore.model.OrderItem;
 import com.web.bookstore.model.Tag;
 import com.web.bookstore.model.User;
+import com.web.bookstore.repository.TagNodeRepository;
 import com.web.bookstore.repository.TagRepository;
 import com.web.bookstore.service.AuthService;
 import com.web.bookstore.service.BookService;
@@ -45,15 +46,17 @@ public class BookServiceImpl implements BookService {
     public final CartItemDAO cartItemDAO;
     public final AuthService authService;
     public final TagRepository tagRepository;
+    public final TagNodeRepository tagNodeRepository;
 
     public BookServiceImpl(BookDAO bookDAO, BookRateDAO bookRateDAO, AuthService authService, OrderDAO orderDAO,
-            CartItemDAO cartItemDAO, TagRepository tagRepository) {
+            CartItemDAO cartItemDAO, TagRepository tagRepository, TagNodeRepository tagNodeRepository) {
         this.bookDAO = bookDAO;
         this.bookRateDAO = bookRateDAO;
         this.authService = authService;
         this.orderDAO = orderDAO;
         this.cartItemDAO = cartItemDAO;
         this.tagRepository = tagRepository;
+        this.tagNodeRepository = tagNodeRepository;
     }
 
     public Optional<Book> getBookById(Integer id) {
@@ -92,7 +95,7 @@ public class BookServiceImpl implements BookService {
         } else if (searchType.equals("tag")) {
             Optional<Tag> tag = tagRepository.findByName(keyWord);
             if (tag.isPresent()) {
-                bookPage = bookDAO.findByTagAndStockGreaterThanPageable(tag.get(), 0, pageable);
+                bookPage = bookDAO.findByTagWithRelatedTagsAndStockGreaterThanPageable(tag.get().getName(), 0, pageable);
             } else {
                 // 如果未找到对应的 Tag，可以返回空结果或进行其他处理
                 bookPage = Page.empty(pageable);
@@ -213,7 +216,7 @@ public class BookServiceImpl implements BookService {
         }
 
         Book bookToUpdate = bookOptional.get();
-        bookToUpdate.updateBook(book, tagRepository);
+        bookToUpdate.updateBook(book, tagRepository, tagNodeRepository);
         bookDAO.save(bookToUpdate);
         return new ResponseDTO(true, "Update success");
     }
@@ -224,7 +227,7 @@ public class BookServiceImpl implements BookService {
         if (bookWithSameIsbn.isPresent()) {
             return new BookAddDTO(false, "ISBN conflict with another book", -1);
         }
-        Book newBook = new Book(book, tagRepository);
+        Book newBook = new Book(book, tagRepository, tagNodeRepository);
 
         bookDAO.save(newBook);
         return new BookAddDTO(true, "Add success", newBook.getId());

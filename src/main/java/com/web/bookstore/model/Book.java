@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.web.bookstore.dto.PostBookDTO;
+import com.web.bookstore.repository.TagNodeRepository;
 import com.web.bookstore.repository.TagRepository;
 
 import jakarta.persistence.CascadeType;
@@ -174,7 +175,7 @@ public class Book {
         }
     }
 
-    public void updateBook(PostBookDTO book, TagRepository tagRepository) {
+    public void updateBook(PostBookDTO book, TagRepository tagRepository, TagNodeRepository tagNodeRepository) {
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.description = book.getDescription();
@@ -192,11 +193,15 @@ public class Book {
                     // 尝试从数据库中查找 Tag
                     Optional<Tag> existingTag = tagRepository.findByName(tagName);
                     if (existingTag.isPresent()) {
+                        TagNode tagNode = new TagNode(existingTag.get().getId(), existingTag.get().getName());
+                        tagNodeRepository.save(tagNode);
                         return existingTag.get();
                     } else {
                         // 如果不存在，创建新的 Tag 并保存
                         Tag newTag = new Tag(tagName);
                         tagRepository.save(newTag); // 先保存新创建的 Tag
+                        TagNode tagNode = new TagNode(newTag.getId(), newTag.getName());
+                        tagNodeRepository.save(tagNode);
                         return newTag;
                     }
                 })
@@ -207,7 +212,7 @@ public class Book {
         this.coverContent = book.getCoverContent();
     }
 
-    public Book(PostBookDTO book, TagRepository tagRepository) {
+    public Book(PostBookDTO book, TagRepository tagRepository, TagNodeRepository tagNodeRepository) {
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.description = book.getDescription();
@@ -225,10 +230,14 @@ public class Book {
                     // 尝试从数据库中查找 Tag
                     Optional<Tag> existingTag = tagRepository.findByName(tagName);
                     if (existingTag.isPresent()) {
+                        TagNode tagNode = new TagNode(existingTag.get().getId(), existingTag.get().getName());
+                        tagNodeRepository.save(tagNode);
                         return existingTag.get();
                     } else {
                         // 如果不存在，创建新的 Tag 并保存
                         Tag newTag = new Tag(tagName);
+                        TagNode tagNode = new TagNode(newTag.getId(), newTag.getName());
+                        tagNodeRepository.save(tagNode);
                         tagRepository.save(newTag); // 先保存新创建的 Tag
                         return newTag;
                     }

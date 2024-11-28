@@ -3,7 +3,9 @@ package com.web.bookstore.daoimpl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -18,17 +20,21 @@ import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.web.bookstore.dao.BookDAO;
 import com.web.bookstore.model.Book;
 import com.web.bookstore.model.Tag;
+import com.web.bookstore.model.TagNode;
 import com.web.bookstore.repository.BookRepository;
+import com.web.bookstore.repository.TagNodeRepository;
 
 @Service
 public class BookDAOImpl implements BookDAO {
 
     private final BookRepository bookRepository;
     private final GridFSBucket gridFSBucket;
+    private final TagNodeRepository tagNodeRepository;
 
-    public BookDAOImpl(BookRepository bookRepository, GridFSBucket gridFSBucket) {
+    public BookDAOImpl(BookRepository bookRepository, GridFSBucket gridFSBucket, TagNodeRepository tagNodeRepository) {
         this.bookRepository = bookRepository;
         this.gridFSBucket = gridFSBucket;
+        this.tagNodeRepository = tagNodeRepository;
         // listAllGridFSFiles();
     }
 
@@ -50,6 +56,27 @@ public class BookDAOImpl implements BookDAO {
         return bookRepository.findByAuthorContainingAndStockGreaterThanPageable(author, stock, pageable).map(this::populateCoverContent);
     }
 
+    public Page<Book> findByTagWithRelatedTagsAndStockGreaterThanPageable(String tagName, Integer stock, Pageable pageable) {
+        // 从 Neo4j 中获取相关标签的 ID 列表
+        List<TagNode> relatedTags = tagNodeRepository.findRelatedTags(tagName);
+        List<Integer> tagIds = relatedTags.stream()
+                .map(TagNode::getId)
+                .collect(Collectors.toList());
+
+        if (tagIds.isEmpty()) {
+            // 如果没有找到相关标签，返回空结果
+            return Page.empty(pageable);
+        }
+
+        for (Integer tagId : tagIds) {
+            System.out.println("Related tag ID: " + tagId);
+        }
+
+        Page<Book> books = bookRepository.findByTagsIdInAndStockGreaterThan(tagIds, stock, pageable).map(this::populateCoverContent);
+
+        return books;
+    }
+
     @Override
     public Optional<Book> findById(Integer id) {
         Optional<Book> bookOptional = bookRepository.findById(id);
@@ -69,7 +96,7 @@ public class BookDAOImpl implements BookDAO {
 
     private Book populateCoverContent(Book book) {
         if (book.getCover() != null) {
-            System.out.println("Populating cover content for book " + book.getId() + " with cover " + book.getCover());
+            // System.out.println("Populating cover content for book " + book.getId() + " with cover " + book.getCover());
             try {
                 byte[] coverContent = getBookCover(book.getCover());
                 // print if the CoverContent is null
