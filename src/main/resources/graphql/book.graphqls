@@ -1,0 +1,23 @@
+type Query {
+  getBookByName(name: String!): GetBookListDTO
+}
+
+type GetBookListDTO {
+  total: Int
+  bookList: [BookBriefDTO]
+}
+
+type BookBriefDTO {
+  id: Int
+  title: String
+  author: String
+  price: Int
+  cover: String
+  tags: [String]
+  sales: Int
+  discount: Int
+  isbn: String
+  stock: Int
+  salesInTime: Int
+  coverContent: String
+}
