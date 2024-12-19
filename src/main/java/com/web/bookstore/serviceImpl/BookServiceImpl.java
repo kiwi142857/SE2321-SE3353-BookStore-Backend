@@ -96,6 +96,7 @@ public class BookServiceImpl implements BookService {
             Optional<Tag> tag = tagRepository.findByName(keyWord);
             if (tag.isPresent()) {
                 bookPage = bookDAO.findByTagWithRelatedTagsAndStockGreaterThanPageable(tag.get().getName(), 0, pageable);
+                // bookPage = bookDAO.findByTagAndStockGreaterThanPageable(tag.get(), 0, pageable);
             } else {
                 // 如果未找到对应的 Tag，可以返回空结果或进行其他处理
                 bookPage = Page.empty(pageable);
