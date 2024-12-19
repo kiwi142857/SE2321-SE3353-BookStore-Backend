@@ -1,15 +1,15 @@
 package com.web.bookstore.service;
 
-import com.web.bookstore.dto.BookAddDTO;
-import com.web.bookstore.dto.GetBookListDTO;
-import com.web.bookstore.model.Book;
-import com.web.bookstore.model.User;
 import java.util.Optional;
 
+import com.web.bookstore.dto.BookAddDTO;
+import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.dto.GetBookRateDTO;
-import com.web.bookstore.dto.ResponseDTO;
 import com.web.bookstore.dto.GetCommentListDTO;
 import com.web.bookstore.dto.PostBookDTO;
+import com.web.bookstore.dto.ResponseDTO;
+import com.web.bookstore.model.Book;
+import com.web.bookstore.model.User;
 
 public interface BookService {
 

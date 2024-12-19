@@ -94,6 +94,11 @@ public class BookDAOImpl implements BookDAO {
         return bookRepository.findById(id);
     }
 
+    @Override
+    public Page<Book> findByTitle(String title, Pageable pageable) {
+        return bookRepository.findByTitle(title, pageable).map(this::populateCoverContent);
+    }
+
     private Book populateCoverContent(Book book) {
         if (book.getCover() != null) {
             // System.out.println("Populating cover content for book " + book.getId() + " with cover " + book.getCover());

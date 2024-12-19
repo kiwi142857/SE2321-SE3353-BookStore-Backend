@@ -28,6 +28,8 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Integer
 
     Optional<Book> findById(Integer id);
 
+    Page<Book> findByTitle(String title, Pageable pageable);
+
     @Query("SELECT b FROM Book b JOIN b.tags t WHERE t = :tag")
     Page<Book> findByTag(Tag tag, Pageable pageable);
 

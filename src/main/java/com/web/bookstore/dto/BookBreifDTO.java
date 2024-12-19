@@ -1,10 +1,13 @@
 package com.web.bookstore.dto;
 
+import java.util.Base64;
 import java.util.List;
 
 import com.web.bookstore.model.Book;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class BookBreifDTO {
@@ -25,6 +28,7 @@ public class BookBreifDTO {
 
     private Integer discount;
 
+    @Getter(AccessLevel.NONE)
     private byte[] coverContent;
 
     // ISBN
@@ -35,6 +39,10 @@ public class BookBreifDTO {
 
     // 表示在某个时间范围内的销量
     private Long salesInTime;
+
+    public String getCoverContent() {
+        return coverContent != null ? Base64.getEncoder().encodeToString(coverContent) : null;
+    }
 
     public BookBreifDTO(Integer id, String title, String author, Integer price, String cover, List<String> tags,
             Integer sales, Integer discount, String isbn, Integer stock, Long salesInTime, byte[] coverContent) {

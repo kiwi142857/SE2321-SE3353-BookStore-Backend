@@ -92,4 +92,7 @@ public class GetBookDetailDTO {
         this.stock = book.getStock();
         this.coverContent = book.getCoverContent();
     }
+
+    public GetBookDetailDTO() {
+    }
 }

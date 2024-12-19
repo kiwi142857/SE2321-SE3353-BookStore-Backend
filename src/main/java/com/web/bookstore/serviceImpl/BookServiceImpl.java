@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import static org.springframework.data.domain.Page.empty;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import com.web.bookstore.dao.CartItemDAO;
 import com.web.bookstore.dao.OrderDAO;
 import com.web.bookstore.dto.BookAddDTO;
 import com.web.bookstore.dto.BookBreifDTO;
+import com.web.bookstore.dto.GetBookDetailDTO;
 import com.web.bookstore.dto.GetBookListDTO;
 import com.web.bookstore.dto.GetBookRateDTO;
 import com.web.bookstore.dto.GetCommentListDTO;
@@ -86,23 +88,26 @@ public class BookServiceImpl implements BookService {
         return new GetBookListDTO(bookBreifDTOList, Math.toIntExact(bookPage.getTotalElements()));
     }
 
+    @Override
     public GetBookListDTO searchBooks(String searchType, String keyWord, Integer page, Integer size) {
         PageRequest pageable = PageRequest.of(page, size);
         Page<Book> bookPage;
 
-        if (searchType.equals("title")) {
-            bookPage = bookDAO.findByStockGreaterThanAndTitleContaining(0, keyWord, pageable);
-        } else if (searchType.equals("tag")) {
-            Optional<Tag> tag = tagRepository.findByName(keyWord);
-            if (tag.isPresent()) {
-                bookPage = bookDAO.findByTagWithRelatedTagsAndStockGreaterThanPageable(tag.get().getName(), 0, pageable);
-                // bookPage = bookDAO.findByTagAndStockGreaterThanPageable(tag.get(), 0, pageable);
-            } else {
-                // 如果未找到对应的 Tag，可以返回空结果或进行其他处理
-                bookPage = Page.empty(pageable);
+        switch (searchType) {
+            case "title" ->
+                bookPage = bookDAO.findByStockGreaterThanAndTitleContaining(0, keyWord, pageable);
+            case "tag" -> {
+                Optional<Tag> tag = tagRepository.findByName(keyWord);
+                if (tag.isPresent()) {
+                    bookPage = bookDAO.findByTagWithRelatedTagsAndStockGreaterThanPageable(tag.get().getName(), 0, pageable);
+                    // bookPage = bookDAO.findByTagAndStockGreaterThanPageable(tag.get(), 0, pageable);
+                } else {
+                    // 如果未找到对应的 Tag，可以返回空结果或进行其他处理
+                    bookPage = empty(pageable);
+                }
             }
-        } else {
-            bookPage = bookDAO.findByAuthorContainingAndStockGreaterThanPageable(keyWord, 0, pageable);
+            default ->
+                bookPage = bookDAO.findByAuthorContainingAndStockGreaterThanPageable(keyWord, 0, pageable);
         }
         // System.out.println(bookList);
         List<Book> bookList = bookPage.getContent();
