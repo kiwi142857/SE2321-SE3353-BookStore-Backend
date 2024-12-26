@@ -15,7 +15,7 @@ public class GraphQLBookController {
     private BookService bookService;
 
     @QueryMapping
-    public GetBookListDTO getBookByName(@Argument String name) {
-        return bookService.searchBooks("title", name, 0, 10);
+    public GetBookListDTO getBookByName(@Argument String name, @Argument int pageIndex) {
+        return bookService.searchBooks("title", name, pageIndex, 10);
     }
 }

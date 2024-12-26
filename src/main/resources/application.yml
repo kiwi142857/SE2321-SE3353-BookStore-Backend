@@ -26,6 +26,9 @@ spring:
       password: kiwi01
       driver-class-name: org.springframework.data.mongodb.core.MongoTemplate
 
+server:
+  port: 8081
+
 cos:
   secretId: AKIDjKhrCQTVdtvhDTUSYkpfFafXRiATWbgg
   secretKey: DPadT5kFWZTIBC5xeDe5e8e8PSJwaBal

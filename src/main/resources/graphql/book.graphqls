@@ -1,5 +1,5 @@
 type Query {
-  getBookByName(name: String!): GetBookListDTO
+  getBookByName(name: String!, pageIndex: Int!): GetBookListDTO
 }
 
 type GetBookListDTO {
