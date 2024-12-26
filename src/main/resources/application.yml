@@ -2,7 +2,8 @@ spring:
   application:
     name: unigpt
   datasource:
-    url: jdbc:mysql://localhost:3306/bookstore
+    # url: jdbc:mysql://localhost:3306/bookstore
+    url: jdbc:mysql://database:3306/bookstore
     username: kiwi
     password: kiwi01
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -11,7 +12,8 @@ spring:
       ddl-auto: update
     show-sql: false
   neo4j:
-    uri: bolt://localhost:7687
+    # uri: bolt://localhost:7687
+    uri: bolt://host.docker.internal:7687
     authentication:
       username: neo4j
       password: kiwi01kiwi #for 8 characters required
@@ -21,7 +23,8 @@ spring:
       max-request-size: 5MB
   data:
     mongodb:
-      uri: mongodb://localhost:27017/BookStore
+      # uri: mongodb://localhost:27017/BookStore
+      uri: mongodb://host.docker.internal:27017/BookStore
       username: kiwi
       password: kiwi01
       driver-class-name: org.springframework.data.mongodb.core.MongoTemplate

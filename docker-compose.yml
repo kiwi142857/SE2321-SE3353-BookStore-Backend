@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: mysql-container
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bookstore
+      MYSQL_USER: kiwi
+      MYSQL_PASSWORD: kiwi01
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-boot-app
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/bookstore
+      SPRING_DATASOURCE_USERNAME: kiwi
+      SPRING_DATASOURCE_PASSWORD: kiwi01
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: always
