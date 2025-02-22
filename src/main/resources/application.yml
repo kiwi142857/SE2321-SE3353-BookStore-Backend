@@ -3,8 +3,8 @@ spring:
     name: bookstore
   datasource:
     url: jdbc:mysql://localhost:3306/bookstore
-    username: kiwi
-    password: kiwi01
+    username: 
+    password: 
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -22,7 +22,7 @@ spring:
     timeout: 10s
     
 cos:
-  secretId: AKIDjKhrCQTVdtvhDTUSYkpfFafXRiATWbgg
-  secretKey: DPadT5kFWZTIBC5xeDe5e8e8PSJwaBal
-  region: ap-shanghai
-  bucketName: web-data-1319894912
+  secretId: 
+  secretKey: 
+  region: 
+  bucketName: 
