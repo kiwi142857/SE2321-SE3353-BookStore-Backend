@@ -31,4 +31,9 @@
 - get-author：期中后任务（获取作者，微服务demo）
 - serverless：期中后任务（无服务相关代码）
 
+## 使用说明
+
+如需运行，请配置application.yml中的数据库密码。
+
+
 如有说明不正确的地方，请及时联系我<qiweic10@sjtu.edu.cn>
